@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import { useOrders } from '../../hooks/useOrders';
 import { productService } from '../../services/productService';
@@ -40,6 +40,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigateToBioBuilder, on
   const [products, setProducts] = useState<Product[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
+  const hasLoadedOnce = useRef(false);
   const [userPlan, setUserPlan] = useState<'free' | 'pro'>('free');
   const [luanId, setLuanId] = useState('');
   const [isProCheckoutOpen, setIsProCheckoutOpen] = useState(false);
@@ -101,7 +102,9 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigateToBioBuilder, on
   // Load toàn bộ dữ liệu
   const loadDashboardData = async () => {
     if (!user) return;
-    setLoading(true);
+    if (!hasLoadedOnce.current) {
+      setLoading(true);
+    }
     try {
       const prods = await productService.getProductsByUserId(user.id);
       setProducts(prods);
@@ -171,6 +174,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigateToBioBuilder, on
       console.error(err);
     } finally {
       setLoading(false);
+      hasLoadedOnce.current = true;
     }
   };
 
