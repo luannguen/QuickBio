@@ -27,6 +27,18 @@ export default async function handler(req: any, res: any) {
         return res.status(400).json({ message: 'Thiếu API Key của Gemini. Vui lòng cấu hình.' });
       }
 
+      // Tự động phân giải Page ID chuẩn từ Token (tránh lỗi ID hiển thị/profile bị sai)
+      let realPageId = fb_page_id;
+      try {
+        const meRes = await fetch(`https://graph.facebook.com/v20.0/me?access_token=${fb_page_token}`);
+        const meData = await meRes.json();
+        if (meData.id) {
+          realPageId = meData.id;
+        }
+      } catch (e) {
+        console.warn('Lỗi phân giải Page ID:', e);
+      }
+
       // Sinh nội dung bằng Gemini
       const postContent = await generateAIContent(
         activeGeminiKey,
@@ -37,7 +49,7 @@ export default async function handler(req: any, res: any) {
       );
 
       // Đăng lên Facebook
-      const fbResult = await postToFacebook(fb_page_id, fb_page_token, postContent);
+      const fbResult = await postToFacebook(realPageId, fb_page_token, postContent);
 
       return res.status(200).json({
         success: true,
@@ -129,8 +141,20 @@ export default async function handler(req: any, res: any) {
           bioUrl
         );
 
+        // Tự động phân giải Page ID chuẩn từ Token
+        let realPageId = config.fb_page_id;
+        try {
+          const meRes = await fetch(`https://graph.facebook.com/v20.0/me?access_token=${config.fb_page_token}`);
+          const meData = await meRes.json();
+          if (meData.id) {
+            realPageId = meData.id;
+          }
+        } catch (e) {
+          console.warn('Lỗi phân giải Page ID trong cron:', e);
+        }
+
         // Đăng lên Facebook
-        await postToFacebook(config.fb_page_id, config.fb_page_token, postContent);
+        await postToFacebook(realPageId, config.fb_page_token, postContent);
 
         // Cập nhật ngày đăng gần nhất
         await supabaseAdmin
