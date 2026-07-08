@@ -1,0 +1,5 @@
+.agents/
+scratch/
+.git/
+node_modules/
+dist/
