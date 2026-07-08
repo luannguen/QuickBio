@@ -199,20 +199,70 @@ Hãy sử dụng thêm các emoji bắt mắt, định dạng rõ ràng, xuống
 KHÔNG viết các phần giải thích tiêu đề hay lời mở đầu, hãy trả về trực tiếp nội dung bài đăng Facebook hoàn chỉnh.`;
   }
 
-  const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      contents: [{ parts: [{ text: prompt }] }]
-    })
-  });
+  try {
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: prompt }] }]
+      })
+    });
 
-  const resData = await response.json() as any;
-  const text = resData?.candidates?.[0]?.content?.parts?.[0]?.text;
-  if (!text) {
-    throw new Error(JSON.stringify(resData) || 'Không thể tạo nội dung từ Gemini');
+    const resData = await response.json() as any;
+    const text = resData?.candidates?.[0]?.content?.parts?.[0]?.text;
+    if (text) {
+      return text.trim();
+    }
+  } catch (err) {
+    console.warn('Lỗi gọi Gemini hoặc hết lượt dùng thử, chuyển sang bài viết mẫu:', err);
   }
-  return text.trim();
+
+  // Fallback khi API bị lỗi / giới hạn
+  return getFallbackContent(productName, productDesc, style, bioUrl);
+}
+
+// Hàm lấy nội dung bài viết tiếp thị dự phòng chất lượng cao
+function getFallbackContent(productName: string, productDesc: string, style: string, bioUrl: string): string {
+  const isPlatformPromotion = productName === 'quickbio-platform';
+  
+  if (isPlatformPromotion) {
+    const fallbacks = [
+      `🔥 CƠ HỘI TẠO THU NHẬP THỤ ĐỘNG 10 TRIỆU/THÁNG TỪ SẢN PHẨM SỐ!
+
+Bạn đang có các tài liệu hay, Ebook tự viết, file thiết kế Canva hoặc các prompt chất lượng nhưng để bụi?
+Hãy dùng ngay QuickBio - nền tảng tạo trang bán hàng Bio-Link cực nhanh:
+✅ Nhận thanh toán VietQR ngân hàng cá nhân tự động.
+✅ Tự động gửi file/link tải cho khách qua Email trong 3 giây.
+✅ CTV giới thiệu nhận ngay 50% hoa hồng trọn đời.
+
+👉 Đăng ký tài khoản hoặc đăng ký Cộng tác viên miễn phí ngay tại: ${bioUrl} 🚀`,
+
+      `💡 Làm thế nào để biến lượt xem trên mạng xã hội thành dòng tiền tự động?
+
+Câu trả lời là bán sản phẩm số (Ebook, Canva Template, Prompts AI) thông qua trang Bio-Link của QuickBio.vn. 
+Không cần lập trình phức tạp, thanh toán VietQR quét mã tự động chuyển khoản trực tiếp vào tài khoản ngân hàng của bạn, tự động giao hàng qua email tức thì.
+
+👉 Bắt đầu xây dựng cỗ máy kiếm tiền tự động của bạn ngay hôm nay tại: ${bioUrl} 💸`,
+
+      `QUYẾT ĐỊNH NGỪNG LÀM THUÊ VÀ BẮT ĐẦU KINH DOANH SẢN PHẨM SỐ TỰ ĐỘNG! 
+
+Với QuickBio.vn, bạn không cần có công ty để đăng ký cổng thanh toán. Dùng VietQR ngân hàng cá nhân của chính bạn để tự động nhận tiền 24/7 và giao tài liệu tự động cho khách hàng.
+Đặc biệt, chương trình chia sẻ 50% doanh thu giới thiệu giúp bạn có nguồn thu nhập thụ động bền vững hàng tháng.
+
+👉 Xem chi tiết và đăng ký miễn phí tại: ${bioUrl} 🌟`
+    ];
+    
+    const randomIndex = Math.floor(Math.random() * fallbacks.length);
+    return fallbacks[randomIndex];
+  } else {
+    return `🔥 KHÁM PHÁ NGAY: ${productName.toUpperCase()}!
+👉 ${productDesc}
+
+Đừng bỏ lỡ tài liệu/sản phẩm chất lượng cao này để tối ưu hóa công việc và cuộc sống của bạn. 
+Nhận tài liệu tự động ngay sau khi thanh toán VietQR chuyển khoản cá nhân nhanh chóng!
+
+📥 Tải về trực tiếp tại link Bio của mình: ${bioUrl} 🚀`;
+  }
 }
 
 // Hàm gọi API Facebook Graph đăng bài
