@@ -6,7 +6,8 @@ import type { Product } from '../../services/productService';
 import { bioService } from '../../services/bioService';
 import type { Order } from '../../services/orderService';
 import { CheckoutModal } from '../../components/CheckoutModal';
-import { 
+import { marketingService } from '../../services/marketingService';
+import {
   Plus, 
   Trash2, 
   DollarSign, 
@@ -83,6 +84,20 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigateToBioBuilder, on
   const [isSimulating, setIsSimulating] = useState(false);
   const [simulatorStatus, setSimulatorStatus] = useState('');
 
+  // Marketing Automation States
+  const [mktFbPageId, setMktFbPageId] = useState('');
+  const [mktFbPageToken, setMktFbPageToken] = useState('');
+  const [mktIsActive, setMktIsActive] = useState(false);
+  const [mktStyle, setMktStyle] = useState('Thuyết phục');
+  const [mktTargetProductId, setMktTargetProductId] = useState('');
+  const [mktGeminiApiKey, setMktGeminiApiKey] = useState('');
+  const [mktLastPostedAt, setMktLastPostedAt] = useState('');
+  const [mktSubTab, setMktSubTab] = useState<'autopost' | 'swipe'>('autopost');
+  const [mktSaving, setMktSaving] = useState(false);
+  const [mktTesting, setMktTesting] = useState(false);
+  const [mktTestSuccess, setMktTestSuccess] = useState('');
+  const [mktTestError, setMktTestError] = useState('');
+
   // Load toàn bộ dữ liệu
   const loadDashboardData = async () => {
     if (!user) return;
@@ -138,6 +153,18 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigateToBioBuilder, on
         if (comms) {
           setCommissions(comms);
           setClicksCount(comms.length * 15 + 24); // Giả lập số lượt click để CTV thấy trực quan
+        }
+
+        // Tải cấu hình Marketing Automation
+        const mkt = await marketingService.getSettings(user.id);
+        if (mkt) {
+          setMktFbPageId(mkt.fb_page_id || '');
+          setMktFbPageToken(mkt.fb_page_token || '');
+          setMktIsActive(mkt.is_active || false);
+          setMktStyle(mkt.style || 'Thuyết phục');
+          setMktTargetProductId(mkt.target_product_id || '');
+          setMktGeminiApiKey(mkt.gemini_api_key || '');
+          setMktLastPostedAt(mkt.last_posted_at || '');
         }
       }
     } catch (err) {
@@ -307,6 +334,79 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigateToBioBuilder, on
     } catch (err: any) {
       console.error(err);
       alert('Lỗi hệ thống: ' + err.message);
+    }
+  };
+
+  // Xử lý lưu cấu hình Marketing Automation
+  const handleSaveMarketingSettings = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!user) return;
+    setMktSaving(true);
+    try {
+      const success = await marketingService.saveSettings(user.id, {
+        fb_page_id: mktFbPageId.trim(),
+        fb_page_token: mktFbPageToken.trim(),
+        is_active: mktIsActive,
+        style: mktStyle,
+        target_product_id: mktTargetProductId,
+        gemini_api_key: mktGeminiApiKey.trim()
+      });
+      if (success) {
+        alert('Đã lưu cấu hình tự động tiếp thị thành công!');
+        loadDashboardData();
+      }
+    } catch (err: any) {
+      console.error(err);
+      alert('Lỗi lưu cấu hình: ' + err.message);
+    } finally {
+      setMktSaving(false);
+    }
+  };
+
+  // Xử lý chạy thử AutoPost
+  const handleTestAutoPost = async () => {
+    if (!user) return;
+    if (!mktFbPageId || !mktFbPageToken) {
+      alert('Vui lòng điền đầy đủ Facebook Page ID và Page Access Token trước khi test!');
+      return;
+    }
+    const targetProduct = products.find(p => p.id === mktTargetProductId);
+    if (!targetProduct) {
+      alert('Vui lòng chọn 1 sản phẩm quảng bá để test!');
+      return;
+    }
+
+    setMktTesting(true);
+    setMktTestSuccess('');
+    setMktTestError('');
+    try {
+      const response = await fetch('/api/autopost', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          test: true,
+          fb_page_id: mktFbPageId.trim(),
+          fb_page_token: mktFbPageToken.trim(),
+          style: mktStyle,
+          product_name: targetProduct.name,
+          product_desc: targetProduct.description,
+          gemini_api_key: mktGeminiApiKey.trim(),
+          bio_url: userSlug ? `https://quick-bio-lilac.vercel.app/b/${userSlug}` : `https://quick-bio-lilac.vercel.app`
+        })
+      });
+
+      const resData = await response.json();
+      if (resData.success) {
+        setMktTestSuccess('Đăng bài test thành công! Xem bài viết mới trên Facebook Page của bạn.');
+        loadDashboardData();
+      } else {
+        setMktTestError(resData.error || resData.message || 'Lỗi không xác định khi test auto-post');
+      }
+    } catch (err: any) {
+      console.error(err);
+      setMktTestError('Lỗi kết nối API: ' + err.message);
+    } finally {
+      setMktTesting(false);
     }
   };
 
@@ -1113,19 +1213,217 @@ Giọng điệu: ${aiTone === 'expert' ? 'Chuyên sâu, logic' : aiTone === 'fun
           </div>
         )}
         
-        {/* TAB 6: MARKETING HUB */}
+        {/* TAB 6: MARKETING AUTOMATION & HUB */}
         {activeTab === 'marketing' && (
-              <div className="space-y-6 animate-fade-in">
-                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                  <div>
-                    <h3 className="text-base font-bold flex items-center gap-2">
-                      <BookOpen className="w-5 h-5 text-brand-orange" />
-                      Thư viện Content Tiếp thị (Marketing Hub)
-                    </h3>
-                    <p className="text-xs text-white/40 mt-1">Copy kịch bản bán hàng và đăng mạng xã hội để kiếm đơn hàng ngay lập tức.</p>
+          <div className="space-y-6 animate-fade-in text-left">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+              <div>
+                <h3 className="text-base font-bold flex items-center gap-2">
+                  <BookOpen className="w-5 h-5 text-brand-orange" />
+                  Hệ thống Tiếp thị Tự động (Marketing Automation)
+                </h3>
+                <p className="text-xs text-white/40 mt-1">Cấu hình tự động đăng bài bán hàng lên Facebook cá nhân/Page hoặc lấy kịch bản tiếp thị.</p>
+              </div>
+            </div>
+
+            {/* Sub Tabs Selection */}
+            <div className="flex border-b border-white/5 gap-2">
+              <button 
+                onClick={() => setMktSubTab('autopost')}
+                className={`px-4 py-2.5 text-xs font-bold border-b-2 transition-all ${
+                  mktSubTab === 'autopost' 
+                    ? 'border-brand-orange text-brand-orange' 
+                    : 'border-transparent text-white/40 hover:text-white'
+                }`}
+              >
+                🤖 Tự động đăng bài (Facebook Auto-Post)
+              </button>
+              <button 
+                onClick={() => setMktSubTab('swipe')}
+                className={`px-4 py-2.5 text-xs font-bold border-b-2 transition-all ${
+                  mktSubTab === 'swipe' 
+                    ? 'border-brand-orange text-brand-orange' 
+                    : 'border-transparent text-white/40 hover:text-white'
+                }`}
+              >
+                📂 Thư viện Content Triệu View
+              </button>
+            </div>
+
+            {/* SUBTAB 1: AUTOMATED FACEBOOK POSTING */}
+            {mktSubTab === 'autopost' && (
+              <div className="space-y-6">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                  {/* Settings Form Column */}
+                  <form onSubmit={handleSaveMarketingSettings} className="lg:col-span-2 glass-card p-6 rounded-2xl border border-white/5 space-y-5">
+                    <h4 className="text-xs font-bold text-white uppercase tracking-wider">Cấu hình kết nối Facebook & AI</h4>
+                    
+                    <div className="flex items-center justify-between p-4 bg-white/5 rounded-xl border border-white/5">
+                      <div>
+                        <div className="text-xs font-bold text-white">Kích hoạt Auto-Post tự động</div>
+                        <div className="text-[10px] text-white/40 mt-0.5">Tự động đăng bài tiếp thị hàng ngày lên Facebook Page của bạn.</div>
+                      </div>
+                      <label className="relative inline-flex items-center cursor-pointer">
+                        <input 
+                          type="checkbox" 
+                          checked={mktIsActive}
+                          onChange={(e) => setMktIsActive(e.target.checked)}
+                          className="sr-only peer"
+                        />
+                        <div className="w-9 h-5 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-brand-orange"></div>
+                      </label>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-[11px] text-white/50 font-semibold mb-2">Facebook Page ID</label>
+                        <input 
+                          type="text" 
+                          value={mktFbPageId}
+                          onChange={(e) => setMktFbPageId(e.target.value)}
+                          placeholder="Nhập Page ID của bạn (Ví dụ: 10006394...)"
+                          className="w-full px-4 py-3 rounded-xl text-xs text-white glass-input"
+                          required={mktIsActive}
+                        />
+                      </div>
+                      
+                      <div>
+                        <label className="block text-[11px] text-white/50 font-semibold mb-2">Sản phẩm cần quảng bá chính</label>
+                        <select 
+                          value={mktTargetProductId}
+                          onChange={(e) => setMktTargetProductId(e.target.value)}
+                          className="w-full px-4 py-3 rounded-xl text-xs text-white glass-input"
+                          required={mktIsActive}
+                        >
+                          <option value="">-- Chọn sản phẩm --</option>
+                          {products.map(p => (
+                            <option key={p.id} value={p.id}>{p.name}</option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-[11px] text-white/50 font-semibold mb-2 flex items-center justify-between">
+                        <span>Facebook Page Access Token (Mã kết nối)</span>
+                        <a href="https://developers.facebook.com" target="_blank" rel="noopener noreferrer" className="text-[10px] text-brand-orange underline">Hướng dẫn lấy token ↗</a>
+                      </label>
+                      <input 
+                        type="password" 
+                        value={mktFbPageToken}
+                        onChange={(e) => setMktFbPageToken(e.target.value)}
+                        placeholder="EAAW..."
+                        className="w-full px-4 py-3 rounded-xl text-xs text-white glass-input"
+                        required={mktIsActive}
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-[11px] text-white/50 font-semibold mb-2">Phong cách viết bài của AI</label>
+                        <select 
+                          value={mktStyle}
+                          onChange={(e) => setMktStyle(e.target.value)}
+                          className="w-full px-4 py-3 rounded-xl text-xs text-white glass-input"
+                        >
+                          <option value="Thuyết phục">Thuyết phục (AIDA/PAS)</option>
+                          <option value="Hài hước">Hài hước & Cà khịa</option>
+                          <option value="Giật gân">Giật gân & Gây tò mò</option>
+                          <option value="Kể chuyện">Kể chuyện (Storytelling)</option>
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="block text-[11px] text-white/50 font-semibold mb-2 flex items-center justify-between">
+                          <span>Google Gemini API Key (Không bắt buộc)</span>
+                          <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer" className="text-[10px] text-brand-orange underline">Lấy API Key ↗</a>
+                        </label>
+                        <input 
+                          type="password" 
+                          value={mktGeminiApiKey}
+                          onChange={(e) => setMktGeminiApiKey(e.target.value)}
+                          placeholder="Mặc định dùng API Key hệ thống"
+                          className="w-full px-4 py-3 rounded-xl text-xs text-white glass-input"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="pt-2">
+                      <button 
+                        type="submit"
+                        disabled={mktSaving}
+                        className="px-6 py-3 bg-gradient-to-r from-brand-orange to-brand-coral hover:from-brand-coral hover:to-brand-orange text-white font-bold text-xs rounded-xl shadow-lg transition-all disabled:opacity-50"
+                      >
+                        {mktSaving ? 'Đang lưu...' : 'Lưu cấu hình tiếp thị'}
+                      </button>
+                    </div>
+                  </form>
+
+                  {/* Actions & Status Column */}
+                  <div className="space-y-6">
+                    <div className="glass-card p-6 rounded-2xl border border-white/5 space-y-4">
+                      <h4 className="text-xs font-bold text-white uppercase tracking-wider">Trạng thái & Kiểm thử</h4>
+                      
+                      <div className="space-y-2 text-xs">
+                        <div className="flex justify-between items-center py-1 border-b border-white/5">
+                          <span className="text-white/50">Tình trạng:</span>
+                          <span className={`font-bold ${mktIsActive ? 'text-green-400' : 'text-white/30'}`}>
+                            {mktIsActive ? 'Đang hoạt động' : 'Đang tắt'}
+                          </span>
+                        </div>
+                        <div className="flex justify-between items-center py-1 border-b border-white/5">
+                          <span className="text-white/50">Đăng lần cuối:</span>
+                          <span className="text-white">
+                            {mktLastPostedAt ? new Date(mktLastPostedAt).toLocaleString('vi-VN') : 'Chưa đăng'}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="pt-4 border-t border-white/5 space-y-3">
+                        <div className="text-[10px] text-white/50 leading-relaxed">
+                          Nhấn nút dưới để bắt đầu gửi yêu cầu AI sinh bài đăng mới và trực tiếp đăng lên trang Facebook Page của bạn để kiểm tra cấu hình.
+                        </div>
+                        <button 
+                          onClick={handleTestAutoPost}
+                          disabled={mktTesting}
+                          className="w-full py-3 bg-white/5 hover:bg-white/10 text-white border border-white/10 text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-1.5 disabled:opacity-50"
+                        >
+                          {mktTesting ? 'Đang chạy thử...' : '🚀 Chạy thử đăng bài ngay'}
+                        </button>
+                      </div>
+
+                      {mktTestSuccess && (
+                        <div className="p-3 bg-green-500/10 border border-green-500/20 text-green-400 text-[10px] rounded-xl font-medium leading-relaxed animate-fade-in">
+                          {mktTestSuccess}
+                        </div>
+                      )}
+                      
+                      {mktTestError && (
+                        <div className="p-3 bg-red-500/10 border border-red-500/20 text-red-400 text-[10px] rounded-xl font-medium leading-relaxed animate-fade-in">
+                          Lỗi test: {mktTestError}
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="glass-card p-6 rounded-2xl border border-white/5 bg-brand-orange/5 space-y-3">
+                      <h4 className="text-xs font-bold text-white flex items-center gap-1.5">
+                        💡 Hướng dẫn cấu hình Facebook Page:
+                      </h4>
+                      <ol className="text-[10px] text-white/60 space-y-2 list-decimal pl-4 leading-relaxed">
+                        <li>Truy cập <a href="https://developers.facebook.com" target="_blank" className="text-brand-orange underline">Meta Developers</a> và tạo một App.</li>
+                        <li>Thiết lập quyền truy cập Page (`pages_manage_posts`, `pages_read_engagement`).</li>
+                        <li>Lấy **Page Access Token** trọn đời để dán vào cấu hình.</li>
+                        <li>Khi lưu và bật hoạt động, Vercel Cron sẽ tự động kích hoạt đăng bài đều đặn mỗi ngày một lần cho bạn.</li>
+                      </ol>
+                    </div>
                   </div>
                 </div>
+              </div>
+            )}
 
+            {/* SUBTAB 2: SWIPE FILES (MANUAL POSTING) */}
+            {mktSubTab === 'swipe' && (
+              <div className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   {/* Card 1: Ebook Prompt ChatGPT */}
                   <div className="glass-card p-6 rounded-2xl border border-white/5 space-y-4 flex flex-col justify-between">
@@ -1239,6 +1537,8 @@ Giọng điệu: ${aiTone === 'expert' ? 'Chuyên sâu, logic' : aiTone === 'fun
                 </div>
               </div>
             )}
+          </div>
+        )}
           </div>
         </div>
       </main>
