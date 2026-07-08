@@ -1,0 +1,21 @@
+# QuickBio
+
+QuickBio (quick-bio-lilac.vercel.app / quickbio.vn) is a light-weight, high-converting Bio-Link and Digital Product Store builder designed for creators, freelancers, and online sellers in Vietnam. It automates 100% of the payment and file delivery process.
+
+## Key Features
+
+- **No-Code Bio-Link Store Builder:** Create a professional link-in-bio page with drag-and-drop elements in under 1 minute.
+- **Automated VietQR Payments:** Connects with the seller's personal bank account via SePay API Webhooks. Generates customized VietQR codes on checkout for instant payment matching. Requires no business registration or complex merchant setup.
+- **3-Second Instant File Delivery:** Automatically sends secure download links for digital products (Ebooks, Canva templates, Notion templates, code files, PDFs) to the customer's email immediately after successful transfer matching.
+- **AI Auto-Poster (Gemini Integration):** Automatically drafts and posts high-converting promotional content directly to the user's Facebook Page on a schedule to drive passive traffic.
+- **50% Lifetime Recurring Affiliate Program:** Watermark-driven viral loops. Users can refer others and earn 50% commission for every upgrade to the Pro plan (99,000 VND/month).
+
+## Target Audience & Problems Solved
+
+- **Target Audience:** Content creators, designers, writers, online educators, and MMO (Make Money Online) practitioners in Vietnam.
+- **Problems Solved:** Eliminates the manual process of checking bank notifications, matching transactions, and emailing download links to customers. Protects download links and operates 24/7.
+
+## Pricing
+
+- **Free Tier:** 1 Bio-link page, maximum 1 digital product upload.
+- **Pro Tier (99,000 VND / month):** Unlimited digital products, AI Auto-Poster, and Affiliate Program activation.
