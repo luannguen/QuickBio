@@ -31,8 +31,8 @@ export default async function handler(req: any, res: any) {
       let realPageId = fb_page_id;
       try {
         const meRes = await fetch(`https://graph.facebook.com/v20.0/me?access_token=${fb_page_token}`);
-        const meData = await meRes.json();
-        if (meData.id) {
+        const meData = await meRes.json() as any;
+        if (meData && meData.id) {
           realPageId = meData.id;
         }
       } catch (e) {
@@ -145,8 +145,8 @@ export default async function handler(req: any, res: any) {
         let realPageId = config.fb_page_id;
         try {
           const meRes = await fetch(`https://graph.facebook.com/v20.0/me?access_token=${config.fb_page_token}`);
-          const meData = await meRes.json();
-          if (meData.id) {
+          const meData = await meRes.json() as any;
+          if (meData && meData.id) {
             realPageId = meData.id;
           }
         } catch (e) {
@@ -207,7 +207,7 @@ KHÔNG viết các phần giải thích tiêu đề hay lời mở đầu, hãy 
     })
   });
 
-  const resData = await response.json();
+  const resData = await response.json() as any;
   const text = resData?.candidates?.[0]?.content?.parts?.[0]?.text;
   if (!text) {
     throw new Error(JSON.stringify(resData) || 'Không thể tạo nội dung từ Gemini');
@@ -226,8 +226,8 @@ async function postToFacebook(pageId: string, pageToken: string, message: string
     }).toString()
   });
 
-  const resData = await response.json();
-  if (resData.error) {
+  const resData = await response.json() as any;
+  if (resData && resData.error) {
     throw new Error(resData.error.message || 'Lỗi đăng bài lên Facebook Graph API');
   }
   return resData;
