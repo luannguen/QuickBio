@@ -76,27 +76,43 @@ export default async function handler(req: any, res: any) {
           continue;
         }
 
-        // Lấy sản phẩm cần quảng bá
-        const { data: product } = await supabaseAdmin
-          .from('products')
-          .select('*')
-          .eq('id', config.target_product_id)
-          .single();
+        let productName = '';
+        let productDesc = '';
+        let bioUrl = '';
 
-        if (!product) {
-          results.push({ user_id: config.user_id, status: 'failed', reason: 'Không tìm thấy sản phẩm quảng bá' });
-          continue;
+        if (config.target_product_id === 'quickbio-platform') {
+          productName = 'quickbio-platform';
+          productDesc = 'Nền tảng Bio-Link và Cửa hàng sản phẩm số tự động nhận VietQR';
+          
+          const affCode = config.profiles?.affiliate_code || '';
+          bioUrl = affCode 
+            ? `https://quick-bio-lilac.vercel.app?ref=${affCode}` 
+            : `https://quick-bio-lilac.vercel.app`;
+        } else {
+          // Lấy sản phẩm cần quảng bá
+          const { data: product } = await supabaseAdmin
+            .from('products')
+            .select('*')
+            .eq('id', config.target_product_id)
+            .single();
+
+          if (!product) {
+            results.push({ user_id: config.user_id, status: 'failed', reason: 'Không tìm thấy sản phẩm quảng bá' });
+            continue;
+          }
+          productName = product.name;
+          productDesc = product.description;
+
+          // Lấy thông tin Bio Link để chèn vào bài viết
+          const { data: bio } = await supabaseAdmin
+            .from('bio_links')
+            .select('slug')
+            .eq('user_id', config.user_id)
+            .eq('status', 'published')
+            .single();
+
+          bioUrl = bio ? `https://quick-bio-lilac.vercel.app/b/${bio.slug}` : `https://quick-bio-lilac.vercel.app`;
         }
-
-        // Lấy thông tin Bio Link để chèn vào bài viết
-        const { data: bio } = await supabaseAdmin
-          .from('bio_links')
-          .select('slug')
-          .eq('user_id', config.user_id)
-          .eq('status', 'published')
-          .single();
-
-        const bioUrl = bio ? `https://quick-bio-lilac.vercel.app/b/${bio.slug}` : `https://quick-bio-lilac.vercel.app`;
 
         const activeGeminiKey = config.gemini_api_key || fallbackGeminiKey;
         if (!activeGeminiKey) {
@@ -107,8 +123,8 @@ export default async function handler(req: any, res: any) {
         // Sinh nội dung bài đăng
         const postContent = await generateAIContent(
           activeGeminiKey,
-          product.name,
-          product.description,
+          productName,
+          productDesc,
           config.style,
           bioUrl
         );
@@ -138,12 +154,26 @@ export default async function handler(req: any, res: any) {
 
 // Hàm gọi API Gemini sinh nội dung
 async function generateAIContent(apiKey: string, productName: string, productDesc: string, style: string, bioUrl: string): Promise<string> {
-  const prompt = `Bạn là một chuyên gia Copywriter bán hàng đỉnh cao. 
+  const isPlatformPromotion = productName === 'quickbio-platform';
+  
+  let prompt = '';
+  if (isPlatformPromotion) {
+    prompt = `Bạn là một chuyên gia Copywriter marketing đỉnh cao. 
+Hãy viết một bài đăng Facebook cực kỳ thu hút, kích thích và có tính thuyết phục cao để giới thiệu và quảng bá nền tảng kiếm tiền online: "QuickBio.vn" - Công cụ tạo Bio-Link và bán sản phẩm số tự động nhận VietQR cá nhân.
+Mô tả nền tảng: "Giúp bất kỳ ai cũng có thể bắt đầu kiếm tiền online bằng cách đăng bán ebook, template, khóa học và tự động nhận thanh toán qua VietQR cá nhân, tự động giao file trong 3 giây. Có chương trình Affiliate chia sẻ hoa hồng 50% trọn đời."
+Mục tiêu bài viết: Thuyết phục mọi người đăng ký tài khoản miễn phí để tạo Bio Link bán sản phẩm số của riêng họ hoặc tham gia làm Cộng Tác Viên (Affiliate) để nhận 50% hoa hồng trọn đời.
+Bài viết phải chèn khéo léo link đăng ký giới thiệu của tôi: "${bioUrl}".
+Phong cách viết bài: ${style} (ví dụ: Thuyết phục, Hài hước, Giật gân, Kể chuyện).
+Hãy sử dụng thêm các emoji bắt mắt, định dạng rõ ràng, xuống dòng dễ đọc và các hashtag phù hợp ở cuối bài.
+KHÔNG viết các phần giải thích tiêu đề hay lời mở đầu, hãy trả về trực tiếp nội dung bài đăng Facebook hoàn chỉnh.`;
+  } else {
+    prompt = `Bạn là một chuyên gia Copywriter bán hàng đỉnh cao. 
 Hãy viết một bài đăng Facebook cực kỳ hấp dẫn, thu hút người đọc để quảng bá sản phẩm số: "${productName}" (Mô tả: "${productDesc}").
 Bài viết phải chèn khéo léo link cửa hàng Bio của tôi: "${bioUrl}".
 Phong cách viết bài: ${style} (ví dụ: Thuyết phục, Hài hước, Giật gân, Kể chuyện).
 Hãy sử dụng thêm các emoji bắt mắt, định dạng rõ ràng, xuống dòng dễ đọc và các hashtag phù hợp ở cuối bài.
 KHÔNG viết các phần giải thích tiêu đề hay lời mở đầu, hãy trả về trực tiếp nội dung bài đăng Facebook hoàn chỉnh.`;
+  }
 
   const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
     method: 'POST',

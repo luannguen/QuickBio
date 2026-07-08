@@ -370,10 +370,25 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigateToBioBuilder, on
       alert('Vui lòng điền đầy đủ Facebook Page ID và Page Access Token trước khi test!');
       return;
     }
-    const targetProduct = products.find(p => p.id === mktTargetProductId);
-    if (!targetProduct) {
-      alert('Vui lòng chọn 1 sản phẩm quảng bá để test!');
-      return;
+    let productName = '';
+    let productDesc = '';
+    let bioUrl = '';
+
+    if (mktTargetProductId === 'quickbio-platform') {
+      productName = 'quickbio-platform';
+      productDesc = 'Nền tảng Bio-Link và Cửa hàng sản phẩm số tự động nhận VietQR';
+      bioUrl = affiliateCode 
+        ? `https://quick-bio-lilac.vercel.app?ref=${affiliateCode}` 
+        : `https://quick-bio-lilac.vercel.app`;
+    } else {
+      const targetProduct = products.find(p => p.id === mktTargetProductId);
+      if (!targetProduct) {
+        alert('Vui lòng chọn 1 sản phẩm quảng bá để test!');
+        return;
+      }
+      productName = targetProduct.name;
+      productDesc = targetProduct.description;
+      bioUrl = userSlug ? `https://quick-bio-lilac.vercel.app/b/${userSlug}` : `https://quick-bio-lilac.vercel.app`;
     }
 
     setMktTesting(true);
@@ -388,10 +403,10 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigateToBioBuilder, on
           fb_page_id: mktFbPageId.trim(),
           fb_page_token: mktFbPageToken.trim(),
           style: mktStyle,
-          product_name: targetProduct.name,
-          product_desc: targetProduct.description,
+          product_name: productName,
+          product_desc: productDesc,
           gemini_api_key: mktGeminiApiKey.trim(),
-          bio_url: userSlug ? `https://quick-bio-lilac.vercel.app/b/${userSlug}` : `https://quick-bio-lilac.vercel.app`
+          bio_url: bioUrl
         })
       });
 
@@ -1296,6 +1311,7 @@ Giọng điệu: ${aiTone === 'expert' ? 'Chuyên sâu, logic' : aiTone === 'fun
                           required={mktIsActive}
                         >
                           <option value="">-- Chọn sản phẩm --</option>
+                          <option value="quickbio-platform">⭐ Quảng bá QuickBio (Nhận 50% hoa hồng Affiliate)</option>
                           {products.map(p => (
                             <option key={p.id} value={p.id}>{p.name}</option>
                           ))}
