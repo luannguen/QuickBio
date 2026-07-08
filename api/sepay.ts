@@ -90,7 +90,7 @@ export default async function handler(req: any, res: any) {
         .maybeSingle();
       
       if (profile && profile.referred_by_creator) {
-        const commissionAmount = Math.round(order.amount * 0.3);
+        const commissionAmount = Math.round(order.amount * 0.5);
         const { error: commError } = await supabaseAdmin
           .from('commissions')
           .insert({

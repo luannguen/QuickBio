@@ -51,6 +51,8 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigateToBioBuilder, on
   const [commissions, setCommissions] = useState<any[]>([]);
   const [clicksCount, setClicksCount] = useState(0); // Mock click tracking for stats
   const [affiliateSuccess, setAffiliateSuccess] = useState(false);
+  const [withdrawLoading, setWithdrawLoading] = useState(false);
+  const [withdrawSuccess, setWithdrawSuccess] = useState(false);
 
   // AI Content Creator States
   const [aiTopic, setAiTopic] = useState('');
@@ -338,6 +340,54 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigateToBioBuilder, on
     } catch (err: any) {
       console.error(err);
       alert('Lỗi hệ thống: ' + err.message);
+    }
+  };
+
+  // Gửi yêu cầu rút tiền hoa hồng
+  const handleRequestWithdrawal = async () => {
+    if (!user) return;
+    if (!paymentInfo.trim()) {
+      alert('Vui lòng điền thông tin tài khoản ngân hàng nhận tiền trước khi rút!');
+      return;
+    }
+    
+    const pendingAmount = commissions
+      .filter(c => c.status === 'pending')
+      .reduce((acc, c) => acc + Number(c.amount), 0);
+
+    if (pendingAmount < 50000) {
+      alert('Số dư hoa hồng chờ duyệt tối thiểu để rút là 50.000đ!');
+      return;
+    }
+
+    const confirmed = window.confirm(`Bạn có chắc chắn muốn gửi yêu cầu rút ${pendingAmount.toLocaleString('vi-VN')}đ về tài khoản ngân hàng:\n${paymentInfo}?`);
+    if (!confirmed) return;
+
+    setWithdrawLoading(true);
+    try {
+      const { supabase, isSupabaseConfigured } = await import('../../services/supabase');
+      if (isSupabaseConfigured && supabase) {
+        // Cập nhật trạng thái tất cả commission pending của user thành requested
+        const { error } = await supabase
+          .from('commissions')
+          .update({ status: 'requested' })
+          .eq('affiliate_id', user.id)
+          .eq('status', 'pending');
+
+        if (error) {
+          alert('Có lỗi xảy ra: ' + error.message);
+          return;
+        }
+
+        setWithdrawSuccess(true);
+        setTimeout(() => setWithdrawSuccess(false), 5000);
+        loadDashboardData();
+      }
+    } catch (err: any) {
+      console.error(err);
+      alert('Lỗi hệ thống: ' + err.message);
+    } finally {
+      setWithdrawLoading(false);
     }
   };
 
@@ -960,25 +1010,57 @@ Giọng điệu: ${aiTone === 'expert' ? 'Chuyên sâu, logic' : aiTone === 'fun
                   Hệ thống Tiếp thị liên kết (Affiliate Program)
                 </h3>
 
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  <div className="glass-card p-5 rounded-2xl border border-white/5 space-y-1">
-                    <span className="text-[10px] text-white/40 uppercase font-semibold">Tổng lượt Click</span>
-                    <div className="text-2xl font-bold text-white">{clicksCount}</div>
-                    <p className="text-[9px] text-white/30">Lượt truy cập thông qua link giới thiệu</p>
+                {withdrawSuccess && (
+                  <div className="p-4 bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-semibold rounded-xl flex items-center gap-2">
+                    <Check className="w-4 h-4" />
+                    Yêu cầu rút tiền thành công! Ban quản trị sẽ đối soát và thanh toán cho bạn trong 24h.
                   </div>
-                  <div className="glass-card p-5 rounded-2xl border border-white/5 space-y-1">
-                    <span className="text-[10px] text-white/40 uppercase font-semibold">Hoa hồng chờ duyệt</span>
-                    <div className="text-2xl font-bold text-yellow-500">
-                      {commissions.filter(c => c.status === 'pending').reduce((acc, c) => acc + Number(c.amount), 0).toLocaleString('vi-VN')}đ
+                )}
+
+                <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
+                  <div className="glass-card p-5 rounded-2xl border border-white/5 space-y-1 flex flex-col justify-between">
+                    <div>
+                      <span className="text-[10px] text-white/40 uppercase font-semibold">Tổng lượt Click</span>
+                      <div className="text-2xl font-bold text-white">{clicksCount}</div>
+                      <p className="text-[9px] text-white/30">Lượt truy cập thông qua link giới thiệu</p>
                     </div>
-                    <p className="text-[9px] text-white/30">Hoa hồng phát sinh từ các đơn thành công</p>
                   </div>
-                  <div className="glass-card p-5 rounded-2xl border border-white/5 space-y-1">
-                    <span className="text-[10px] text-white/40 uppercase font-semibold">Hoa hồng đã nhận</span>
-                    <div className="text-2xl font-bold text-green-500">
-                      {commissions.filter(c => c.status === 'paid').reduce((acc, c) => acc + Number(c.amount), 0).toLocaleString('vi-VN')}đ
+                  <div className="glass-card p-5 rounded-2xl border border-white/5 space-y-1 flex flex-col justify-between">
+                    <div>
+                      <span className="text-[10px] text-white/40 uppercase font-semibold">Hoa hồng chờ duyệt</span>
+                      <div className="text-2xl font-bold text-yellow-500">
+                        {commissions.filter(c => c.status === 'pending').reduce((acc, c) => acc + Number(c.amount), 0).toLocaleString('vi-VN')}đ
+                      </div>
+                      <p className="text-[9px] text-white/30">Hoa hồng khả dụng có thể rút (tối thiểu 50k)</p>
                     </div>
-                    <p className="text-[9px] text-white/30">Đã chuyển khoản thanh toán cho bạn</p>
+                    {commissions.filter(c => c.status === 'pending').reduce((acc, c) => acc + Number(c.amount), 0) >= 50000 && (
+                      <button
+                        type="button"
+                        onClick={handleRequestWithdrawal}
+                        disabled={withdrawLoading}
+                        className="mt-3 w-full py-2 bg-yellow-500 hover:bg-yellow-600 text-black font-bold text-[10px] rounded-lg transition-all active:scale-95 disabled:opacity-50 flex items-center justify-center gap-1"
+                      >
+                        {withdrawLoading ? 'Đang gửi...' : 'Rút tiền ngay'}
+                      </button>
+                    )}
+                  </div>
+                  <div className="glass-card p-5 rounded-2xl border border-white/5 space-y-1 flex flex-col justify-between">
+                    <div>
+                      <span className="text-[10px] text-white/40 uppercase font-semibold">Hoa hồng đang rút</span>
+                      <div className="text-2xl font-bold text-blue-400">
+                        {commissions.filter(c => c.status === 'requested').reduce((acc, c) => acc + Number(c.amount), 0).toLocaleString('vi-VN')}đ
+                      </div>
+                      <p className="text-[9px] text-white/30">Đang trong quá trình đối soát chuyển khoản</p>
+                    </div>
+                  </div>
+                  <div className="glass-card p-5 rounded-2xl border border-white/5 space-y-1 flex flex-col justify-between">
+                    <div>
+                      <span className="text-[10px] text-white/40 uppercase font-semibold">Hoa hồng đã nhận</span>
+                      <div className="text-2xl font-bold text-green-500">
+                        {commissions.filter(c => c.status === 'paid').reduce((acc, c) => acc + Number(c.amount), 0).toLocaleString('vi-VN')}đ
+                      </div>
+                      <p className="text-[9px] text-white/30">Đã thanh toán thành công về tài khoản</p>
+                    </div>
                   </div>
                 </div>
 
@@ -1079,9 +1161,17 @@ Giọng điệu: ${aiTone === 'expert' ? 'Chuyên sâu, logic' : aiTone === 'fun
                               <td className="px-4 py-3 text-brand-orange font-bold">{Number(c.amount).toLocaleString()}đ</td>
                               <td className="px-4 py-3">
                                 <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold ${
-                                  c.orders?.status === 'paid' ? 'bg-green-500/10 text-green-400' : 'bg-yellow-500/10 text-yellow-400'
+                                  c.status === 'paid' 
+                                    ? 'bg-green-500/10 text-green-400' 
+                                    : c.status === 'requested'
+                                    ? 'bg-blue-500/10 text-blue-400'
+                                    : 'bg-yellow-500/10 text-yellow-400'
                                 }`}>
-                                  {c.orders?.status === 'paid' ? 'Đã thanh toán' : 'Chờ xử lý'}
+                                  {c.status === 'paid' 
+                                    ? 'Đã thanh toán' 
+                                    : c.status === 'requested' 
+                                    ? 'Đang rút tiền' 
+                                    : 'Chờ duyệt'}
                                 </span>
                               </td>
                               <td className="px-4 py-3 text-white/40">{new Date(c.created_at).toLocaleDateString('vi-VN')}</td>
