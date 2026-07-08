@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SaaSify | Launch Your Product Instantly</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;6500;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-color: #000000;
+            --card-bg: #09090b;
+            --border-color: #27272a;
+            --text-main: #ffffff;
+            --text-muted: #a1a1aa;
+            --primary: #ffffff;
+            --primary-inverse: #000000;
+            --accent: #38bdf8;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        h1, h2, h3, h4, .font-heading {
+            font-family: 'Outfit', sans-serif;
+            letter-spacing: -0.02em;
+        }
+
+        header {
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(8px);
+            z-index: 50;
+        }
+
+        .header-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 16px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .brand {
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--text-main);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        nav a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            margin-left: 20px;
+            transition: color 0.2s;
+        }
+
+        nav a:hover {
+            color: var(--text-main);
+        }
+
+        /* Hero Section */
+        .hero {
+            max-width: 800px;
+            margin: 80px auto;
+            padding: 0 20px;
+            text-align: center;
+            space-y: 24px;
+        }
+
+        @media (min-width: 768px) {
+            .hero {
+                margin: 120px auto;
+            }
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 9999px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 24px;
+        }
+
+        .hero h1 {
+            font-size: 44px;
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 20px;
+        }
+
+        @media (min-width: 768px) {
+            .hero h1 {
+                font-size: 64px;
+            }
+        }
+
+        .hero p {
+            font-size: 16px;
+            color: var(--text-muted);
+            line-height: 1.6;
+            max-width: 540px;
+            margin: 0 auto 36px auto;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: opacity 0.2s, transform 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: var(--primary-inverse);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+        }
+
+        /* Feature Section */
+        .features {
+            max-width: 1000px;
+            margin: 80px auto;
+            padding: 0 20px;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 24px;
+        }
+
+        @media (min-width: 768px) {
+            .grid-3 {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 30px;
+            transition: border-color 0.3s;
+        }
+
+        .card:hover {
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .card-icon {
+            font-size: 20px;
+            margin-bottom: 20px;
+            color: var(--text-main);
+        }
+
+        .card h3 {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .card p {
+            font-size: 13px;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        /* Pricing Section */
+        .pricing {
+            max-width: 800px;
+            margin: 80px auto;
+            padding: 0 20px;
+        }
+
+        .pricing-header {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+
+        .pricing-header h2 {
+            font-size: 32px;
+            font-weight: 850px;
+            margin-bottom: 12px;
+        }
+
+        .pricing-header p {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        .pricing-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            max-width: 440px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .pricing-card.popular {
+            border-color: var(--text-muted);
+        }
+
+        .pricing-card.popular::before {
+            content: "POPULAR";
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--primary);
+            color: var(--primary-inverse);
+            font-size: 9px;
+            font-weight: 800;
+            padding: 4px 10px;
+            border-radius: 99px;
+            letter-spacing: 0.05em;
+        }
+
+        .price {
+            font-size: 48px;
+            font-weight: 800;
+            margin: 24px 0 8px 0;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .price span {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-muted);
+        }
+
+        .pricing-features {
+            text-align: left;
+            margin: 32px 0;
+            list-style: none;
+            space-y: 12px;
+        }
+
+        .pricing-features li {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .pricing-features li i {
+            color: var(--text-main);
+            font-size: 11px;
+        }
+
+        footer {
+            border-top: 1px solid var(--border-color);
+            padding: 48px 20px;
+            text-align: center;
+        }
+
+        footer p {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+        }
+
+        .footer-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 12px;
+            margin: 0 10px;
+            transition: color 0.2s;
+        }
+
+        .footer-links a:hover {
+            color: var(--text-main);
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-container">
+            <a href="#" class="brand">
+                <i class="fa-solid fa-bolt"></i> SaaSify
+            </a>
+            <nav>
+                <a href="#features">Tính năng</a>
+                <a href="#pricing">Bảng giá</a>
+                <a href="#docs">Tài liệu</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="badge">
+            <i class="fa-solid fa-sparkles"></i> Phiên bản 2.0 hiện đã có sẵn
+        </div>
+        <h1>Ship Your Startup in Hours, Not Weeks.</h1>
+        <p>Bộ Boilerplate giúp lập trình viên tiết kiệm hàng chục giờ code backend, auth, database, và cổng thanh toán để tập trung vào xây dựng sản phẩm cốt lõi.</p>
+        <div style="display: flex; justify-content: center; gap: 12px;">
+            <a href="#pricing" class="btn btn-primary">Bắt đầu ngay <i class="fa-solid fa-arrow-right"></i></a>
+            <a href="#features" class="btn btn-secondary">Tìm hiểu thêm</a>
+        </div>
+    </section>
+
+    <!-- Features -->
+    <section class="features" id="features">
+        <div class="grid-3">
+            
+            <div class="card">
+                <div class="card-icon"><i class="fa-solid fa-user-shield"></i></div>
+                <h3>Xác thực sẵn có</h3>
+                <p>Hệ thống Auth đăng nhập bằng Email, Google, Github được tích hợp sạch sẽ qua Supabase.</p>
+            </div>
+
+            <div class="card">
+                <div class="card-icon"><i class="fa-solid fa-wallet"></i></div>
+                <h3>VietQR Payment</h3>
+                <p>Sinh mã QR chuyển khoản và xác thực giao dịch biến động số dư tự động trong 5 giây.</p>
+            </div>
+
+            <div class="card">
+                <div class="card-icon"><i class="fa-solid fa-palette"></i></div>
+                <h3>Tailwind + Radix</h3>
+                <p>Được thiết kế sẵn các UI component đẹp mắt, responsive và dễ dàng custom theme.</p>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Pricing -->
+    <section class="pricing" id="pricing">
+        <div class="pricing-header">
+            <h2>Bảng giá đơn giản, minh bạch</h2>
+            <p>Không phí ẩn. Thanh toán một lần, sử dụng trọn đời cho dự án của bạn.</p>
+        </div>
+
+        <div class="pricing-card popular">
+            <h3>Starter Kit License</h3>
+            <div class="price">299K <span>/ trọn đời</span></div>
+            <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px;">Dành cho 1 developer phát triển dự án cá nhân.</p>
+            
+            <ul class="pricing-features">
+                <li><i class="fa-solid fa-check"></i> Toàn bộ mã nguồn React & Node.js</li>
+                <li><i class="fa-solid fa-check"></i> Cấu hình Supabase & PostgreSQL Schema</li>
+                <li><i class="fa-solid fa-check"></i> Webhook xử lý thanh toán VietQR</li>
+                <li><i class="fa-solid fa-check"></i> Cập nhật miễn phí trọn đời</li>
+                <li><i class="fa-solid fa-check"></i> Hỗ trợ qua email 24/7</li>
+            </ul>
+
+            <a href="#" class="btn btn-primary" style="width: 100%; justify-content: center; padding: 14px;">Mua ngay license của bạn</a>
+        </div>
+    </section>
+
+    <footer>
+        <p>© 2026 SaaSify. Tối ưu hóa hiệu năng & chuẩn SEO.</p>
+        <div class="footer-links">
+            <a href="#">Điều khoản</a>
+            <a href="#">Bảo mật</a>
+            <a href="#">Liên hệ</a>
+        </div>
+    </footer>
+
+</body>
+</html>

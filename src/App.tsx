@@ -1,0 +1,148 @@
+import { useState, useEffect } from 'react';
+import { useAuth } from './hooks/useAuth';
+import { LandingPage } from './features/landing/LandingPage';
+import { Dashboard } from './features/dashboard/Dashboard';
+import { BioBuilder } from './features/bio-builder/BioBuilder';
+import { PublicBio } from './features/public-bio/PublicBio';
+
+type ViewType = 'landing' | 'dashboard' | 'bio-builder' | 'bio-public';
+
+function App() {
+  const { user, loading } = useAuth();
+  
+  // Tự động lấy slug từ path của URL (ví dụ: localhost:5173/luannguyen -> slug là luannguyen)
+  const getSlugFromPath = () => {
+    const path = window.location.pathname.replace(/^\/|\/$/g, '');
+    if (!path || ['dashboard', 'bio-builder', 'landing'].includes(path)) {
+      return null;
+    }
+    return path;
+  };
+
+  const initialSlug = getSlugFromPath();
+  const [view, setView] = useState<ViewType>(initialSlug ? 'bio-public' : 'landing');
+  const [activeSlug, setActiveSlug] = useState<string>(initialSlug || 'luannguyen');
+
+  // Xử lý Tiếp thị Liên kết (Affiliate Tracking)
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const refCode = params.get('ref');
+    if (refCode) {
+      import('./services/supabase').then(async ({ supabase }) => {
+        if (!supabase) return;
+        const { data, error } = await supabase
+          .from('profiles')
+          .select('id')
+          .eq('affiliate_code', refCode)
+          .single();
+        
+        if (data && !error) {
+          localStorage.setItem('quickbio_referrer', data.id);
+          console.log('Đã ghi nhận mã giới thiệu:', refCode, 'ID:', data.id);
+        }
+      });
+    }
+  }, []);
+
+  // Lắng nghe sự kiện click back/forward của trình duyệt để đồng bộ route
+  useEffect(() => {
+    const handlePopState = () => {
+      const slug = getSlugFromPath();
+      if (slug) {
+        setActiveSlug(slug);
+        setView('bio-public');
+      } else {
+        const path = window.location.pathname.replace(/^\/|\/$/g, '');
+        if (path === 'dashboard' && user) {
+          setView('dashboard');
+        } else if (path === 'bio-builder' && user) {
+          setView('bio-builder');
+        } else {
+          setView('landing');
+        }
+      }
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, [user]);
+
+  // Hàm chuyển đổi trang và cập nhật URL trình duyệt (không reload)
+  const navigateTo = (newView: ViewType, slug?: string) => {
+    setView(newView);
+    if (newView === 'bio-public' && slug) {
+      setActiveSlug(slug);
+      window.history.pushState({}, '', `/${slug}`);
+    } else if (newView === 'dashboard') {
+      window.history.pushState({}, '', '/dashboard');
+    } else if (newView === 'bio-builder') {
+      window.history.pushState({}, '', '/bio-builder');
+    } else {
+      window.history.pushState({}, '', '/');
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#080B11]">
+        <div className="text-center space-y-3">
+          <div className="w-10 h-10 border-2 border-brand-orange border-t-transparent rounded-full animate-spin mx-auto"></div>
+          <p className="text-sm text-white/50">Đang khởi tạo hệ thống...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Render view tương ứng
+  switch (view) {
+    case 'landing':
+      return (
+        <LandingPage 
+          onNavigateToDashboard={() => navigateTo('dashboard')}
+          onNavigateToDemoBio={() => navigateTo('bio-public', 'luannguyen')}
+        />
+      );
+    
+    case 'dashboard':
+      if (!user) {
+        navigateTo('landing');
+        return null;
+      }
+      return (
+        <Dashboard 
+          onNavigateToBioBuilder={() => navigateTo('bio-builder')}
+          onNavigateToBioPublic={(slug) => navigateTo('bio-public', slug)}
+        />
+      );
+
+    case 'bio-builder':
+      if (!user) {
+        navigateTo('landing');
+        return null;
+      }
+      return (
+        <BioBuilder 
+          userId={user.id}
+          onNavigateToDashboard={() => navigateTo('dashboard')}
+        />
+      );
+
+    case 'bio-public':
+      return (
+        <PublicBio 
+          slug={activeSlug}
+          onNavigateToLanding={() => navigateTo('landing')}
+        />
+      );
+    
+    default:
+      return (
+        <LandingPage 
+          onNavigateToDashboard={() => navigateTo('dashboard')}
+          onNavigateToDemoBio={() => navigateTo('bio-public', 'luannguyen')}
+        />
+      );
+  }
+}
+
+export default App;

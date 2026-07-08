@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alex Nguyễn | Creative Designer & Developer</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-color: #0b0f19;
+            --text-color: #ffffff;
+            --primary-color: #ff6b35;
+            --secondary-color: #f7c59f;
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --glass-blur: blur(12px);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Outfit', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(255, 107, 53, 0.08) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(124, 179, 66, 0.05) 0px, transparent 50%);
+            min-height: 100vh;
+        }
+
+        /* Glassmorphism Panel */
+        .glass-panel {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border-radius: 24px;
+        }
+
+        header {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 24px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 20px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, #ff6b35, #f7c59f);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        nav a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            margin-left: 24px;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: var(--primary-color);
+        }
+
+        main {
+            max-width: 1100px;
+            margin: 40px auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 40px;
+        }
+
+        @media (min-width: 768px) {
+            main {
+                grid-template-columns: 1.2fr 1fr;
+                align-items: center;
+                margin: 80px auto;
+            }
+        }
+
+        .hero-text h1 {
+            font-size: 42px;
+            font-weight: 800;
+            line-height: 1.15;
+            margin-bottom: 20px;
+        }
+
+        @media (min-width: 768px) {
+            .hero-text h1 {
+                font-size: 56px;
+            }
+        }
+
+        .hero-text h1 span {
+            background: linear-gradient(135deg, #ff6b35, #ff8a5b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-text p {
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.6);
+            line-height: 1.6;
+            margin-bottom: 32px;
+            max-w: 480px;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 16px;
+        }
+
+        .btn {
+            padding: 14px 28px;
+            border-radius: 14px;
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            box-shadow: 0 8px 24px rgba(255, 107, 53, 0.25);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(255, 107, 53, 0.35);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        /* Profile Showcase Card */
+        .profile-card {
+            padding: 30px;
+            text-align: center;
+            max-width: 380px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .profile-card img {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            object-cover: cover;
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .profile-card h2 {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .profile-card p {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.5);
+            margin-bottom: 24px;
+        }
+
+        .social-icons {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .social-icons a {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            color: rgba(255, 255, 255, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .social-icons a:hover {
+            background: var(--primary-color);
+            color: white;
+            transform: translateY(-3px);
+            border-color: transparent;
+        }
+
+        /* Portfolio projects */
+        .projects-section {
+            max-width: 1100px;
+            margin: 60px auto;
+            padding: 0 20px;
+        }
+
+        .section-title {
+            font-size: 24px;
+            font-weight: 800;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .grid-projects {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 24px;
+        }
+
+        @media (min-width: 768px) {
+            .grid-projects {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        .project-card {
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 240px;
+            transition: all 0.3s;
+        }
+
+        .project-card:hover {
+            border-color: rgba(255, 107, 53, 0.3);
+            transform: translateY(-4px);
+        }
+
+        .project-card i {
+            font-size: 28px;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+
+        .project-card h4 {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .project-card p {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.5);
+            line-height: 1.5;
+        }
+
+        .project-link {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--primary-color);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 20px;
+        }
+
+        footer {
+            border-t: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 40px 20px;
+            text-align: center;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.4);
+            margin-top: 100px;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">AlexNguyen.</div>
+        <nav>
+            <a href="#projects">Dự án</a>
+            <a href="#contact">Liên hệ</a>
+        </nav>
+    </header>
+
+    <main>
+        <!-- Hero Text -->
+        <div class="hero-text">
+            <h1>Creating <span>Digital</span> Experiences.</h1>
+            <p>Xin chào, tôi là Alex, một Creative Designer và Developer tự do. Tôi chuyên thiết kế và lập trình các ứng dụng web tối giản, hiệu quả và có trải nghiệm người dùng tối ưu nhất.</p>
+            <div class="cta-buttons">
+                <a href="#projects" class="btn btn-primary">Xem dự án <i class="fa-solid fa-arrow-right"></i></a>
+                <a href="#contact" class="btn btn-secondary">Liên hệ</a>
+            </div>
+        </div>
+
+        <!-- Profile Card -->
+        <div class="profile-card glass-panel">
+            <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&h=200&q=80" alt="Avatar">
+            <h2>Alex Nguyễn</h2>
+            <p>UI/UX Designer & Web Developer</p>
+            <div class="social-icons">
+                <a href="#"><i class="fa-brands fa-facebook-f"></i></a>
+                <a href="#"><i class="fa-brands fa-twitter"></i></a>
+                <a href="#"><i class="fa-brands fa-github"></i></a>
+                <a href="#"><i class="fa-brands fa-instagram"></i></a>
+            </div>
+        </div>
+    </main>
+
+    <!-- Projects Section -->
+    <section class="projects-section" id="projects">
+        <h3 class="section-title"><i class="fa-solid fa-sparkles text-primary"></i> Dự án nổi bật</h3>
+        
+        <div class="grid-projects">
+            
+            <div class="project-card glass-panel">
+                <div>
+                    <i class="fa-solid fa-cube"></i>
+                    <h4>SaaS Dashboard</h4>
+                    <p>Hệ thống quản trị dữ liệu SaaS với giao diện tối giản và trực quan.</p>
+                </div>
+                <a href="#" class="project-link">Xem chi tiết <i class="fa-solid fa-arrow-right-long"></i></a>
+            </div>
+
+            <div class="project-card glass-panel">
+                <div>
+                    <i class="fa-solid fa-store"></i>
+                    <h4>E-commerce App</h4>
+                    <p>Ứng dụng mua sắm trực tuyến hỗ trợ thanh toán VietQR động trong 10 giây.</p>
+                </div>
+                <a href="#" class="project-link">Xem chi tiết <i class="fa-solid fa-arrow-right-long"></i></a>
+            </div>
+
+            <div class="project-card glass-panel">
+                <div>
+                    <i class="fa-solid fa-terminal"></i>
+                    <h4>Developer Kit</h4>
+                    <p>Bộ thư viện mã nguồn mở hỗ trợ tăng tốc phát triển dự án React & Tailwind.</p>
+                </div>
+                <a href="#" class="project-link">Xem chi tiết <i class="fa-solid fa-arrow-right-long"></i></a>
+            </div>
+
+        </div>
+    </section>
+
+    <footer>
+        <p>© 2026 Alex Nguyễn. Built with Glassmorphism HTML Template.</p>
+    </footer>
+
+</body>
+</html>
