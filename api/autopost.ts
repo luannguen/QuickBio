@@ -195,11 +195,11 @@ KHÔNG viết các phần giải thích tiêu đề hay lời mở đầu, hãy 
 async function postToFacebook(pageId: string, pageToken: string, message: string): Promise<any> {
   const response = await fetch(`https://graph.facebook.com/v20.0/${pageId}/feed`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams({
       message: message,
       access_token: pageToken
-    })
+    }).toString()
   });
 
   const resData = await response.json();
