@@ -20,8 +20,19 @@ function App() {
     return path;
   };
 
+  const getInitialView = (): ViewType => {
+    const path = window.location.pathname.replace(/^\/|\/$/g, '');
+    if (path === 'dashboard') return 'dashboard';
+    if (path === 'bio-builder') return 'bio-builder';
+    if (path === 'kiem-tien') return 'kiem-tien';
+    if (path && !['landing'].includes(path)) {
+      return 'bio-public';
+    }
+    return 'landing';
+  };
+
   const initialSlug = getSlugFromPath();
-  const [view, setView] = useState<ViewType>(initialSlug ? 'bio-public' : 'landing');
+  const [view, setView] = useState<ViewType>(getInitialView());
   const [activeSlug, setActiveSlug] = useState<string>(initialSlug || 'luannguyen');
 
   // Xử lý Tiếp thị Liên kết (Affiliate Tracking)
