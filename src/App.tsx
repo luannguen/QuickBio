@@ -4,8 +4,9 @@ import { LandingPage } from './features/landing/LandingPage';
 import { Dashboard } from './features/dashboard/Dashboard';
 import { BioBuilder } from './features/bio-builder/BioBuilder';
 import { PublicBio } from './features/public-bio/PublicBio';
+import { KiemTienPage } from './features/landing/KiemTienPage';
 
-type ViewType = 'landing' | 'dashboard' | 'bio-builder' | 'bio-public';
+type ViewType = 'landing' | 'dashboard' | 'bio-builder' | 'bio-public' | 'kiem-tien';
 
 function App() {
   const { user, loading } = useAuth();
@@ -13,7 +14,7 @@ function App() {
   // Tự động lấy slug từ path của URL (ví dụ: localhost:5173/luannguyen -> slug là luannguyen)
   const getSlugFromPath = () => {
     const path = window.location.pathname.replace(/^\/|\/$/g, '');
-    if (!path || ['dashboard', 'bio-builder', 'landing'].includes(path)) {
+    if (!path || ['dashboard', 'bio-builder', 'landing', 'kiem-tien'].includes(path)) {
       return null;
     }
     return path;
@@ -57,6 +58,8 @@ function App() {
           setView('dashboard');
         } else if (path === 'bio-builder' && user) {
           setView('bio-builder');
+        } else if (path === 'kiem-tien') {
+          setView('kiem-tien');
         } else {
           setView('landing');
         }
@@ -77,6 +80,8 @@ function App() {
       window.history.pushState({}, '', '/dashboard');
     } else if (newView === 'bio-builder') {
       window.history.pushState({}, '', '/bio-builder');
+    } else if (newView === 'kiem-tien') {
+      window.history.pushState({}, '', '/kiem-tien');
     } else {
       window.history.pushState({}, '', '/');
     }
@@ -131,6 +136,13 @@ function App() {
       return (
         <PublicBio 
           slug={activeSlug}
+          onNavigateToLanding={() => navigateTo('landing')}
+        />
+      );
+
+    case 'kiem-tien':
+      return (
+        <KiemTienPage 
           onNavigateToLanding={() => navigateTo('landing')}
         />
       );
