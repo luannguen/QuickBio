@@ -45,9 +45,8 @@ export const marketingService = {
           .eq('user_id', userId)
           .maybeSingle();
 
-        if (error) {
-          // Nếu bảng chưa được tạo trên Supabase, fallback về LocalStorage
-          console.warn('Table marketing_settings not found, using localStorage fallback');
+        if (error || !data) {
+          // Nếu bảng chưa được tạo hoặc chưa có dữ liệu trên Supabase, fallback về LocalStorage
           return getLocalSettings();
         }
         return data as MarketingSettings;
