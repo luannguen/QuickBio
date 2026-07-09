@@ -192,6 +192,9 @@ export const PublicBio: React.FC<PublicBioProps> = ({ slug, onNavigateToLanding 
 
   return (
     <div className="min-h-screen pb-20 flex justify-center relative overflow-hidden" style={themeStyle}>
+      {/* Subtle background grid pattern */}
+      <div className="absolute inset-0 bg-[radial-gradient(rgba(255,255,255,0.015)_1px,transparent_1px)] bg-[size:20px_20px] pointer-events-none"></div>
+
       {/* Background Mesh Blurs for Premium Visuals */}
       <div className="absolute top-[10%] left-[-20%] w-[350px] h-[350px] bg-brand-orange/5 rounded-full blur-[100px] pointer-events-none"></div>
       <div className="absolute bottom-[20%] right-[-20%] w-[350px] h-[350px] bg-brand-coral/5 rounded-full blur-[100px] pointer-events-none"></div>

@@ -289,11 +289,14 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onNavigateToDashboard,
           </div>
           <div className="order-1 lg:order-2 flex justify-center relative">
             <div className="absolute inset-0 bg-brand-orange/10 rounded-3xl filter blur-3xl pointer-events-none"></div>
-            <img 
-              src="/sales_dashboard.png" 
-              alt="Sales Dashboard Mockup" 
-              className="w-full max-w-[420px] rounded-2xl border border-white/10 shadow-2xl shadow-brand-orange/5 animate-float"
-            />
+            <div className="relative group transition-all duration-500">
+              <div className="absolute -inset-1 bg-gradient-to-r from-brand-orange to-brand-coral rounded-2xl blur-lg opacity-25 group-hover:opacity-45 transition duration-500"></div>
+              <img 
+                src="/sales_dashboard.png" 
+                alt="Sales Dashboard Mockup" 
+                className="relative w-full max-w-[420px] rounded-2xl border border-white/10 shadow-2xl shadow-brand-orange/5 animate-float transform group-hover:scale-[1.03] group-hover:rotate-[-1deg] transition-all duration-500"
+              />
+            </div>
           </div>
         </div>
 
@@ -301,11 +304,14 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onNavigateToDashboard,
         <div className="w-full max-w-5xl pt-16 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           <div className="flex justify-center relative order-1">
             <div className="absolute inset-0 bg-brand-green/10 rounded-3xl filter blur-3xl pointer-events-none"></div>
-            <img 
-              src="/hero_visual.png" 
-              alt="Bio Builder Mockup" 
-              className="w-full max-w-[420px] rounded-2xl border border-white/10 shadow-2xl shadow-brand-green/5 animate-float-delay"
-            />
+            <div className="relative group transition-all duration-500">
+              <div className="absolute -inset-1 bg-gradient-to-r from-brand-green to-[#D4E157] rounded-2xl blur-lg opacity-20 group-hover:opacity-35 transition duration-500"></div>
+              <img 
+                src="/hero_visual.png" 
+                alt="Bio Builder Mockup" 
+                className="relative w-full max-w-[420px] rounded-2xl border border-white/10 shadow-2xl shadow-brand-green/5 animate-float-delay transform group-hover:scale-[1.03] group-hover:rotate-[1deg] transition-all duration-500"
+              />
+            </div>
           </div>
           <div className="space-y-6 text-left order-2">
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-green-500/10 border border-green-500/20 text-xs font-semibold text-green-400">
