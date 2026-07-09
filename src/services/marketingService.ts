@@ -43,7 +43,7 @@ export const marketingService = {
           .from('marketing_settings')
           .select('*')
           .eq('user_id', userId)
-          .single();
+          .maybeSingle();
 
         if (error) {
           // Nếu bảng chưa được tạo trên Supabase, fallback về LocalStorage
