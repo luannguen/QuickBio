@@ -108,6 +108,31 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigateToBioBuilder, on
 
   const isAdmin = user && ['luan.nguyenthien@gmail.com', 'luannguyenthien@gmail.com', 'luannguyen@quickbio.vn'].includes(user.email || '');
 
+  // Tải dữ liệu yêu cầu rút tiền cho Admin
+  const loadAdminData = async () => {
+    if (!user) return;
+    setAdminLoading(true);
+    try {
+      const session = await supabase?.auth.getSession();
+      const token = session?.data?.session?.access_token;
+      if (!token) return;
+
+      const res = await fetch('/api/admin/withdrawals', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setAdminCommissions(data.commissions || []);
+      }
+    } catch (err) {
+      console.error('Lỗi khi tải dữ liệu admin:', err);
+    } finally {
+      setAdminLoading(false);
+    }
+  };
+
   // Load toàn bộ dữ liệu
   const loadDashboardData = async () => {
     if (!user) return;
@@ -399,30 +424,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigateToBioBuilder, on
     }
   };
 
-  // Tải dữ liệu yêu cầu rút tiền cho Admin
-  const loadAdminData = async () => {
-    if (!user) return;
-    setAdminLoading(true);
-    try {
-      const session = await supabase?.auth.getSession();
-      const token = session?.data?.session?.access_token;
-      if (!token) return;
 
-      const res = await fetch('/api/admin/withdrawals', {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-      if (res.ok) {
-        const data = await res.json();
-        setAdminCommissions(data.commissions || []);
-      }
-    } catch (err) {
-      console.error('Lỗi khi tải dữ liệu admin:', err);
-    } finally {
-      setAdminLoading(false);
-    }
-  };
 
   // Admin duyệt chuyển tiền hoa hồng cho đối tác
   const handleApproveWithdrawal = async (userId: string, userName: string, amount: number) => {
