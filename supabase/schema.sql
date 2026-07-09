@@ -163,3 +163,23 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 CREATE OR REPLACE TRIGGER on_auth_user_created
     AFTER INSERT ON auth.users
     FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
+
+-- 8. Bảng Marketing Settings (Cấu hình tự động tiếp thị Facebook & Gemini AI)
+CREATE TABLE public.marketing_settings (
+    user_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE PRIMARY KEY,
+    fb_page_id TEXT,
+    fb_page_token TEXT,
+    is_active BOOLEAN DEFAULT false NOT NULL,
+    style TEXT DEFAULT 'Thuyết phục' NOT NULL,
+    target_product_id TEXT,
+    gemini_api_key TEXT,
+    last_posted_at TIMESTAMPTZ,
+    updated_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
+);
+
+-- Kích hoạt RLS cho Marketing Settings
+ALTER TABLE public.marketing_settings ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Cho phép chính chủ quản lý cấu hình marketing" 
+    ON public.marketing_settings FOR ALL 
+    USING (auth.uid() = user_id);
