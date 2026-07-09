@@ -36,7 +36,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigateToBioBuilder, on
   const { user, signOut } = useAuth();
   const { getCreatorOrders, getBankSettings, saveBankSettings, simulatePayment } = useOrders();
 
-  const [activeTab, setActiveTab] = useState<'products' | 'orders' | 'sepay' | 'affiliate' | 'ai-content' | 'marketing'>('products');
+  const [activeTab, setActiveTab] = useState<'products' | 'orders' | 'sepay' | 'affiliate' | 'ai-content' | 'marketing' | 'admin'>('products');
   const [products, setProducts] = useState<Product[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
@@ -53,6 +53,8 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigateToBioBuilder, on
   const [affiliateSuccess, setAffiliateSuccess] = useState(false);
   const [withdrawLoading, setWithdrawLoading] = useState(false);
   const [withdrawSuccess, setWithdrawSuccess] = useState(false);
+  const [adminCommissions, setAdminCommissions] = useState<any[]>([]);
+  const [adminLoading, setAdminLoading] = useState(false);
 
   // AI Content Creator States
   const [aiTopic, setAiTopic] = useState('');
@@ -100,6 +102,8 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigateToBioBuilder, on
   const [mktTesting, setMktTesting] = useState(false);
   const [mktTestSuccess, setMktTestSuccess] = useState('');
   const [mktTestError, setMktTestError] = useState('');
+
+  const isAdmin = user && ['luannguyenthien@gmail.com', 'luannguyen@quickbio.vn'].includes(user.email || '');
 
   // Load toàn bộ dữ liệu
   const loadDashboardData = async () => {
@@ -170,6 +174,10 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigateToBioBuilder, on
           setMktTargetProductId(mkt.target_product_id || '');
           setMktGeminiApiKey(mkt.gemini_api_key || '');
           setMktLastPostedAt(mkt.last_posted_at || '');
+        }
+
+        if (isAdmin) {
+          await loadAdminData();
         }
       }
     } catch (err) {
@@ -388,6 +396,67 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigateToBioBuilder, on
       alert('Lỗi hệ thống: ' + err.message);
     } finally {
       setWithdrawLoading(false);
+    }
+  };
+
+  // Tải dữ liệu yêu cầu rút tiền cho Admin
+  const loadAdminData = async () => {
+    if (!user) return;
+    setAdminLoading(true);
+    try {
+      const { supabase } = await import('../../services/supabase');
+      const session = await supabase?.auth.getSession();
+      const token = session?.data?.session?.access_token;
+      if (!token) return;
+
+      const res = await fetch('/api/admin/withdrawals', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setAdminCommissions(data.commissions || []);
+      }
+    } catch (err) {
+      console.error('Lỗi khi tải dữ liệu admin:', err);
+    } finally {
+      setAdminLoading(false);
+    }
+  };
+
+  // Admin duyệt chuyển tiền hoa hồng cho đối tác
+  const handleApproveWithdrawal = async (userId: string, userName: string, amount: number) => {
+    if (!user) return;
+    const confirmed = window.confirm(`Xác nhận Chủ tịch đã chuyển khoản số tiền ${amount.toLocaleString('vi-VN')}đ cho CTV ${userName}? \nHệ thống sẽ cập nhật trạng thái đã thanh toán.`);
+    if (!confirmed) return;
+
+    try {
+      const { supabase } = await import('../../services/supabase');
+      const session = await supabase?.auth.getSession();
+      const token = session?.data?.session?.access_token;
+      if (!token) return;
+
+      const res = await fetch('/api/admin/approve-withdrawal', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ userId })
+      });
+
+      if (res.ok) {
+        alert('Đã duyệt và thanh toán hoa hồng thành công!');
+        loadAdminData();
+        loadDashboardData();
+      } else {
+        const data = await res.json();
+        alert('Lỗi duyệt rút tiền: ' + data.message);
+      }
+    } catch (err: any) {
+      console.error(err);
+      alert('Lỗi hệ thống: ' + err.message);
     }
   };
 
@@ -693,7 +762,8 @@ Giọng điệu: ${aiTone === 'expert' ? 'Chuyên sâu, logic' : aiTone === 'fun
               { name: 'Cấu hình VietQR & Ngân hàng', id: 'sepay' },
               { name: 'Kiếm tiền (Affiliate)', id: 'affiliate', count: commissions.length > 0 ? commissions.length : undefined },
               { name: 'Sáng tạo AI (Gemini)', id: 'ai-content' },
-              { name: 'Thư viện Tiếp thị (Marketing Hub)', id: 'marketing' }
+              { name: 'Thư viện Tiếp thị (Marketing Hub)', id: 'marketing' },
+              ...(isAdmin ? [{ name: '👑 Quản trị Admin', id: 'admin', count: adminCommissions.filter(c => c.status === 'requested').length || undefined }] : [])
             ].map(tab => (
               <button
                 key={tab.id}
@@ -1649,6 +1719,121 @@ Giọng điệu: ${aiTone === 'expert' ? 'Chuyên sâu, logic' : aiTone === 'fun
             )}
           </div>
         )}
+
+            {/* TAB 7: ADMIN CONSOLE */}
+            {activeTab === 'admin' && isAdmin && (
+              <div className="space-y-6 animate-fade-in">
+                <h3 className="text-base font-bold flex items-center gap-2">
+                  <span className="text-brand-orange">👑</span>
+                  Quản trị hệ thống QuickBio (Admin Console)
+                </h3>
+
+                {adminLoading ? (
+                  <div className="glass-card p-12 rounded-2xl border border-white/5 flex flex-col items-center justify-center gap-3">
+                    <Loader2 className="w-8 h-8 text-brand-orange animate-spin" />
+                    <p className="text-xs text-white/50">Đang tải dữ liệu đối soát...</p>
+                  </div>
+                ) : (
+                  <>
+                {/* Danh sách yêu cầu đang rút */}
+                <div className="glass-card p-6 rounded-2xl border border-white/5 space-y-4">
+                  <h4 className="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-blue-500 animate-ping" />
+                    Yêu cầu rút tiền chờ xử lý ({adminCommissions.filter(c => c.status === 'requested').length})
+                  </h4>
+
+                  {adminCommissions.filter(c => c.status === 'requested').length === 0 ? (
+                    <p className="text-xs text-white/30 text-center py-6">Hiện không có yêu cầu rút tiền nào cần xử lý.</p>
+                  ) : (
+                    <div className="space-y-4">
+                      {/* Gom nhóm yêu cầu rút tiền theo user */}
+                      {Object.entries(
+                        adminCommissions
+                          .filter(c => c.status === 'requested')
+                          .reduce((acc: any, c) => {
+                            const userId = c.affiliate_id;
+                            if (!acc[userId]) {
+                              acc[userId] = {
+                                profile: c.profiles,
+                                amount: 0,
+                                items: []
+                              };
+                            }
+                            acc[userId].amount += Number(c.amount);
+                            acc[userId].items.push(c);
+                            return acc;
+                          }, {})
+                      ).map(([userId, group]: [string, any]) => (
+                        <div key={userId} className="p-4 bg-white/5 border border-white/10 rounded-xl space-y-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                          <div className="space-y-1">
+                            <div className="font-bold text-white text-sm">{group.profile?.full_name || 'Người dùng QuickBio'}</div>
+                            <div className="text-xs text-white/50">{group.profile?.email}</div>
+                            <div className="text-xs text-brand-orange bg-brand-orange/10 px-2 py-1 rounded border border-brand-orange/20 inline-block font-mono font-semibold">
+                              🏦 TK nhận: {group.profile?.payment_info || 'Chưa cập nhật tài khoản!'}
+                            </div>
+                          </div>
+                          
+                          <div className="flex items-center gap-4 justify-between sm:justify-end">
+                            <div className="text-right">
+                              <span className="text-[10px] text-white/40 block font-semibold uppercase">Số tiền yêu cầu</span>
+                              <span className="text-xl font-black text-green-400">{group.amount.toLocaleString('vi-VN')}đ</span>
+                            </div>
+                            
+                            <button
+                              type="button"
+                              onClick={() => handleApproveWithdrawal(userId, group.profile?.full_name || 'CTV', group.amount)}
+                              className="px-4 py-2.5 bg-green-500 hover:bg-green-600 text-black font-bold text-xs rounded-lg transition-colors active:scale-95 flex items-center gap-1 shadow-md shadow-green-500/10"
+                            >
+                              Duyệt chuyển tiền
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* Lịch sử đã thanh toán */}
+                <div className="glass-card p-6 rounded-2xl border border-white/5 space-y-4">
+                  <h4 className="text-xs font-bold text-white/70 uppercase tracking-wider">Lịch sử hoa hồng đã thanh toán</h4>
+                  
+                  {adminCommissions.filter(c => c.status === 'paid').length === 0 ? (
+                    <p className="text-xs text-white/30 text-center py-4">Chưa có lịch sử thanh toán nào.</p>
+                  ) : (
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-xs text-left text-white/70">
+                        <thead className="text-[10px] text-white/40 uppercase border-b border-white/5 bg-white/5 font-mono">
+                          <tr>
+                            <th className="px-4 py-3">CTV</th>
+                            <th className="px-4 py-3">Email</th>
+                            <th className="px-4 py-3">Số tiền</th>
+                            <th className="px-4 py-3">Trạng thái</th>
+                            <th className="px-4 py-3">Ngày cập nhật</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {adminCommissions.filter(c => c.status === 'paid').slice(0, 15).map((c, i) => (
+                            <tr key={i} className="border-b border-white/5 hover:bg-white/5">
+                              <td className="px-4 py-3 font-semibold text-white">{c.profiles?.full_name}</td>
+                              <td className="px-4 py-3 text-white/50">{c.profiles?.email}</td>
+                              <td className="px-4 py-3 text-green-400 font-bold">{Number(c.amount).toLocaleString()}đ</td>
+                              <td className="px-4 py-3">
+                                <span className="px-2 py-0.5 rounded-full text-[9px] font-bold bg-green-500/10 text-green-400">
+                                  Đã thanh toán
+                                </span>
+                              </td>
+                              <td className="px-4 py-3 text-white/40">{new Date(c.created_at).toLocaleDateString('vi-VN')}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                </div>
+                  </>
+                )}
+              </div>
+            )}
           </div>
         </div>
       </main>
