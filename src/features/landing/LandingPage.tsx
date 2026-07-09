@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../hooks/useAuth';
-import { Sparkles, ArrowRight, ShoppingBag, QrCode, Share2, Layers } from 'lucide-react';
+import { Sparkles, ArrowRight, Layers } from 'lucide-react';
 import { AuthModal } from '../../components/AuthModal';
 
 interface LandingPageProps {
@@ -224,39 +224,86 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onNavigateToDashboard,
           </div>
         </div>
 
-        {/* Features grid */}
+        {/* Bento Grid Features */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-5xl pt-16">
-          
-          <div className="glass-card p-6 rounded-2xl border border-white/5 text-left space-y-4">
-            <div className="w-12 h-12 bg-brand-orange/10 rounded-xl flex items-center justify-center text-brand-orange border border-brand-orange/25">
-              <Share2 className="w-6 h-6" />
+          {/* Bento Card 1: Bio-Link Builder (width: md:col-span-2) */}
+          <div className="bg-[#0f1422]/60 rounded-3xl border border-white/5 p-8 text-left space-y-6 flex flex-col justify-between overflow-hidden relative group hover:border-brand-orange/30 transition-all duration-500">
+            <div className="absolute -inset-px bg-gradient-to-tr from-brand-orange/0 via-transparent to-brand-orange/10 rounded-3xl opacity-0 group-hover:opacity-100 transition duration-500 pointer-events-none"></div>
+            <div className="space-y-2">
+              <div className="text-[10px] uppercase font-extrabold tracking-widest text-brand-orange">Công cụ thiết kế</div>
+              <h3 className="text-xl font-extrabold text-white">Trình dựng Bio-Link kéo thả cực cuốn</h3>
+              <p className="text-sm text-white/50 max-w-md leading-relaxed">Tùy biến Avatar, màu nền, các mạng xã hội và xem trước giao diện trên điện thoại ngay lập tức.</p>
             </div>
-            <h3 className="text-lg font-bold text-white">Bio-Link Cao cấp</h3>
-            <p className="text-sm text-white/50 leading-relaxed">
-              Trình biên tập trực quan, chọn màu sắc gradient và giao diện Glassmorphism mượt mà. Tối ưu hoàn hảo cho hiển thị trên điện thoại.
-            </p>
+            {/* Visual mini builder wireframe inside card */}
+            <div className="w-full bg-[#080b11]/80 rounded-2xl p-4 border border-white/10 flex items-center gap-4 transform translate-y-3 group-hover:translate-y-0 transition-transform duration-500">
+              <div className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex-shrink-0 flex items-center justify-center text-white/60">👤</div>
+              <div className="flex-1 space-y-1.5">
+                <div className="w-24 h-2.5 bg-white/10 rounded"></div>
+                <div className="w-32 h-1.5 bg-white/5 rounded"></div>
+              </div>
+              <div className="flex gap-2">
+                <span className="w-2.5 h-2.5 rounded-full bg-[#FF6B35]"></span>
+                <span className="w-2.5 h-2.5 rounded-full bg-[#3B82F6]"></span>
+                <span className="w-2.5 h-2.5 rounded-full bg-[#7CB342]"></span>
+              </div>
+            </div>
           </div>
 
-          <div className="glass-card p-6 rounded-2xl border border-white/5 text-left space-y-4">
-            <div className="w-12 h-12 bg-orange-500/10 rounded-xl flex items-center justify-center text-brand-coral border border-brand-coral/25">
-              <ShoppingBag className="w-6 h-6" />
+          {/* Bento Card 2: VietQR Verification (width: md:col-span-1) */}
+          <div className="bg-[#0f1422]/60 rounded-3xl border border-white/5 p-8 text-left space-y-6 flex flex-col justify-between overflow-hidden relative group hover:border-[#8BC34A]/30 transition-all duration-500">
+            <div className="absolute -inset-px bg-gradient-to-tr from-[#8BC34A]/0 via-transparent to-[#8BC34A]/10 rounded-3xl opacity-0 group-hover:opacity-100 transition duration-500 pointer-events-none"></div>
+            <div className="space-y-2">
+              <div className="text-[10px] uppercase font-extrabold tracking-widest text-[#8BC34A]">Thanh toán tức thì</div>
+              <h3 className="text-xl font-extrabold text-white">Quét VietQR Tự động</h3>
+              <p className="text-sm text-white/50 leading-relaxed">Tiền về thẳng tài khoản ngân hàng cá nhân của bạn, không qua trung gian giam vốn.</p>
             </div>
-            <h3 className="text-lg font-bold text-white">Bán Sản phẩm số</h3>
-            <p className="text-sm text-white/50 leading-relaxed">
-              Upload file zip, pdf, link khóa học. Giao hàng tự động qua email và hiển thị link tải trực tiếp ngay sau khi khách chuyển khoản thành công.
-            </p>
+            {/* Visual bank notification alert inside card */}
+            <div className="bg-[#8BC34A]/10 border border-[#8BC34A]/25 p-3.5 rounded-2xl flex items-center gap-3 transform translate-y-3 group-hover:translate-y-0 transition-transform duration-500">
+              <span className="text-xl">💰</span>
+              <div className="text-xs">
+                <div className="font-extrabold text-white">Biến động số dư MBBank</div>
+                <div className="text-[#8BC34A] font-extrabold font-mono">+49.000 VND (QB41500)</div>
+              </div>
+            </div>
           </div>
 
-          <div className="glass-card p-6 rounded-2xl border border-white/5 text-left space-y-4">
-            <div className="w-12 h-12 bg-green-500/10 rounded-xl flex items-center justify-center text-green-400 border border-green-500/25">
-              <QrCode className="w-6 h-6" />
+          {/* Bento Card 3: Digital Goods Delivery (width: md:col-span-1) */}
+          <div className="bg-[#0f1422]/60 rounded-3xl border border-white/5 p-8 text-left space-y-6 flex flex-col justify-between overflow-hidden relative group hover:border-[#3b82f6]/30 transition-all duration-500">
+            <div className="absolute -inset-px bg-gradient-to-tr from-[#3b82f6]/0 via-transparent to-[#3b82f6]/10 rounded-3xl opacity-0 group-hover:opacity-100 transition duration-500 pointer-events-none"></div>
+            <div className="space-y-2">
+              <div className="text-[10px] uppercase font-extrabold tracking-widest text-[#3b82f6]">Giao hàng số</div>
+              <h3 className="text-xl font-extrabold text-white">Tự động bàn giao File</h3>
+              <p className="text-sm text-white/50 leading-relaxed">File tài liệu, khóa học được gửi trực tiếp qua email của khách hàng ngay khi thanh toán thành công.</p>
             </div>
-            <h3 className="text-lg font-bold text-white">Thanh toán VietQR Tự động</h3>
-            <p className="text-sm text-white/50 leading-relaxed">
-              Tiền chảy trực tiếp vào tài khoản ngân hàng cá nhân của bạn. Không qua trung gian giam vốn, không lo chiết khấu cao. Tự động hóa qua SePay Webhook.
-            </p>
+            {/* Visual delivery simulation inside card */}
+            <div className="bg-white/[0.02] border border-white/5 p-3.5 rounded-2xl flex items-center gap-3 transform translate-y-3 group-hover:translate-y-0 transition-transform duration-500">
+              <span className="text-xl">📧</span>
+              <div className="text-[10px] space-y-0.5">
+                <div className="font-extrabold text-white">Đã gửi: 100+ Prompt ChatGPT...</div>
+                <div className="text-white/40 font-mono">Người nhận: luan.nguyen***@gmail.com</div>
+              </div>
+            </div>
           </div>
 
+          {/* Bento Card 4: Gemini AI Assistant (width: md:col-span-2) */}
+          <div className="bg-[#0f1422]/60 rounded-3xl border border-white/5 p-8 text-left space-y-6 flex flex-col justify-between overflow-hidden relative group hover:border-brand-coral/30 transition-all duration-500">
+            <div className="absolute -inset-px bg-gradient-to-tr from-brand-coral/0 via-transparent to-brand-coral/10 rounded-3xl opacity-0 group-hover:opacity-100 transition duration-500 pointer-events-none"></div>
+            <div className="space-y-2">
+              <div className="text-[10px] uppercase font-extrabold tracking-widest text-brand-coral">Trí tuệ nhân tạo</div>
+              <h3 className="text-xl font-extrabold text-white">Viết Content bằng Gemini AI Pro</h3>
+              <p className="text-sm text-white/50 max-w-md leading-relaxed">Tự động tạo các bài viết bán hàng thôi miên trên Facebook để kéo traffic về Bio Link của bạn.</p>
+            </div>
+            {/* Visual AI Prompting inside card */}
+            <div className="bg-[#080b11]/80 rounded-2xl p-4 border border-white/10 flex flex-col gap-2 transform translate-y-3 group-hover:translate-y-0 transition-transform duration-500">
+              <div className="text-[9px] text-white/40 flex items-center justify-between">
+                <span>Prompt: "Viết bài tiếp thị Canva Template..."</span>
+                <span className="bg-brand-coral/20 text-brand-coral font-bold px-1.5 py-0.5 rounded text-[8px] font-mono">Gemini Pro</span>
+              </div>
+              <div className="text-[9px] text-white/70 italic line-clamp-2 leading-relaxed">
+                "🚀 Mở khóa kho Canva 500+ Mẫu thiết kế bán hàng kéo thả, tạo banner Shopee/Facebook siêu lung linh trong 3 giây..."
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Interactive Showcase Section (Visual Powerhouse) */}
