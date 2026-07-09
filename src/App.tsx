@@ -128,6 +128,7 @@ function App() {
         <Dashboard 
           onNavigateToBioBuilder={() => navigateTo('bio-builder')}
           onNavigateToBioPublic={(slug) => navigateTo('bio-public', slug)}
+          onNavigateToHome={() => navigateTo('landing')}
         />
       );
 

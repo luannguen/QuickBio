@@ -12,6 +12,7 @@ import {
   Loader2, 
   Link as LinkIcon 
 } from 'lucide-react';
+import { ImageUploader } from '../../components/ImageUploader';
 
 interface BioBuilderProps {
   userId: string;
@@ -215,13 +216,12 @@ export const BioBuilder: React.FC<BioBuilderProps> = ({ userId, onNavigateToDash
                   />
                 </div>
                 <div>
-                  <label className="block text-xs text-white/50 font-semibold mb-2">Đường dẫn ảnh đại diện (Avatar URL)</label>
-                  <input 
-                    type="text" 
-                    value={bio.avatar_url}
-                    onChange={(e) => updateBioFields({ avatar_url: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl text-xs text-white glass-input"
-                    placeholder="URL ảnh đại diện (Unsplash, Github...)"
+                  <label className="block text-xs text-white/50 font-semibold mb-2">Ảnh đại diện trang cá nhân (Avatar)</label>
+                  <ImageUploader 
+                    value={bio.avatar_url || ''} 
+                    onChange={(val) => updateBioFields({ avatar_url: val })}
+                    label="Tải ảnh đại diện lên"
+                    aspectRatio="square"
                   />
                 </div>
               </div>

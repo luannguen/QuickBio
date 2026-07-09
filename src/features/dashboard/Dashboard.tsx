@@ -6,6 +6,7 @@ import type { Product } from '../../services/productService';
 import { bioService } from '../../services/bioService';
 import type { Order } from '../../services/orderService';
 import { CheckoutModal } from '../../components/CheckoutModal';
+import { ImageUploader } from '../../components/ImageUploader';
 import { marketingService } from '../../services/marketingService';
 import {
   Plus, 
@@ -30,9 +31,10 @@ import {
 interface DashboardProps {
   onNavigateToBioBuilder: () => void;
   onNavigateToBioPublic: (slug: string) => void;
+  onNavigateToHome?: () => void;
 }
 
-export const Dashboard: React.FC<DashboardProps> = ({ onNavigateToBioBuilder, onNavigateToBioPublic }) => {
+export const Dashboard: React.FC<DashboardProps> = ({ onNavigateToBioBuilder, onNavigateToBioPublic, onNavigateToHome }) => {
   const { user, signOut } = useAuth();
   const { getCreatorOrders, getBankSettings, saveBankSettings, simulatePayment } = useOrders();
 
@@ -637,7 +639,11 @@ Giọng điệu: ${aiTone === 'expert' ? 'Chuyên sâu, logic' : aiTone === 'fun
       {/* Top Banner Dashboard */}
       <header className="border-b border-white/5 bg-brand-card/30 backdrop-blur-md sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-6 py-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-          <div className="flex items-center gap-3">
+          <div 
+            onClick={onNavigateToHome} 
+            className="flex items-center gap-3 cursor-pointer hover:opacity-85 transition-opacity"
+            title="Quay về trang chủ"
+          >
             <div className="w-10 h-10 bg-gradient-to-tr from-brand-orange to-brand-coral rounded-xl flex items-center justify-center">
               <Sparkles className="w-5 h-5 text-white animate-pulse" />
             </div>
@@ -1895,13 +1901,12 @@ Giọng điệu: ${aiTone === 'expert' ? 'Chuyên sâu, logic' : aiTone === 'fun
                 </div>
                 
                 <div>
-                  <label className="block text-xs text-white/50 font-semibold mb-2">Đường dẫn ảnh bìa (Cover Image URL)</label>
-                  <input 
-                    type="text"
-                    value={prodCover}
-                    onChange={(e) => setProdCover(e.target.value)}
-                    placeholder="Link ảnh minh họa"
-                    className="w-full px-4 py-3 rounded-xl text-xs text-white glass-input"
+                  <label className="block text-xs text-white/50 font-semibold mb-2">Ảnh bìa sản phẩm (Cover Image)</label>
+                  <ImageUploader 
+                    value={prodCover} 
+                    onChange={(val) => setProdCover(val)}
+                    label="Tải ảnh bìa lên"
+                    aspectRatio="video"
                   />
                 </div>
               </div>
