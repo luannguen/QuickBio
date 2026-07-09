@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { productService } from '../services/productService';
 import type { Product } from '../services/productService';
 import { useOrders } from '../hooks/useOrders';
 import { useCart } from '../hooks/useCart';
@@ -25,6 +26,14 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ product, creatorId
   const [countdown, setCountdown] = useState(600); // 10 minutes in seconds
   const [acctCopied, setAcctCopied] = useState(false);
   const [codeCopied, setCodeCopied] = useState(false);
+  
+  // Promo and Order Bump States
+  const [promoCodeInput, setPromoCodeInput] = useState('');
+  const [appliedDiscount, setAppliedDiscount] = useState(0); // in percent
+  const [appliedPromoCode, setAppliedPromoCode] = useState('');
+  const [promoStatus, setPromoStatus] = useState<'none' | 'success' | 'error'>('none');
+  const [orderBumpChecked, setOrderBumpChecked] = useState(false);
+  const [bumpProduct, setBumpProduct] = useState<Product | null>(null);
   
   const pollingInterval = useRef<any>(null);
 
@@ -57,6 +66,53 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ product, creatorId
     };
     loadBank();
   }, [creatorId, getBankSettings]);
+
+  // Load các sản phẩm khác của Creator để làm Order Bump
+  useEffect(() => {
+    const loadCreatorProducts = async () => {
+      try {
+        const list = await productService.getActiveProductsByUserId(creatorId);
+        const others = list.filter(p => p.id !== product.id);
+        if (others.length > 0) {
+          setBumpProduct(others[0]);
+        }
+      } catch (err) {
+        console.error('Failed to load other products for order bump:', err);
+      }
+    };
+    loadCreatorProducts();
+  }, [creatorId, product.id]);
+
+  // Tính toán giá tiền
+  const basePrice = product.price;
+  const bumpPrice = orderBumpChecked && bumpProduct ? Math.round(bumpProduct.price * 0.5) : 0;
+  const subtotal = basePrice + bumpPrice;
+  const discountAmount = Math.round(subtotal * (appliedDiscount / 100));
+  const finalAmount = subtotal - discountAmount;
+
+  // Xử lý áp mã giảm giá
+  const handleApplyPromo = () => {
+    const code = promoCodeInput.trim().toUpperCase();
+    if (!code) return;
+    
+    if (code === 'MMO50') {
+      setAppliedDiscount(50);
+      setAppliedPromoCode('MMO50');
+      setPromoStatus('success');
+    } else if (code === 'QUICK20') {
+      setAppliedDiscount(20);
+      setAppliedPromoCode('QUICK20');
+      setPromoStatus('success');
+    } else if (code === 'PROMO10') {
+      setAppliedDiscount(10);
+      setAppliedPromoCode('PROMO10');
+      setPromoStatus('success');
+    } else {
+      setAppliedDiscount(0);
+      setAppliedPromoCode('');
+      setPromoStatus('error');
+    }
+  };
 
   // Dọn dẹp polling khi unmount
   useEffect(() => {
@@ -108,14 +164,14 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ product, creatorId
       product_id: product.id,
       customer_email: email,
       customer_name: name,
-      amount: product.price,
+      amount: finalAmount,
       referred_by: referrer
     });
 
     if (newOrder) {
       setOrder(newOrder);
       // Sinh link VietQR
-      const url = getQrUrl(activeBank, product.price, newOrder.payment_code);
+      const url = getQrUrl(activeBank, finalAmount, newOrder.payment_code);
       setQrUrl(url);
       setStep('qr');
       startPolling(newOrder.id);
@@ -185,6 +241,84 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ product, creatorId
                   className="w-full px-4 py-3 rounded-xl text-white glass-input"
                 />
                 <span className="text-[11px] text-white/40 mt-1 block">Chúng tôi sẽ gửi link tải file trực tiếp về email này.</span>
+              </div>
+            </div>
+
+            {/* Order Bump Card */}
+            {bumpProduct && (
+              <div className="bg-gradient-to-tr from-brand-orange/10 via-brand-coral/5 to-transparent border border-brand-orange/20 p-4 rounded-xl space-y-2 text-left relative overflow-hidden group">
+                <label className="flex items-start gap-3 cursor-pointer">
+                  <input 
+                    type="checkbox" 
+                    checked={orderBumpChecked}
+                    onChange={(e) => setOrderBumpChecked(e.target.checked)}
+                    className="mt-1 w-4.5 h-4.5 rounded text-brand-orange focus:ring-brand-orange border-white/10 bg-black/40"
+                  />
+                  <div className="flex-1 space-y-1">
+                    <div className="flex items-center gap-1.5">
+                      <span className="bg-brand-coral text-white text-[8px] font-black uppercase px-1.5 py-0.5 rounded animate-pulse">SIÊU ƯU ĐÃI MUA KÈM</span>
+                      <span className="text-[10px] text-white/55">Giảm độc quyền 50%</span>
+                    </div>
+                    <h5 className="text-xs font-bold text-white group-hover:text-brand-orange transition-colors">{bumpProduct.name}</h5>
+                    <p className="text-[10px] text-white/40 line-clamp-1">{bumpProduct.description}</p>
+                    <div className="flex items-center gap-2 pt-1">
+                      <span className="text-xs font-bold text-brand-orange font-mono">{Math.round(bumpProduct.price * 0.5).toLocaleString('vi-VN')}đ</span>
+                      <span className="text-[9px] text-white/30 line-through font-mono">{bumpProduct.price.toLocaleString('vi-VN')}đ</span>
+                    </div>
+                  </div>
+                </label>
+              </div>
+            )}
+
+            {/* Promo Code Input */}
+            <div className="space-y-2">
+              <label className="block text-xs font-semibold text-white/60 uppercase tracking-wider">Mã giảm giá (Promo Code)</label>
+              <div className="flex gap-2">
+                <input 
+                  type="text" 
+                  value={promoCodeInput}
+                  onChange={(e) => setPromoCodeInput(e.target.value)}
+                  placeholder="Ví dụ: MMO50, QUICK20..."
+                  className="flex-1 px-4 py-2.5 rounded-xl text-white text-xs glass-input"
+                />
+                <button
+                  type="button"
+                  onClick={handleApplyPromo}
+                  className="px-4 py-2 bg-white/5 hover:bg-white/10 text-white border border-white/10 text-xs font-bold rounded-xl transition-all"
+                >
+                  Áp dụng
+                </button>
+              </div>
+              
+              {promoStatus === 'success' && (
+                <p className="text-[10px] text-green-400 font-medium">✓ Áp dụng mã giảm giá {appliedPromoCode} thành công! Giảm {appliedDiscount}%</p>
+              )}
+              {promoStatus === 'error' && (
+                <p className="text-[10px] text-red-400 font-medium">✗ Mã giảm giá không hợp lệ</p>
+              )}
+            </div>
+
+            {/* Total Price breakdown */}
+            <div className="bg-black/30 p-4 rounded-xl border border-white/5 text-xs space-y-2 text-left">
+              <div className="flex justify-between text-white/50">
+                <span>Giá sản phẩm chính:</span>
+                <span className="font-mono">{product.price.toLocaleString('vi-VN')}đ</span>
+              </div>
+              {orderBumpChecked && bumpProduct && (
+                <div className="flex justify-between text-white/50">
+                  <span>Mua kèm: {bumpProduct.name} (Giảm 50%):</span>
+                  <span className="font-mono">+{Math.round(bumpProduct.price * 0.5).toLocaleString('vi-VN')}đ</span>
+                </div>
+              )}
+              {appliedDiscount > 0 && (
+                <div className="flex justify-between text-green-400">
+                  <span>Giảm giá ({appliedPromoCode} -{appliedDiscount}%):</span>
+                  <span className="font-mono">-{discountAmount.toLocaleString('vi-VN')}đ</span>
+                </div>
+              )}
+              <div className="flex justify-between border-t border-white/5 pt-2 text-sm font-bold text-white">
+                <span>Tổng số tiền thanh toán:</span>
+                <span className="text-brand-orange font-mono">{finalAmount.toLocaleString('vi-VN')}đ</span>
               </div>
             </div>
 
@@ -346,19 +480,32 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ product, creatorId
               </div>
             </div>
 
-            <a 
-              href={product.file_url} 
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full py-4 bg-green-500 hover:bg-green-600 text-white font-bold rounded-xl flex items-center justify-center gap-2 transition-all duration-300 transform hover:scale-[1.02] shadow-lg shadow-green-500/20"
-            >
-              <Download className="w-5 h-5" />
-              Tải xuống sản phẩm ngay
-            </a>
+            <div className="space-y-3">
+              <a 
+                href={product.file_url} 
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full py-4 bg-green-500 hover:bg-green-600 text-white font-bold rounded-xl flex items-center justify-center gap-2 transition-all duration-300 transform hover:scale-[1.02] shadow-lg shadow-green-500/20 text-sm animate-pulse"
+              >
+                <Download className="w-5 h-5" />
+                Tải xuống: {product.name}
+              </a>
+              {orderBumpChecked && bumpProduct && (
+                <a 
+                  href={bumpProduct.file_url} 
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full py-4 bg-[#8BC34A] hover:bg-[#7CB342] text-white font-bold rounded-xl flex items-center justify-center gap-2 transition-all duration-300 transform hover:scale-[1.02] shadow-lg shadow-[#8BC34A]/20 text-sm animate-pulse"
+                >
+                  <Download className="w-5 h-5" />
+                  Tải mua kèm: {bumpProduct.name}
+                </a>
+              )}
+            </div>
 
             <button 
               onClick={onClose}
-              className="w-full py-2 text-white/50 hover:text-white text-xs transition-colors"
+              className="w-full py-2 text-white/50 hover:text-white text-xs transition-colors pt-2"
             >
               Đóng cửa sổ
             </button>

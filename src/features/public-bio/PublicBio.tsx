@@ -117,6 +117,15 @@ export const PublicBio: React.FC<PublicBioProps> = ({ slug, onNavigateToLanding 
   );
 
   useEffect(() => {
+    // Lưu mã giới thiệu CTV nếu có trên URL
+    const params = new URLSearchParams(window.location.search);
+    const ref = params.get('ref');
+    if (ref) {
+      localStorage.setItem('quickbio_referrer', ref.trim());
+    }
+  }, []);
+
+  useEffect(() => {
     const loadBioData = async () => {
       setLoading(true);
       try {
