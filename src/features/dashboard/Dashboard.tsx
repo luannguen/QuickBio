@@ -103,7 +103,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigateToBioBuilder, on
   const [mktTestSuccess, setMktTestSuccess] = useState('');
   const [mktTestError, setMktTestError] = useState('');
 
-  const isAdmin = user && ['luannguyenthien@gmail.com', 'luannguyen@quickbio.vn'].includes(user.email || '');
+  const isAdmin = user && ['luan.nguyenthien@gmail.com', 'luannguyenthien@gmail.com', 'luannguyen@quickbio.vn'].includes(user.email || '');
 
   // Load toàn bộ dữ liệu
   const loadDashboardData = async () => {
