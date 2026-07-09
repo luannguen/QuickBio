@@ -27,7 +27,23 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onNavigateToDashboard,
   };
 
   return (
-    <div className="min-h-screen relative overflow-hidden bg-[#080B11] text-white">
+    <div className="min-h-screen relative overflow-hidden bg-[#080B11] text-white bg-[linear-gradient(to_right,rgba(255,255,255,0.015)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.015)_1px,transparent_1px)] bg-[size:40px_40px]">
+      <style>{`
+        @keyframes float-slow {
+          0%, 100% { transform: translateY(0px) rotate(0deg); }
+          50% { transform: translateY(-12px) rotate(1deg); }
+        }
+        .animate-float {
+          animation: float-slow 7s ease-in-out infinite;
+        }
+        @keyframes float-delay {
+          0%, 100% { transform: translateY(0px) rotate(0deg); }
+          50% { transform: translateY(12px) rotate(-1deg); }
+        }
+        .animate-float-delay {
+          animation: float-delay 9s ease-in-out infinite;
+        }
+      `}</style>
       {/* Background Glows */}
       <div className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] bg-brand-orange/10 rounded-full blur-[120px] pointer-events-none"></div>
       <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-brand-green/10 rounded-full blur-[100px] pointer-events-none"></div>
@@ -241,6 +257,82 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onNavigateToDashboard,
             </p>
           </div>
 
+        </div>
+
+        {/* Interactive Showcase Section (Visual Powerhouse) */}
+        <div className="w-full max-w-5xl pt-16 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <div className="space-y-6 text-left order-2 lg:order-1">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-coral/10 border border-brand-coral/20 text-xs font-semibold text-brand-coral">
+              <span className="w-2 h-2 rounded-full bg-brand-coral animate-ping"></span>
+              <span>Độc quyền bản Pro</span>
+            </div>
+            <h3 className="text-2xl sm:text-3xl font-extrabold text-white leading-tight">
+              Báo Cáo Doanh Thu Real-time & Biểu Đồ Trực Quan
+            </h3>
+            <p className="text-sm text-white/50 leading-relaxed">
+              Theo dõi chi tiết số lượt click link, lượt quét QR thanh toán, tỷ lệ chuyển đổi đơn hàng và doanh số thực tế theo thời gian thực. Giúp các Nhà sáng tạo đo lường chính xác hiệu quả kéo traffic từ Facebook, TikTok, Zalo.
+            </p>
+            <ul className="space-y-3.5 text-xs text-white/70">
+              <li className="flex items-center gap-3">
+                <div className="w-5 h-5 rounded-full bg-brand-orange/15 border border-brand-orange/30 text-brand-orange flex items-center justify-center font-bold text-[10px]">✓</div>
+                <span>Thống kê chi tiết số click vào từng sản phẩm số</span>
+              </li>
+              <li className="flex items-center gap-3">
+                <div className="w-5 h-5 rounded-full bg-brand-orange/15 border border-brand-orange/30 text-brand-orange flex items-center justify-center font-bold text-[10px]">✓</div>
+                <span>Tự động tính tỷ lệ chuyển đổi (Click-to-Sale) của trang</span>
+              </li>
+              <li className="flex items-center gap-3">
+                <div className="w-5 h-5 rounded-full bg-brand-orange/15 border border-brand-orange/30 text-brand-orange flex items-center justify-center font-bold text-[10px]">✓</div>
+                <span>Biểu đồ tăng trưởng trực quan tăng 200% khả năng tối ưu hóa</span>
+              </li>
+            </ul>
+          </div>
+          <div className="order-1 lg:order-2 flex justify-center relative">
+            <div className="absolute inset-0 bg-brand-orange/10 rounded-3xl filter blur-3xl pointer-events-none"></div>
+            <img 
+              src="/sales_dashboard.png" 
+              alt="Sales Dashboard Mockup" 
+              className="w-full max-w-[420px] rounded-2xl border border-white/10 shadow-2xl shadow-brand-orange/5 animate-float"
+            />
+          </div>
+        </div>
+
+        {/* Builder Visual Section */}
+        <div className="w-full max-w-5xl pt-16 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <div className="flex justify-center relative order-1">
+            <div className="absolute inset-0 bg-brand-green/10 rounded-3xl filter blur-3xl pointer-events-none"></div>
+            <img 
+              src="/hero_visual.png" 
+              alt="Bio Builder Mockup" 
+              className="w-full max-w-[420px] rounded-2xl border border-white/10 shadow-2xl shadow-brand-green/5 animate-float-delay"
+            />
+          </div>
+          <div className="space-y-6 text-left order-2">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-green-500/10 border border-green-500/20 text-xs font-semibold text-green-400">
+              <span>🚀</span>
+              <span>Tốc độ & Trải nghiệm</span>
+            </div>
+            <h3 className="text-2xl sm:text-3xl font-extrabold text-white leading-tight">
+              Trình Thiết Kế Bio-link Tức Thì
+            </h3>
+            <p className="text-sm text-white/50 leading-relaxed">
+              Tùy biến không giới hạn Avatar cá nhân, màu sắc, font chữ, các mạng xã hội liên kết. Cập nhật và lưu thay đổi ngay lập tức lên trang Bio công khai của bạn mà không cần bất kỳ kỹ năng lập trình nào.
+            </p>
+            <ul className="space-y-3.5 text-xs text-white/70">
+              <li className="flex items-center gap-3">
+                <div className="w-5 h-5 rounded-full bg-green-500/15 border border-green-500/30 text-green-400 flex items-center justify-center font-bold text-[10px]">✓</div>
+                <span>Tải ảnh đại diện, ảnh sản phẩm nhanh chóng bằng kéo thả/dán ảnh</span>
+              </li>
+              <li className="flex items-center gap-3">
+                <div className="w-5 h-5 rounded-full bg-green-500/15 border border-green-500/30 text-green-400 flex items-center justify-center font-bold text-[10px]">✓</div>
+                <span>Xem trước trực quan phiên bản Mobile ngay trong trang sửa</span>
+              </li>
+              <li className="flex items-center gap-3">
+                <div className="w-5 h-5 rounded-full bg-green-500/15 border border-green-500/30 text-green-400 flex items-center justify-center font-bold text-[10px]">✓</div>
+                <span>Hệ thống lưu nháp tự động chống mất dữ liệu</span>
+              </li>
+            </ul>
+          </div>
         </div>
 
         {/* Tech and flow overview */}
