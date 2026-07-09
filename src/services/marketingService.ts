@@ -12,6 +12,28 @@ export interface MarketingSettings {
 
 const LOCAL_STORAGE_KEY = 'quickbio_marketing_settings';
 
+const getLocalSettings = (): MarketingSettings => {
+  try {
+    const data = localStorage.getItem(LOCAL_STORAGE_KEY);
+    if (data) {
+      return JSON.parse(data);
+    }
+  } catch (e) {
+    console.error('Error reading local marketing settings:', e);
+  }
+  return {
+    fb_page_id: '',
+    fb_page_token: '',
+    is_active: false,
+    style: 'Thuyết phục',
+    target_product_id: ''
+  };
+};
+
+const saveLocalSettings = (settings: MarketingSettings): void => {
+  localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(settings));
+};
+
 export const marketingService = {
   // Lấy cấu hình marketing
   getSettings: async (userId: string): Promise<MarketingSettings | null> => {
@@ -26,21 +48,21 @@ export const marketingService = {
         if (error) {
           // Nếu bảng chưa được tạo trên Supabase, fallback về LocalStorage
           console.warn('Table marketing_settings not found, using localStorage fallback');
-          return marketingService.getLocalSettings();
+          return getLocalSettings();
         }
         return data as MarketingSettings;
       } catch (err) {
         console.error('Error fetching marketing settings:', err);
-        return marketingService.getLocalSettings();
+        return getLocalSettings();
       }
     }
-    return marketingService.getLocalSettings();
+    return getLocalSettings();
   },
 
   // Lưu cấu hình marketing
   saveSettings: async (userId: string, settings: MarketingSettings): Promise<boolean> => {
     // Luôn lưu local trước
-    marketingService.saveLocalSettings(settings);
+    saveLocalSettings(settings);
 
     if (isSupabaseConfigured && supabase) {
       try {
@@ -66,25 +88,6 @@ export const marketingService = {
     return true;
   },
 
-  getLocalSettings: (): MarketingSettings => {
-    try {
-      const data = localStorage.getItem(LOCAL_STORAGE_KEY);
-      if (data) {
-        return JSON.parse(data);
-      }
-    } catch (e) {
-      console.error('Error reading local marketing settings:', e);
-    }
-    return {
-      fb_page_id: '',
-      fb_page_token: '',
-      is_active: false,
-      style: 'Thuyết phục',
-      target_product_id: ''
-    };
-  },
-
-  saveLocalSettings: (settings: MarketingSettings): void => {
-    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(settings));
-  }
+  getLocalSettings,
+  saveLocalSettings
 };

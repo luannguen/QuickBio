@@ -32,7 +32,7 @@ export const bioService = {
     if (isSupabaseConfigured && supabase) {
       const { data, error } = await supabase
         .from('bio_links')
-        .select('*')
+        .select('*, profiles(avatar_url)')
         .eq('slug', slug.toLowerCase())
         .eq('status', 'published')
         .maybeSingle();
@@ -41,7 +41,13 @@ export const bioService = {
         console.error('Error fetching bio link by slug:', error);
         return null;
       }
-      return data as BioLink | null;
+      if (!data) return null;
+
+      const profileData = data.profiles as any;
+      return {
+        ...data,
+        avatar_url: profileData?.avatar_url || ''
+      } as BioLink;
     } else {
       const bioLinks = mockDb.get('bio_links');
       const bio = bioLinks.find((b: any) => b.slug === slug.toLowerCase() && b.status === 'published');
@@ -54,7 +60,7 @@ export const bioService = {
     if (isSupabaseConfigured && supabase) {
       const { data, error } = await supabase
         .from('bio_links')
-        .select('*')
+        .select('*, profiles(avatar_url)')
         .eq('user_id', userId)
         .maybeSingle();
 
@@ -62,7 +68,13 @@ export const bioService = {
         console.error('Error fetching bio link by userId:', error);
         return null;
       }
-      return data as BioLink | null;
+      if (!data) return null;
+
+      const profileData = data.profiles as any;
+      return {
+        ...data,
+        avatar_url: profileData?.avatar_url || ''
+      } as BioLink;
     } else {
       const bioLinks = mockDb.get('bio_links');
       const bio = bioLinks.find((b: any) => b.user_id === userId);
@@ -87,15 +99,25 @@ export const bioService = {
       status: 'draft'
     };
 
+    const { avatar_url, ...restBioData } = bioData;
+
     if (isSupabaseConfigured && supabase) {
-      // Kiểm tra xem đã có chưa
+      // 1. Cập nhật avatar_url vào bảng profiles trước
+      if (avatar_url !== undefined) {
+        await supabase
+          .from('profiles')
+          .update({ avatar_url })
+          .eq('id', userId);
+      }
+
+      // 2. Lấy thông tin bio_link hiện tại
       const existing = await bioService.getBioByUserId(userId);
       
       if (existing) {
         const { data, error } = await supabase
           .from('bio_links')
           .update({
-            ...bioData,
+            ...restBioData,
             updated_at: new Date().toISOString()
           })
           .eq('id', existing.id)
@@ -103,20 +125,27 @@ export const bioService = {
           .single();
 
         if (error) throw error;
-        return data as BioLink;
+        return {
+          ...data,
+          avatar_url: avatar_url !== undefined ? avatar_url : existing.avatar_url
+        } as BioLink;
       } else {
+        const { avatar_url: defaultAvatar, ...restDefaultBio } = defaultBio;
         const { data, error } = await supabase
           .from('bio_links')
           .insert({
-            ...defaultBio,
-            ...bioData,
+            ...restDefaultBio,
+            ...restBioData,
             user_id: userId
           })
           .select()
           .single();
 
         if (error) throw error;
-        return data as BioLink;
+        return {
+          ...data,
+          avatar_url: avatar_url || defaultAvatar || ''
+        } as BioLink;
       }
     } else {
       // Mock mode
