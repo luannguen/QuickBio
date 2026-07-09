@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import type { Product } from '../services/productService';
 import { useOrders } from '../hooks/useOrders';
 import { useCart } from '../hooks/useCart';
-import { Loader2, CheckCircle2, Download, AlertTriangle, X, Sparkles } from 'lucide-react';
+import { Loader2, CheckCircle2, Download, AlertTriangle, X, Sparkles, Lock, Clock } from 'lucide-react';
 
 interface CheckoutModalProps {
   product: Product;
@@ -21,8 +21,33 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ product, creatorId
   const [bankConfig, setBankConfig] = useState<any>(null);
   const [qrUrl, setQrUrl] = useState<string>('');
   const [validationError, setValidationError] = useState('');
+  const [paymentTab, setPaymentTab] = useState<'qr' | 'bank'>('qr');
+  const [countdown, setCountdown] = useState(600); // 10 minutes in seconds
+  const [acctCopied, setAcctCopied] = useState(false);
+  const [codeCopied, setCodeCopied] = useState(false);
   
   const pollingInterval = useRef<any>(null);
+
+  // Countdown effect
+  useEffect(() => {
+    if (step !== 'qr') return;
+    const timer = setInterval(() => {
+      setCountdown((prev) => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [step]);
+
+  const formatTime = (secs: number) => {
+    const mins = Math.floor(secs / 60);
+    const remainingSecs = secs % 60;
+    return `${mins.toString().padStart(2, '0')}:${remainingSecs.toString().padStart(2, '0')}`;
+  };
 
   // Load cấu hình ngân hàng khi modal mở
   useEffect(() => {
@@ -175,80 +200,119 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ product, creatorId
         {/* Trang mã QR Thanh toán */}
         {step === 'qr' && order && (
           <div className="p-6 space-y-5 text-center">
-            <div className="text-sm text-white/70">
-              Chuyển khoản chính xác số tiền và nội dung để hệ thống tự động giao hàng trong vài giây.
+            {/* Countdown timer */}
+            <div className="flex justify-between items-center bg-white/[0.02] border border-white/5 px-4 py-2.5 rounded-xl text-xs text-white/60">
+              <span className="flex items-center gap-1.5">
+                <Clock className="w-3.5 h-3.5 text-brand-orange animate-pulse" />
+                Mã thanh toán hết hạn trong:
+              </span>
+              <span className="font-mono font-black text-brand-orange text-sm animate-pulse">{formatTime(countdown)}</span>
             </div>
 
-            {/* Mã QR VietQR */}
-            <div className="relative mx-auto w-56 h-56 bg-white p-3 rounded-2xl shadow-xl flex items-center justify-center border border-white/10 group">
-              {qrUrl ? (
-                <img src={qrUrl} alt="VietQR Code" className="w-full h-full object-contain" />
-              ) : (
-                <Loader2 className="w-8 h-8 text-brand-orange animate-spin" />
-              )}
-            </div>
-
-            {qrUrl && (
-              <a 
-                href={qrUrl}
-                download={`ThanhToan_${order.payment_code}.png`}
-                className="inline-flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 text-white rounded-lg text-sm transition-all shadow-sm"
+            {/* Payment method selector tabs */}
+            <div className="grid grid-cols-2 gap-2 p-1 bg-black/40 rounded-xl border border-white/5">
+              <button 
+                type="button"
+                onClick={() => setPaymentTab('qr')}
+                className={`py-2 text-xs font-bold rounded-lg transition-all ${paymentTab === 'qr' ? 'bg-brand-orange text-white shadow' : 'text-white/40 hover:text-white'}`}
               >
-                <Download className="w-4 h-4" />
-                Tải ảnh QR về máy
-              </a>
+                Quét mã VietQR
+              </button>
+              <button 
+                type="button"
+                onClick={() => setPaymentTab('bank')}
+                className={`py-2 text-xs font-bold rounded-lg transition-all ${paymentTab === 'bank' ? 'bg-brand-orange text-white shadow' : 'text-white/40 hover:text-white'}`}
+              >
+                Chuyển khoản tay
+              </button>
+            </div>
+
+            {paymentTab === 'qr' ? (
+              <div className="space-y-4">
+                <div className="text-[11px] text-white/50">
+                  Mở ứng dụng ngân hàng và **Quét mã VietQR** bên dưới:
+                </div>
+                {/* Mã QR VietQR */}
+                <div className="relative mx-auto w-52 h-52 bg-white p-3 rounded-2xl shadow-xl flex items-center justify-center border border-white/10 group">
+                  {qrUrl ? (
+                    <img src={qrUrl} alt="VietQR Code" className="w-full h-full object-contain" />
+                  ) : (
+                    <Loader2 className="w-8 h-8 text-brand-orange animate-spin" />
+                  )}
+                </div>
+
+                {qrUrl && (
+                  <a 
+                    href={qrUrl}
+                    download={`ThanhToan_${order.payment_code}.png`}
+                    className="inline-flex items-center gap-1.5 px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 text-white rounded-lg text-xs transition-all shadow-sm"
+                  >
+                    <Download className="w-3.5 h-3.5" />
+                    Tải ảnh QR về máy
+                  </a>
+                )}
+              </div>
+            ) : (
+              <div className="text-left bg-brand-card/50 p-4 rounded-xl border border-white/5 space-y-3 text-xs leading-relaxed">
+                <div className="flex justify-between border-b border-white/5 pb-2">
+                  <span className="text-white/50">Ngân hàng:</span>
+                  <span className="font-bold text-white">{bankConfig?.bank_code || 'MBBank'}</span>
+                </div>
+                <div className="flex justify-between items-center border-b border-white/5 pb-2">
+                  <span className="text-white/50">Số tài khoản:</span>
+                  <div className="flex items-center gap-2">
+                    <span className="font-bold text-white tracking-wider">{bankConfig?.bank_account || '9999999999'}</span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        navigator.clipboard.writeText(bankConfig?.bank_account || '9999999999');
+                        setAcctCopied(true);
+                        setTimeout(() => setAcctCopied(false), 1500);
+                      }}
+                      className={`px-2 py-0.5 rounded text-[10px] font-bold transition-all ${acctCopied ? 'bg-green-500 text-white' : 'bg-white/10 text-white/70 hover:bg-brand-orange'}`}
+                    >
+                      {acctCopied ? 'Đã copy!' : 'Copy'}
+                    </button>
+                  </div>
+                </div>
+                <div className="flex justify-between border-b border-white/5 pb-2">
+                  <span className="text-white/50">Chủ tài khoản:</span>
+                  <span className="font-bold text-white">{bankConfig?.account_name || 'NGUYEN VAN A'}</span>
+                </div>
+                <div className="flex justify-between border-b border-white/5 pb-2">
+                  <span className="text-white/50">Số tiền:</span>
+                  <span className="font-black text-brand-orange">{order.amount.toLocaleString('vi-VN')}đ</span>
+                </div>
+                <div className="flex justify-between items-center py-1.5 bg-brand-orange/10 px-2 rounded-lg border border-brand-orange/20">
+                  <span className="text-brand-orange font-bold">Nội dung CK:</span>
+                  <div className="flex items-center gap-2">
+                    <span className="font-black text-brand-orange tracking-wider">{order.payment_code}</span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        navigator.clipboard.writeText(order.payment_code);
+                        setCodeCopied(true);
+                        setTimeout(() => setCodeCopied(false), 1500);
+                      }}
+                      className={`px-2 py-0.5 rounded text-[10px] font-bold transition-all ${codeCopied ? 'bg-green-500 text-white' : 'bg-brand-orange text-white'}`}
+                    >
+                      {codeCopied ? 'Đã copy!' : 'Copy'}
+                    </button>
+                  </div>
+                </div>
+              </div>
             )}
 
-            {/* Thông tin chuyển khoản dạng text */}
-            <div className="bg-brand-card/50 p-4 rounded-xl border border-white/5 text-left space-y-3 text-sm">
-              <div className="flex justify-between border-b border-white/5 pb-2">
-                <span className="text-white/50">Ngân hàng:</span>
-                <span className="font-semibold text-white">{bankConfig?.bank_code || 'MBBank'}</span>
-              </div>
-              <div className="flex justify-between items-center border-b border-white/5 pb-2">
-                <span className="text-white/50">Số tài khoản:</span>
-                <div 
-                  className="flex items-center gap-2 cursor-pointer group/copy px-2 py-1 -mr-2 rounded-md hover:bg-white/5 transition-colors"
-                  onClick={() => {
-                    navigator.clipboard.writeText(bankConfig?.bank_account || '9999999999');
-                    alert('Đã copy số tài khoản!');
-                  }}
-                  title="Nhấn để copy"
-                >
-                  <span className="font-semibold text-white tracking-wider">{bankConfig?.bank_account || '9999999999'}</span>
-                  <span className="text-[10px] bg-white/10 px-1.5 py-0.5 rounded text-white/70 group-hover/copy:bg-brand-orange group-hover/copy:text-white transition-colors">Copy</span>
-                </div>
-              </div>
-              <div className="flex justify-between border-b border-white/5 pb-2">
-                <span className="text-white/50">Chủ tài khoản:</span>
-                <span className="font-semibold text-white">{bankConfig?.account_name || 'NGUYEN VAN A'}</span>
-              </div>
-              <div className="flex justify-between border-b border-white/5 pb-2">
-                <span className="text-white/50">Số tiền:</span>
-                <span className="font-bold text-brand-orange">{order.amount.toLocaleString('vi-VN')}đ</span>
-              </div>
-              <div className="flex justify-between items-center py-1 bg-brand-orange/10 px-2 rounded-lg border border-brand-orange/20">
-                <span className="text-brand-orange font-semibold">Nội dung CK:</span>
-                <div 
-                  className="flex items-center gap-2 cursor-pointer group/copy px-1 py-1 rounded-md hover:bg-brand-orange/20 transition-colors"
-                  onClick={() => {
-                    navigator.clipboard.writeText(order.payment_code);
-                    alert('Đã copy Nội dung chuyển khoản!');
-                  }}
-                  title="Nhấn để copy"
-                >
-                  <span className="font-bold text-brand-orange tracking-wider">
-                    {order.payment_code}
-                  </span>
-                  <span className="text-[10px] bg-brand-orange/20 px-1.5 py-0.5 rounded text-brand-orange group-hover/copy:bg-brand-orange group-hover/copy:text-white transition-colors">Copy</span>
-                </div>
-              </div>
+            {/* Polling loading indicator */}
+            <div className="flex items-center justify-center gap-2 text-[10px] text-white/50 animate-pulse pt-2">
+              <Loader2 className="w-3.5 h-3.5 animate-spin text-brand-orange" />
+              <span>Đang chờ chuyển khoản (đối soát tự động 3 giây)...</span>
             </div>
 
-            {/* Polling loading indicator */}
-            <div className="flex items-center justify-center gap-2 text-xs text-white/50 animate-pulse pt-2">
-              <Loader2 className="w-4 h-4 animate-spin text-brand-orange" />
-              <span>Hệ thống đang chờ giao dịch...</span>
+            {/* SSL Secure Trust Badge */}
+            <div className="flex items-center justify-center gap-1.5 text-[9px] text-white/30 pt-3 border-t border-white/5">
+              <Lock className="w-3.5 h-3.5 text-green-500/80 animate-pulse" />
+              <span>Giao dịch mã hóa SSL bảo mật trực tiếp 100%</span>
             </div>
           </div>
         )}
