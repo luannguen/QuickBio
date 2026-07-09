@@ -192,28 +192,35 @@ export const PublicBio: React.FC<PublicBioProps> = ({ slug, onNavigateToLanding 
 
   return (
     <div className="min-h-screen pb-20 flex justify-center relative overflow-hidden" style={themeStyle}>
+      {/* Background Mesh Blurs for Premium Visuals */}
+      <div className="absolute top-[10%] left-[-20%] w-[350px] h-[350px] bg-brand-orange/5 rounded-full blur-[100px] pointer-events-none"></div>
+      <div className="absolute bottom-[20%] right-[-20%] w-[350px] h-[350px] bg-brand-coral/5 rounded-full blur-[100px] pointer-events-none"></div>
+
       {/* Sticky Countdown Banner (FOMO) */}
-      <div className="absolute top-0 left-0 w-full bg-brand-orange text-white text-xs sm:text-sm font-bold text-center py-2.5 px-4 shadow-lg flex items-center justify-center gap-2 z-50">
-        <Clock className="w-4 h-4 animate-pulse" />
-        <span>ƯU ĐÃI FLASH SALE KẾT THÚC SAU:</span>
-        <span className="bg-white/20 px-2 py-0.5 rounded tracking-wider">{formatTime(timeLeft)}</span>
+      <div className="absolute top-0 left-0 w-full bg-gradient-to-r from-brand-orange via-brand-coral to-brand-orange text-white text-xs sm:text-sm font-bold text-center py-3 px-4 shadow-lg flex items-center justify-center gap-2.5 z-50 border-b border-white/10 backdrop-blur-md">
+        <Clock className="w-4 h-4 animate-pulse text-yellow-300" />
+        <span className="tracking-wider">GIẢM GIÁ ĐỘC QUYỀN 50% KẾT THÚC SAU:</span>
+        <span className="bg-black/35 px-3 py-1 rounded-md font-mono text-yellow-300 shadow-inner tracking-wider border border-white/10">{formatTime(timeLeft)}</span>
       </div>
 
-      <div className="w-full max-w-lg px-4 pt-20 space-y-8">
+      <div className="w-full max-w-lg px-4 pt-24 space-y-8 relative z-10">
         
         {/* Profile Card */}
         <div className="text-center space-y-4 animate-float-slow">
-          <div className="relative inline-block">
-            <div className="absolute -inset-0.5 bg-gradient-to-r from-brand-orange to-brand-coral rounded-full blur opacity-50"></div>
+          <div className="relative inline-block group">
+            <div className="absolute -inset-1 bg-gradient-to-r from-brand-orange via-brand-coral to-yellow-500 rounded-full blur-[15px] opacity-75 group-hover:opacity-100 transition-opacity duration-500"></div>
             <img 
               src={bio.avatar_url || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&h=150&q=80'} 
               alt={bio.title} 
-              className="relative w-24 h-24 rounded-full object-cover border-2 border-white/20 mx-auto"
+              className="relative w-24 h-24 rounded-full object-cover border-4 border-[#080B11] mx-auto shadow-2xl transition-transform duration-500 group-hover:scale-105"
             />
+            <div className="absolute bottom-0 right-0 w-6 h-6 bg-brand-orange rounded-full flex items-center justify-center border-2 border-[#080B11] text-white shadow-lg shadow-brand-orange/30">
+              <Sparkles className="w-3 h-3 animate-spin-slow" />
+            </div>
           </div>
           <div className="space-y-1">
-            <h1 className="text-xl font-bold tracking-tight">{bio.title}</h1>
-            <p className="text-sm opacity-70 max-w-sm mx-auto">{bio.bio_text}</p>
+            <h1 className="text-2xl font-extrabold tracking-tight bg-gradient-to-b from-white to-white/80">{bio.title}</h1>
+            <p className="text-sm opacity-70 max-w-sm mx-auto leading-relaxed">{bio.bio_text}</p>
           </div>
         </div>
 
@@ -228,7 +235,7 @@ export const PublicBio: React.FC<PublicBioProps> = ({ slug, onNavigateToLanding 
                   href={url as string} 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="w-12 h-12 rounded-xl flex items-center justify-center bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 text-white transition-all transform hover:scale-110 active:scale-95"
+                  className="w-12 h-12 rounded-2xl flex items-center justify-center bg-white/[0.03] hover:bg-gradient-to-tr hover:from-brand-orange/20 hover:to-brand-coral/20 border border-white/5 hover:border-brand-orange/30 text-white/70 hover:text-white transition-all duration-300 transform hover:scale-110 active:scale-95 hover:shadow-lg hover:shadow-brand-orange/5"
                 >
                   {getSocialIcon(key)}
                 </a>
@@ -238,50 +245,89 @@ export const PublicBio: React.FC<PublicBioProps> = ({ slug, onNavigateToLanding 
         )}
 
         {/* Cửa hàng sản phẩm số (DigiStore) */}
-        <div className="space-y-4">
-          <h3 className="text-sm font-semibold tracking-wider uppercase opacity-60 flex items-center gap-2 px-1">
-            <ShoppingBag className="w-4 h-4 text-brand-orange" />
-            Cửa hàng Sản phẩm số
-          </h3>
+        <div className="space-y-5">
+          <div className="flex items-center justify-between px-1">
+            <h3 className="text-xs font-bold tracking-widest uppercase opacity-55 flex items-center gap-2">
+              <ShoppingBag className="w-4 h-4 text-brand-orange animate-bounce-slow" />
+              Cửa hàng Sản phẩm số
+            </h3>
+            <span className="text-[10px] bg-green-500/10 text-green-400 font-semibold px-2 py-0.5 rounded-full border border-green-500/20 flex items-center gap-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
+              Giao file tự động qua Email
+            </span>
+          </div>
 
           {products.length === 0 ? (
-            <div className="glass-card rounded-2xl p-8 text-center border border-white/5 space-y-2">
+            <div className="glass-card rounded-3xl p-10 text-center border border-white/5 space-y-2">
               <p className="text-sm opacity-50">Hiện chưa có sản phẩm nào được đăng bán.</p>
             </div>
           ) : (
-            <div className="space-y-4">
-              {products.map((product) => (
+            <div className="space-y-5">
+              {products.map((product, idx) => (
                 <div 
                   key={product.id} 
-                  className="glass-card rounded-2xl p-5 border border-white/5 hover:border-white/15 transition-all duration-300 flex flex-col sm:flex-row gap-4"
+                  className="glass-card rounded-3xl p-5 border border-white/5 hover:border-brand-orange/20 hover:bg-white/[0.04] transition-all duration-300 flex flex-col sm:flex-row gap-5 transform hover:-translate-y-1 hover:shadow-2xl hover:shadow-black/40 relative overflow-hidden group"
                 >
+                  {/* Glowing background on hover */}
+                  <div className="absolute inset-0 bg-gradient-to-tr from-brand-orange/0 via-white/0 to-brand-coral/0 group-hover:from-brand-orange/[0.02] group-hover:to-brand-coral/[0.02] transition-colors duration-500 pointer-events-none"></div>
+
+                  {/* Bán chạy / Độc quyền Badge */}
+                  <div className="absolute top-3 left-3 z-10">
+                    <span className={`text-[9px] font-extrabold uppercase px-2 py-1 rounded-lg border ${
+                      idx === 0 
+                        ? 'bg-yellow-500 text-black border-yellow-400/30' 
+                        : 'bg-brand-orange text-white border-brand-orange/30'
+                    } shadow-md`}>
+                      {idx === 0 ? '🔥 Bán Chạy' : '⚡ Yêu Thích'}
+                    </span>
+                  </div>
+
                   {/* Ảnh bìa sản phẩm */}
                   {product.cover_image_url && (
-                    <img 
-                      src={product.cover_image_url} 
-                      alt={product.name} 
-                      className="w-full sm:w-28 h-28 object-cover rounded-xl border border-white/5 flex-shrink-0"
-                    />
+                    <div className="relative w-full sm:w-28 h-28 flex-shrink-0 rounded-2xl overflow-hidden border border-white/5">
+                      <img 
+                        src={product.cover_image_url} 
+                        alt={product.name} 
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      />
+                    </div>
                   )}
+
                   {/* Thông tin sản phẩm */}
                   <div className="flex-1 flex flex-col justify-between space-y-3 min-w-0">
                     <div className="space-y-1">
-                      <h4 className="font-semibold text-white truncate text-base">{product.name}</h4>
+                      <h4 className="font-bold text-white text-base truncate group-hover:text-brand-orange transition-colors duration-300">{product.name}</h4>
                       <p className="text-xs text-white/50 line-clamp-2 leading-relaxed">{product.description}</p>
                     </div>
+
+                    {/* Stock level pressure (CRO Scarcity) */}
+                    <div className="space-y-1">
+                      <div className="flex justify-between items-center text-[10px] text-white/40">
+                        <span>Đã bán: 91% (Giới hạn 100 slot)</span>
+                        <span className="text-brand-orange font-bold font-mono">Chỉ còn 9 slot giá tốt</span>
+                      </div>
+                      <div className="w-full h-1.5 bg-white/5 rounded-full overflow-hidden border border-white/5">
+                        <div className="h-full bg-gradient-to-r from-brand-orange to-brand-coral rounded-full w-[91%] shadow-sm shadow-brand-orange/50"></div>
+                      </div>
+                    </div>
                     
-                    <div className="flex items-center justify-between gap-4 pt-1">
-                      <div className="text-brand-orange font-bold text-lg">
-                        {product.price.toLocaleString('vi-VN')}đ
+                    <div className="flex items-center justify-between gap-4 pt-1 border-t border-white/5">
+                      <div className="flex items-baseline gap-1.5">
+                        <span className="text-brand-orange font-black text-xl font-mono">
+                          {product.price.toLocaleString('vi-VN')}đ
+                        </span>
+                        <span className="text-[10px] text-white/30 line-through font-mono">
+                          {(product.price * 2).toLocaleString('vi-VN')}đ
+                        </span>
                       </div>
                       
                       <button 
                         onClick={() => setActiveProduct(product)}
-                        className="px-4 py-2.5 bg-white/5 hover:bg-gradient-to-r hover:from-brand-orange hover:to-brand-coral hover:text-white border border-white/10 hover:border-transparent text-xs font-bold rounded-xl transition-all duration-300 transform active:scale-95 flex items-center gap-1.5 touch-target"
+                        className="px-5 py-2.5 bg-gradient-to-r from-brand-orange to-brand-coral hover:from-brand-coral hover:to-brand-orange text-white text-xs font-bold rounded-2xl transition-all duration-300 transform active:scale-95 flex items-center gap-1.5 shadow-lg shadow-brand-orange/15 hover:shadow-brand-orange/30 hover:scale-[1.03]"
                         style={{ minHeight: '44px' }}
                       >
                         <ShoppingBag className="w-3.5 h-3.5" />
-                        Mua ngay
+                        Mua Ngay
                       </button>
                     </div>
                   </div>
