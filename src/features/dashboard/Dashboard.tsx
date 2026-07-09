@@ -8,6 +8,7 @@ import type { Order } from '../../services/orderService';
 import { CheckoutModal } from '../../components/CheckoutModal';
 import { ImageUploader } from '../../components/ImageUploader';
 import { marketingService } from '../../services/marketingService';
+import { supabase, isSupabaseConfigured } from '../../services/supabase';
 import {
   Plus, 
   Trash2, 
@@ -132,7 +133,6 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigateToBioBuilder, on
       }
 
       // Load dữ liệu Affiliate
-      const { supabase, isSupabaseConfigured } = await import('../../services/supabase');
       if (isSupabaseConfigured && supabase) {
         const { data: profile } = await supabase
           .from('profiles')
@@ -324,7 +324,6 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigateToBioBuilder, on
     }
 
     try {
-      const { supabase, isSupabaseConfigured } = await import('../../services/supabase');
       if (isSupabaseConfigured && supabase) {
         const { error } = await supabase
           .from('profiles')
@@ -375,7 +374,6 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigateToBioBuilder, on
 
     setWithdrawLoading(true);
     try {
-      const { supabase, isSupabaseConfigured } = await import('../../services/supabase');
       if (isSupabaseConfigured && supabase) {
         // Cập nhật trạng thái tất cả commission pending của user thành requested
         const { error } = await supabase
@@ -406,7 +404,6 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigateToBioBuilder, on
     if (!user) return;
     setAdminLoading(true);
     try {
-      const { supabase } = await import('../../services/supabase');
       const session = await supabase?.auth.getSession();
       const token = session?.data?.session?.access_token;
       if (!token) return;
@@ -434,7 +431,6 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigateToBioBuilder, on
     if (!confirmed) return;
 
     try {
-      const { supabase } = await import('../../services/supabase');
       const session = await supabase?.auth.getSession();
       const token = session?.data?.session?.access_token;
       if (!token) return;

@@ -99,7 +99,7 @@ export const bioService = {
       status: 'draft'
     };
 
-    const { avatar_url, ...restBioData } = bioData;
+    const { avatar_url, profiles, ...restBioData } = bioData as any;
 
     if (isSupabaseConfigured && supabase) {
       // 1. Cập nhật avatar_url vào bảng profiles trước
