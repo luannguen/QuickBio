@@ -22,31 +22,33 @@ export const AIVoiceWidget: React.FC = () => {
     }
 
     try {
-      // Khởi tạo SDK Vapi
-      vapiRef.current = new Vapi(publicKey);
+      // Khởi tạo SDK Vapi (sửa lỗi interop ESM/CommonJS)
+      const VapiClass = (Vapi as any).default || Vapi;
+      const vapiInstance = new VapiClass(publicKey);
+      vapiRef.current = vapiInstance;
 
       // Thiết lập các sự kiện lắng nghe
-      vapiRef.current.on('call-start', () => {
+      vapiInstance.on('call-start', () => {
         setIsCallActive(true);
         setConnecting(false);
         setErrorMsg(null);
       });
 
-      vapiRef.current.on('call-end', () => {
+      vapiInstance.on('call-end', () => {
         setIsCallActive(false);
         setConnecting(false);
         setIsListening(false);
       });
 
-      vapiRef.current.on('speech-start', () => {
+      vapiInstance.on('speech-start', () => {
         setIsListening(true);
       });
 
-      vapiRef.current.on('speech-end', () => {
+      vapiInstance.on('speech-end', () => {
         setIsListening(false);
       });
 
-      vapiRef.current.on('error', (err: any) => {
+      vapiInstance.on('error', (err: any) => {
         console.error('Vapi Web SDK Error:', err);
         setErrorMsg(err.message || 'Lỗi kết nối máy chủ thoại.');
         setIsCallActive(false);
