@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { 
   Phone, 
   Sparkles, 
@@ -13,12 +13,175 @@ import {
   MessageSquare,
   Volume2
 } from 'lucide-react';
+import { useVapiStore } from '../../hooks/store';
+
+// ============================================================
+// 1. TiltCard Component: Hiệu ứng Parallax 3D xoay theo con trỏ chuột
+// ============================================================
+interface TiltCardProps {
+  children: React.ReactNode;
+  className?: string;
+}
+
+const TiltCard: React.FC<TiltCardProps> = ({ children, className = '' }) => {
+  const cardRef = useRef<HTMLDivElement>(null);
+  const [coords, setCoords] = useState({ x: 0, y: 0 });
+  const [isHovered, setIsHovered] = useState(false);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!cardRef.current) return;
+    const rect = cardRef.current.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    
+    // Chuẩn hoá toạ độ từ -0.5 đến 0.5
+    const normX = (x / rect.width) - 0.5;
+    const normY = (y / rect.height) - 0.5;
+    
+    setCoords({ x: normX, y: normY });
+  };
+
+  const handleMouseEnter = () => setIsHovered(true);
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+    setCoords({ x: 0, y: 0 });
+  };
+
+  const rotateX = isHovered ? coords.y * -12 : 0; // Tối đa xoay 12 độ
+  const rotateY = isHovered ? coords.x * 12 : 0;
+  
+  const shineX = isHovered ? (coords.x + 0.5) * 100 : 50;
+  const shineY = isHovered ? (coords.y + 0.5) * 100 : 50;
+
+  return (
+    <div
+      ref={cardRef}
+      onMouseMove={handleMouseMove}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      className={`relative overflow-hidden transition-all duration-300 ease-out ${className}`}
+      style={{
+        transform: `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(${isHovered ? 1.015 : 1}, ${isHovered ? 1.015 : 1}, 1)`,
+        transformStyle: 'preserve-3d',
+      }}
+    >
+      {/* Lớp phản chiếu ánh sáng bóng bẩy */}
+      <div 
+        className="absolute inset-0 pointer-events-none opacity-0 hover:opacity-100 transition-opacity duration-300"
+        style={{
+          background: `radial-gradient(circle at ${shineX}% ${shineY}%, rgba(255, 107, 53, 0.08) 0%, transparent 60%)`,
+          zIndex: 5
+        }}
+      />
+      <div style={{ transform: 'translateZ(10px)', transformStyle: 'preserve-3d' }}>
+        {children}
+      </div>
+    </div>
+  );
+};
+
+// ============================================================
+// 2. VoiceOrb Component: Quả cầu 3D sinh học dạng lỏng (Liquid Orb) nhún nhảy theo âm lượng
+// ============================================================
+interface VoiceOrbProps {
+  isActive: boolean;
+  connecting: boolean;
+  volume: number;
+  onToggle: () => void;
+}
+
+const VoiceOrb: React.FC<VoiceOrbProps> = ({ isActive, connecting, volume, onToggle }) => {
+  const baseScale = isActive ? 1.08 : 1.0;
+  const scale = baseScale + volume * 0.45;
+
+  return (
+    <div className="relative flex flex-col items-center justify-center py-6">
+      {/* Vòng hào quang phát sáng 3D */}
+      <div 
+        className="absolute w-44 h-44 rounded-full bg-brand-orange/15 blur-[55px] transition-all duration-300 animate-[pulse_4s_infinite]"
+        style={{ transform: `scale(${scale})` }}
+      />
+      <div 
+        className="absolute w-36 h-36 rounded-full bg-indigo-500/10 blur-[45px] transition-all duration-500 animate-[pulse_5s_infinite]"
+        style={{ transform: `scale(${scale * 0.85})` }}
+      />
+
+      {/* Quả cầu chính */}
+      <button 
+        onClick={onToggle}
+        aria-label={isActive ? 'Tắt cuộc gọi' : 'Bắt đầu cuộc gọi'}
+        title={isActive ? 'Kết thúc cuộc gọi' : 'Trò chuyện cùng Lễ tân AI'}
+        className="relative w-28 h-28 rounded-full bg-gradient-to-br from-brand-orange via-brand-coral to-indigo-600 shadow-[inset_0_-8px_16px_rgba(0,0,0,0.5),0_12px_24px_rgba(255,107,53,0.3)] transition-all duration-150 flex items-center justify-center overflow-hidden border border-white/25 hover:border-white/40 cursor-pointer active:scale-95 group focus:outline-none focus:ring-4 focus:ring-brand-orange/30 z-10"
+        style={{
+          transform: `scale(${scale})`,
+          animation: isActive ? 'liquidMorphActive 2.2s ease-in-out infinite' : 'liquidMorph 8s ease-in-out infinite'
+        }}
+      >
+        {/* Phản xạ ánh sáng bề mặt */}
+        <div className="absolute top-[8%] left-[8%] w-[25%] h-[25%] bg-white/25 rounded-full blur-[1px] pointer-events-none" />
+        
+        {/* Vòng xoay holographic bên trong */}
+        <div className="absolute w-[85%] h-[85%] rounded-full border border-white/10 animate-[spin_12s_linear_infinite] pointer-events-none" />
+        <div className="absolute w-[65%] h-[65%] rounded-full border border-white/5 animate-[spin_8s_linear_infinite_reverse] pointer-events-none" />
+
+        {/* Nội dung trung tâm */}
+        <div className="z-20 text-white flex flex-col items-center justify-center pointer-events-none">
+          {connecting ? (
+            <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin" />
+          ) : isActive ? (
+            <div className="flex items-end gap-1 h-8">
+              {[...Array(3)].map((_, i) => {
+                const sensitivity = [12, 22, 14][i];
+                const height = Math.min(26, 12 + volume * sensitivity);
+                return (
+                  <div 
+                    key={i} 
+                    className="w-1 bg-white rounded-full transition-all duration-75"
+                    style={{ height: `${height}px` }}
+                  />
+                );
+              })}
+            </div>
+          ) : (
+            <Volume2 className="w-8 h-8 text-white animate-pulse" />
+          )}
+        </div>
+      </button>
+
+      <span className="text-[10px] uppercase tracking-wider text-white/50 font-bold mt-4 animate-pulse select-none">
+        {connecting ? 'Đang kết nối...' : isActive ? 'Bấm để gác máy ❌' : 'Bấm quả cầu để alo AI 📞'}
+      </span>
+
+      <style>{`
+        @keyframes liquidMorph {
+          0%, 100% { border-radius: 50% 50% 50% 50% / 50% 50% 50% 50%; }
+          33% { border-radius: 42% 58% 68% 32% / 42% 48% 58% 52%; }
+          66% { border-radius: 58% 42% 32% 68% / 48% 58% 42% 52%; }
+        }
+        @keyframes liquidMorphActive {
+          0%, 100% { border-radius: 50% 50% 50% 50% / 50% 50% 50% 50%; }
+          25% { border-radius: 38% 62% 62% 38% / 48% 48% 52% 52%; }
+          50% { border-radius: 62% 38% 38% 62% / 40% 60% 40% 60%; }
+          75% { border-radius: 46% 54% 54% 46% / 54% 40% 60% 40%; }
+        }
+      `}</style>
+    </div>
+  );
+};
 
 interface AIVoiceLandingPageProps {
   onNavigateToHome: () => void;
 }
 
 export const AIVoiceLandingPage: React.FC<AIVoiceLandingPageProps> = ({ onNavigateToHome }) => {
+  const { 
+    isCallActive, 
+    connecting, 
+    volume, 
+    triggerStart, 
+    triggerStop 
+  } = useVapiStore();
+
   // States cho bộ tạo cuộc gọi Outbound Demo
   const [customerName, setCustomerName] = useState('');
   const [customerPhone, setCustomerPhone] = useState('');
@@ -34,6 +197,14 @@ export const AIVoiceLandingPage: React.FC<AIVoiceLandingPageProps> = ({ onNaviga
   const baseUrl = window.location.origin;
   const cleanCode = affCode.trim().toLowerCase().replace(/[^a-z0-9]/g, '');
   const refUrl = cleanCode ? `${baseUrl}/tong-dai-ai?ref=${cleanCode}` : `${baseUrl}/tong-dai-ai`;
+
+  const handleToggleCall = () => {
+    if (isCallActive) {
+      triggerStop();
+    } else {
+      triggerStart();
+    }
+  };
 
   // Xử lý kích hoạt cuộc gọi AI Outbound gọi lại
   const handleTriggerOutboundCall = async (e: React.FormEvent) => {
@@ -184,151 +355,159 @@ Bên em đã tích hợp giải pháp này vào QuickBio:
             Giải pháp tích hợp giọng nói trí tuệ nhân tạo tiếng Việt chuyên nghiệp dành riêng cho Nha Khoa, Spa, Salon. Tự động nhận diện cuộc gọi đặt lịch, đối soát lịch trống trên cơ sở dữ liệu và sinh mã VietQR chuyển khoản tự động.
           </p>
 
-          <div className="pt-4 flex flex-col sm:flex-row justify-center items-center gap-4">
-            <div className="bg-[#0f1422]/90 border border-brand-orange/20 px-6 py-3 rounded-full flex items-center gap-3 shadow-lg shadow-brand-orange/5 animate-pulse">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-orange opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-brand-orange"></span>
-              </span>
-              <span className="text-xs font-bold text-brand-orange">Alo nói chuyện thử với Lễ Tân AI ở góc dưới màn hình! 👇</span>
-            </div>
-          </div>
+          {/* 3D Liquid voice orb demo */}
+          <VoiceOrb 
+            isActive={isCallActive}
+            connecting={connecting}
+            volume={volume}
+            onToggle={handleToggleCall}
+          />
         </section>
 
         {/* Feature Grid */}
         <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-[#0c111d]/50 border border-white/10 p-6 rounded-2xl space-y-4 hover:border-brand-orange/30 hover:-translate-y-1 hover:shadow-lg hover:shadow-brand-orange/5 transition-all duration-300 ease-out cursor-pointer">
-            <div className="w-12 h-12 rounded-xl bg-brand-orange/10 flex items-center justify-center text-brand-orange">
-              <Clock className="w-6 h-6" />
+          <TiltCard className="rounded-2xl">
+            <div className="bg-[#0c111d]/50 border border-white/10 p-6 rounded-2xl space-y-4 hover:border-brand-orange/30 hover:shadow-lg hover:shadow-brand-orange/5 transition-all duration-300 ease-out cursor-pointer h-full">
+              <div className="w-12 h-12 rounded-xl bg-brand-orange/10 flex items-center justify-center text-brand-orange">
+                <Clock className="w-6 h-6" />
+              </div>
+              <h3 className="font-bold text-lg text-white">Làm Việc 24/7 Không Nghỉ</h3>
+              <p className="text-xs text-white/50 leading-relaxed">Không bao giờ bỏ lỡ cuộc gọi đặt lịch của khách hàng, kể cả ngoài giờ làm việc, đêm khuya hay ngày nghỉ lễ.</p>
             </div>
-            <h3 className="font-bold text-lg text-white">Làm Việc 24/7 Không Nghỉ</h3>
-            <p className="text-xs text-white/50 leading-relaxed">Không bao giờ bỏ lỡ cuộc gọi đặt lịch của khách hàng, kể cả ngoài giờ làm việc, đêm khuya hay ngày nghỉ lễ.</p>
-          </div>
+          </TiltCard>
 
-          <div className="bg-[#0c111d]/50 border border-white/10 p-6 rounded-2xl space-y-4 hover:border-brand-orange/30 hover:-translate-y-1 hover:shadow-lg hover:shadow-brand-orange/5 transition-all duration-300 ease-out cursor-pointer">
-            <div className="w-12 h-12 rounded-xl bg-brand-orange/10 flex items-center justify-center text-brand-orange">
-              <Zap className="w-6 h-6" />
+          <TiltCard className="rounded-2xl">
+            <div className="bg-[#0c111d]/50 border border-white/10 p-6 rounded-2xl space-y-4 hover:border-brand-orange/30 hover:shadow-lg hover:shadow-brand-orange/5 transition-all duration-300 ease-out cursor-pointer h-full">
+              <div className="w-12 h-12 rounded-xl bg-brand-orange/10 flex items-center justify-center text-brand-orange">
+                <Zap className="w-6 h-6" />
+              </div>
+              <h3 className="font-bold text-lg text-white">Tra Lịch Trống Real-time</h3>
+              <p className="text-xs text-white/50 leading-relaxed">Tự kết nối với cơ sở dữ liệu để tìm kiếm các khung giờ còn trống trong ngày và đề xuất trực tiếp cho khách chọn.</p>
             </div>
-            <h3 className="font-bold text-lg text-white">Tra Lịch Trống Real-time</h3>
-            <p className="text-xs text-white/50 leading-relaxed">Tự kết nối với cơ sở dữ liệu để tìm kiếm các khung giờ còn trống trong ngày và đề xuất trực tiếp cho khách chọn.</p>
-          </div>
+          </TiltCard>
 
-          <div className="bg-[#0c111d]/50 border border-white/10 p-6 rounded-2xl space-y-4 hover:border-brand-orange/30 hover:-translate-y-1 hover:shadow-lg hover:shadow-brand-orange/5 transition-all duration-300 ease-out cursor-pointer">
-            <div className="w-12 h-12 rounded-xl bg-brand-orange/10 flex items-center justify-center text-brand-orange">
-              <DollarSign className="w-6 h-6" />
+          <TiltCard className="rounded-2xl">
+            <div className="bg-[#0c111d]/50 border border-white/10 p-6 rounded-2xl space-y-4 hover:border-brand-orange/30 hover:shadow-lg hover:shadow-brand-orange/5 transition-all duration-300 ease-out cursor-pointer h-full">
+              <div className="w-12 h-12 rounded-xl bg-brand-orange/10 flex items-center justify-center text-brand-orange">
+                <DollarSign className="w-6 h-6" />
+              </div>
+              <h3 className="font-bold text-lg text-white">Báo Thanh Toán VietQR</h3>
+              <p className="text-xs text-white/50 leading-relaxed">Tính tiền dịch vụ và đọc to thông tin chuyển khoản cùng mã giao dịch thông minh để khách quét mã đối soát tự động.</p>
             </div>
-            <h3 className="font-bold text-lg text-white">Báo Thanh Toán VietQR</h3>
-            <p className="text-xs text-white/50 leading-relaxed">Tính tiền dịch vụ và đọc to thông tin chuyển khoản cùng mã giao dịch thông minh để khách quét mã đối soát tự động.</p>
-          </div>
+          </TiltCard>
         </section>
 
         {/* Outbound Call Demo Section */}
-        <section className="bg-gradient-to-b from-[#0f1422] to-[#080b11] border border-white/10 p-8 rounded-3xl space-y-8 max-w-xl mx-auto shadow-2xl relative backdrop-blur-md">
-          <div className="absolute top-4 right-4 text-xs font-bold text-brand-orange/40">DEMO TRỰC TIẾP</div>
-          <div className="text-center space-y-2">
-            <h2 className="text-xl font-bold">Hãy Để AI Gọi Điện Cho Bạn!</h2>
-            <p className="text-xs text-white/50">Nhập thông tin bên dưới, hệ thống sẽ thực hiện cuộc gọi Outbound gọi trực tiếp vào máy của bạn để demo nói chuyện cùng AI.</p>
-          </div>
-
-          <form onSubmit={handleTriggerOutboundCall} className="space-y-4">
-            <div>
-              <label className="block text-[10px] uppercase font-bold text-white/50 mb-1.5">Tên Của Bạn</label>
-              <input 
-                type="text" 
-                placeholder="Ví dụ: Nguyễn Văn A"
-                value={customerName}
-                onChange={(e) => setCustomerName(e.target.value)}
-                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-orange focus:ring-2 focus:ring-brand-orange/20 transition-all duration-200"
-                required
-              />
-            </div>
-            <div>
-              <label className="block text-[10px] uppercase font-bold text-white/50 mb-1.5">Số Điện Thoại Nhận Cuộc Gọi</label>
-              <input 
-                type="tel" 
-                placeholder="Ví dụ: 0912345678"
-                value={customerPhone}
-                onChange={(e) => setCustomerPhone(e.target.value)}
-                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-orange focus:ring-2 focus:ring-brand-orange/20 transition-all duration-200"
-                required
-              />
+        <TiltCard className="rounded-3xl max-w-xl mx-auto">
+          <section className="bg-gradient-to-b from-[#0f1422] to-[#080b11] border border-white/10 p-8 rounded-3xl space-y-8 shadow-2xl relative backdrop-blur-md">
+            <div className="absolute top-4 right-4 text-xs font-bold text-brand-orange/40">DEMO TRỰC TIẾP</div>
+            <div className="text-center space-y-2">
+              <h2 className="text-xl font-bold">Hãy Để AI Gọi Điện Cho Bạn!</h2>
+              <p className="text-xs text-white/50">Nhập thông tin bên dưới, hệ thống sẽ thực hiện cuộc gọi Outbound gọi trực tiếp vào máy của bạn để demo nói chuyện cùng AI.</p>
             </div>
 
-            {outboundError && (
-              <div className="p-3 bg-red-500/10 border border-red-500/20 text-red-400 text-xs rounded-xl flex items-center gap-2">
-                <AlertCircle className="w-4 h-4 shrink-0" />
-                <span>{outboundError}</span>
+            <form onSubmit={handleTriggerOutboundCall} className="space-y-4">
+              <div>
+                <label className="block text-[10px] uppercase font-bold text-white/50 mb-1.5">Tên Của Bạn</label>
+                <input 
+                  type="text" 
+                  placeholder="Ví dụ: Nguyễn Văn A"
+                  value={customerName}
+                  onChange={(e) => setCustomerName(e.target.value)}
+                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-orange focus:ring-2 focus:ring-brand-orange/20 transition-all duration-200"
+                  required
+                />
               </div>
-            )}
-
-            {outboundSuccess && (
-              <div className="p-4 bg-green-500/10 border border-green-500/20 text-green-400 text-xs rounded-xl leading-relaxed">
-                {outboundSuccess}
+              <div>
+                <label className="block text-[10px] uppercase font-bold text-white/50 mb-1.5">Số Điện Thoại Nhận Cuộc Gọi</label>
+                <input 
+                  type="tel" 
+                  placeholder="Ví dụ: 0912345678"
+                  value={customerPhone}
+                  onChange={(e) => setCustomerPhone(e.target.value)}
+                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-orange focus:ring-2 focus:ring-brand-orange/20 transition-all duration-200"
+                  required
+                />
               </div>
-            )}
 
-            <button
-              type="submit"
-              disabled={outboundLoading}
-              className="w-full py-3.5 bg-gradient-to-tr from-brand-orange to-brand-coral hover:shadow-lg hover:shadow-brand-orange/15 text-white font-bold rounded-xl text-sm transition-all active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none flex items-center justify-center gap-2 touch-target"
-            >
-              {outboundLoading ? (
-                <>
-                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                  <span>Đang kết nối cuộc gọi...</span>
-                </>
-              ) : (
-                <>
-                  <Phone className="w-4 h-4" />
-                  <span>AI Gọi Cho Tôi Trải Nghiệm Ngay!</span>
-                </>
+              {outboundError && (
+                <div className="p-3 bg-red-500/10 border border-red-500/20 text-red-400 text-xs rounded-xl flex items-center gap-2">
+                  <AlertCircle className="w-4 h-4 shrink-0" />
+                  <span>{outboundError}</span>
+                </div>
               )}
-            </button>
-          </form>
-        </section>
 
-        {/* Affiliate Link Generator Section */}
-        <section className="bg-[#0a0f1d]/85 border border-white/10 p-8 rounded-3xl space-y-6 backdrop-blur-md shadow-xl">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-            <div className="space-y-1">
-              <h2 className="text-lg font-bold flex items-center gap-2">
-                <Share2 className="w-5 h-5 text-brand-orange" />
-                <span>Chia sẻ dự án - Nhận 50% hoa hồng</span>
-              </h2>
-              <p className="text-xs text-white/50 leading-relaxed">Tạo đường link giới thiệu của riêng bạn, chia sẻ lên mạng xã hội. Nếu có bất kỳ khách hàng nào đăng ký dịch vụ lễ tân tổng đài AI qua link này, bạn sẽ nhận được 50% doanh thu giới thiệu.</p>
-            </div>
-            
-            <div className="w-full md:w-auto flex gap-2">
-              <input 
-                type="text" 
-                placeholder="Nhập mã CTV của bạn..."
-                value={affCode}
-                onChange={(e) => setAffCode(e.target.value)}
-                className="bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:border-brand-orange focus:ring-2 focus:ring-brand-orange/20 transition-all duration-200 w-full md:w-48"
-              />
+              {outboundSuccess && (
+                <div className="p-4 bg-green-500/10 border border-green-500/20 text-green-400 text-xs rounded-xl leading-relaxed">
+                  {outboundSuccess}
+                </div>
+              )}
+
               <button
-                onClick={handleCopyLink}
-                className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 shrink-0 ${copiedLink ? 'bg-green-500 text-white' : 'bg-brand-orange hover:bg-brand-coral text-white active:scale-95'}`}
+                type="submit"
+                disabled={outboundLoading}
+                className="w-full py-3.5 bg-gradient-to-tr from-brand-orange to-brand-coral hover:shadow-lg hover:shadow-brand-orange/15 text-white font-bold rounded-xl text-sm transition-all active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none flex items-center justify-center gap-2 touch-target cursor-pointer"
               >
-                {copiedLink ? (
+                {outboundLoading ? (
                   <>
-                    <Check className="w-3.5 h-3.5" />
-                    <span>Đã Copy!</span>
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    <span>Đang kết nối cuộc gọi...</span>
                   </>
                 ) : (
                   <>
-                    <Copy className="w-3.5 h-3.5" />
-                    <span>Copy Link</span>
+                    <Phone className="w-4 h-4" />
+                    <span>AI Gọi Cho Tôi Trải Nghiệm Ngay!</span>
                   </>
                 )}
               </button>
-            </div>
-          </div>
+            </form>
+          </section>
+        </TiltCard>
 
-          <div className="p-4 bg-white/[0.02] border border-white/5 rounded-2xl flex items-center justify-between text-xs text-white/40 break-all font-mono">
-            <span>{refUrl}</span>
-          </div>
-        </section>
+        {/* Affiliate Link Generator Section */}
+        <TiltCard className="rounded-3xl">
+          <section className="bg-[#0a0f1d]/85 border border-white/10 p-8 rounded-3xl space-y-6 backdrop-blur-md shadow-xl">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+              <div className="space-y-1">
+                <h2 className="text-lg font-bold flex items-center gap-2">
+                  <Share2 className="w-5 h-5 text-brand-orange" />
+                  <span>Chia sẻ dự án - Nhận 50% hoa hồng</span>
+                </h2>
+                <p className="text-xs text-white/50 leading-relaxed">Tạo đường link giới thiệu của riêng bạn, chia sẻ lên mạng xã hội. Nếu có bất kỳ khách hàng nào đăng ký dịch vụ lễ tân tổng đài AI qua link này, bạn sẽ nhận được 50% doanh thu giới thiệu.</p>
+              </div>
+              
+              <div className="w-full md:w-auto flex gap-2">
+                <input 
+                  type="text" 
+                  placeholder="Nhập mã CTV của bạn..."
+                  value={affCode}
+                  onChange={(e) => setAffCode(e.target.value)}
+                  className="bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:border-brand-orange focus:ring-2 focus:ring-brand-orange/20 transition-all duration-200 w-full md:w-48"
+                />
+                <button
+                  onClick={handleCopyLink}
+                  className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 shrink-0 ${copiedLink ? 'bg-green-500 text-white' : 'bg-brand-orange hover:bg-brand-coral text-white active:scale-95 cursor-pointer'}`}
+                >
+                  {copiedLink ? (
+                    <>
+                      <Check className="w-3.5 h-3.5" />
+                      <span>Đã Copy!</span>
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="w-3.5 h-3.5" />
+                      <span>Copy Link</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
+
+            <div className="p-4 bg-white/[0.02] border border-white/5 rounded-2xl flex items-center justify-between text-xs text-white/40 break-all font-mono">
+              <span>{refUrl}</span>
+            </div>
+          </section>
+        </TiltCard>
 
         {/* Viral Marketing Swipe Files */}
         <section className="space-y-6">

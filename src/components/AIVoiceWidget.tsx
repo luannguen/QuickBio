@@ -1,14 +1,24 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Vapi from '@vapi-ai/web';
 import { Phone, PhoneOff, Sparkles, AlertCircle } from 'lucide-react';
+import { useVapiStore } from '../hooks/store';
 
 export const AIVoiceWidget: React.FC = () => {
-  const [isCallActive, setIsCallActive] = useState(false);
-  const [connecting, setConnecting] = useState(false);
-  const [isListening, setIsListening] = useState(false);
-  const [volume, setVolume] = useState(0);
-  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const { 
+    isCallActive, 
+    connecting, 
+    isListening, 
+    volume, 
+    startTrigger,
+    stopTrigger,
+    setCallActive, 
+    setConnecting, 
+    setListening, 
+    setVolume,
+    resetCall 
+  } = useVapiStore();
 
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const vapiRef = useRef<Vapi | null>(null);
 
   // Lấy các biến cấu hình từ biến môi trường
@@ -30,24 +40,21 @@ export const AIVoiceWidget: React.FC = () => {
 
       // Thiết lập các sự kiện lắng nghe
       vapiInstance.on('call-start', () => {
-        setIsCallActive(true);
+        setCallActive(true);
         setConnecting(false);
         setErrorMsg(null);
       });
 
       vapiInstance.on('call-end', () => {
-        setIsCallActive(false);
-        setConnecting(false);
-        setIsListening(false);
-        setVolume(0);
+        resetCall();
       });
 
       vapiInstance.on('speech-start', () => {
-        setIsListening(true);
+        setListening(true);
       });
 
       vapiInstance.on('speech-end', () => {
-        setIsListening(false);
+        setListening(false);
       });
 
       vapiInstance.on('volume-level', (vol: number) => {
@@ -57,9 +64,7 @@ export const AIVoiceWidget: React.FC = () => {
       vapiInstance.on('error', (err: any) => {
         console.error('Vapi Web SDK Error:', err);
         setErrorMsg(err.message || 'Lỗi kết nối máy chủ thoại.');
-        setIsCallActive(false);
-        setConnecting(false);
-        setVolume(0);
+        resetCall();
       });
     } catch (e: any) {
       console.error('Khởi tạo Vapi thất bại:', e);
@@ -71,6 +76,25 @@ export const AIVoiceWidget: React.FC = () => {
       }
     };
   }, [publicKey]);
+
+  // Lắng nghe lệnh kích hoạt cuộc gọi từ trang Landing Page
+  useEffect(() => {
+    if (startTrigger > 0 && !isCallActive && !connecting) {
+      setConnecting(true);
+      setErrorMsg(null);
+      vapiRef.current?.start(assistantId).catch((err: any) => {
+        console.error('Không thể bắt đầu cuộc gọi từ trigger:', err);
+        setErrorMsg(err.message || 'Lỗi kết nối cuộc gọi.');
+        resetCall();
+      });
+    }
+  }, [startTrigger]);
+
+  useEffect(() => {
+    if (stopTrigger > 0 && isCallActive) {
+      vapiRef.current?.stop();
+    }
+  }, [stopTrigger]);
 
   const handleToggleCall = async () => {
     // Trường hợp chưa có API Key

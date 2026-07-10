@@ -153,3 +153,38 @@ export const useCartStore = create<CartState>((set) => ({
   setCustomerInfo: (name, email) => set({ customerName: name, customerEmail: email }),
   resetCart: () => set({ selectedProduct: null, isOpen: false })
 }));
+
+// ==========================================
+// 4. Vapi Store (Quản lý trạng thái cuộc gọi thoại AI)
+// ==========================================
+interface VapiState {
+  isCallActive: boolean;
+  connecting: boolean;
+  isListening: boolean;
+  volume: number;
+  startTrigger: number;
+  stopTrigger: number;
+  setCallActive: (active: boolean) => void;
+  setConnecting: (connecting: boolean) => void;
+  setListening: (listening: boolean) => void;
+  setVolume: (volume: number) => void;
+  triggerStart: () => void;
+  triggerStop: () => void;
+  resetCall: () => void;
+}
+
+export const useVapiStore = create<VapiState>((set) => ({
+  isCallActive: false,
+  connecting: false,
+  isListening: false,
+  volume: 0,
+  startTrigger: 0,
+  stopTrigger: 0,
+  setCallActive: (active) => set({ isCallActive: active }),
+  setConnecting: (connecting) => set({ connecting }),
+  setListening: (listening) => set({ isListening: listening }),
+  setVolume: (volume) => set({ volume }),
+  triggerStart: () => set((state) => ({ startTrigger: state.startTrigger + 1, connecting: true })),
+  triggerStop: () => set((state) => ({ stopTrigger: state.stopTrigger + 1 })),
+  resetCall: () => set({ isCallActive: false, connecting: false, isListening: false, volume: 0 })
+}));
