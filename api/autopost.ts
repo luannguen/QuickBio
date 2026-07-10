@@ -45,7 +45,7 @@ export default async function handler(req: any, res: any) {
         product_name || 'Sản phẩm số',
         product_desc || 'Tài liệu chất lượng cao',
         style || 'Thuyết phục',
-        bio_url || 'https://quickbio.vn'
+        bio_url || 'https://quick-bio-lilac.vercel.app'
       );
 
       // Đăng lên Facebook
@@ -183,7 +183,7 @@ async function generateAIContent(apiKey: string, productName: string, productDes
   let prompt = '';
   if (isPlatformPromotion) {
     prompt = `Bạn là một chuyên gia Copywriter marketing đỉnh cao. 
-Hãy viết một bài đăng Facebook cực kỳ thu hút, kích thích và có tính thuyết phục cao để giới thiệu và quảng bá nền tảng kiếm tiền online: "QuickBio.vn" - Công cụ tạo Bio-Link và bán sản phẩm số tự động nhận VietQR cá nhân.
+Hãy viết một bài đăng Facebook cực kỳ thu hút, kích thích và có tính thuyết phục cao để giới thiệu và quảng bá nền tảng kiếm tiền online: "QuickBio" - Công cụ tạo Bio-Link và bán sản phẩm số tự động nhận VietQR cá nhân.
 Mô tả nền tảng: "Giúp bất kỳ ai cũng có thể bắt đầu kiếm tiền online bằng cách đăng bán ebook, template, khóa học và tự động nhận thanh toán qua VietQR cá nhân, tự động giao file trong 3 giây. Có chương trình Affiliate chia sẻ hoa hồng 50% trọn đời."
 Mục tiêu bài viết: Thuyết phục mọi người đăng ký tài khoản miễn phí để tạo Bio Link bán sản phẩm số của riêng họ hoặc tham gia làm Cộng Tác Viên (Affiliate) để nhận 50% hoa hồng trọn đời.
 Bài viết phải chèn khéo léo link đăng ký giới thiệu của tôi: "${bioUrl}".
@@ -239,14 +239,14 @@ Hãy dùng ngay QuickBio - nền tảng tạo trang bán hàng Bio-Link cực nh
 
       `💡 Làm thế nào để biến lượt xem trên mạng xã hội thành dòng tiền tự động?
 
-Câu trả lời là bán sản phẩm số (Ebook, Canva Template, Prompts AI) thông qua trang Bio-Link của QuickBio.vn. 
+Câu trả lời là bán sản phẩm số (Ebook, Canva Template, Prompts AI) thông qua trang Bio-Link của QuickBio. 
 Không cần lập trình phức tạp, thanh toán VietQR quét mã tự động chuyển khoản trực tiếp vào tài khoản ngân hàng của bạn, tự động giao hàng qua email tức thì.
 
 👉 Bắt đầu xây dựng cỗ máy kiếm tiền tự động của bạn ngay hôm nay tại: ${bioUrl} 💸`,
 
       `QUYẾT ĐỊNH NGỪNG LÀM THUÊ VÀ BẮT ĐẦU KINH DOANH SẢN PHẨM SỐ TỰ ĐỘNG! 
 
-Với QuickBio.vn, bạn không cần có công ty để đăng ký cổng thanh toán. Dùng VietQR ngân hàng cá nhân của chính bạn để tự động nhận tiền 24/7 và giao tài liệu tự động cho khách hàng.
+Với QuickBio, bạn không cần có công ty để đăng ký cổng thanh toán. Dùng VietQR ngân hàng cá nhân của chính bạn để tự động nhận tiền 24/7 và giao tài liệu tự động cho khách hàng.
 Đặc biệt, chương trình chia sẻ 50% doanh thu giới thiệu giúp bạn có nguồn thu nhập thụ động bền vững hàng tháng.
 
 👉 Xem chi tiết và đăng ký miễn phí tại: ${bioUrl} 🌟`

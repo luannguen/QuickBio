@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../hooks/useAuth';
-import { Sparkles, ArrowRight, Layers } from 'lucide-react';
+import { Sparkles, ArrowRight, Layers, ChevronDown } from 'lucide-react';
 import { AuthModal } from '../../components/AuthModal';
 
 interface LandingPageProps {
@@ -12,6 +12,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onNavigateToDashboard,
   const { isAuthenticated, loading } = useAuth();
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [mockPhoneStep, setMockPhoneStep] = useState<'bio' | 'checkout' | 'paid'>('bio');
+  const [openFaq, setOpenFaq] = useState<number | null>(null);
 
   const handleStart = () => {
     if (isAuthenticated) {
@@ -86,16 +87,16 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onNavigateToDashboard,
               <span>Giải pháp SaaS MMO tự động hoá 100%</span>
             </div>
 
-            <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight leading-[1.15] text-white">
-              Biến Bio-Link thành{' '}
+            <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight leading-[1.12] text-white">
+              Giải phóng thu nhập từ{' '}
               <span className="bg-clip-text text-transparent bg-gradient-to-r from-brand-orange to-brand-coral">
-                Cửa hàng Sản phẩm số
+                Lượng Follow
               </span>{' '}
-              Tự động hóa 100%
+              của bạn
             </h1>
 
-            <p className="text-base sm:text-lg text-white/50 leading-relaxed max-w-xl">
-              Tạo trang cá nhân chuyên nghiệp, đăng bán ebook, tài liệu, slide. Khách chỉ cần quét VietQR, hệ thống sẽ tự động xác thực và bàn giao file trực tiếp qua email chỉ trong 3 giây.
+            <p className="text-base sm:text-lg text-white/60 leading-relaxed max-w-xl">
+              Xây dựng cửa hàng sản phẩm số trên Bio-Link chỉ trong 30 giây. Khách quét mã VietQR thanh toán - Tiền về bank của bạn - Hệ thống tự động bàn giao file qua Email tức thì.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4">
@@ -167,7 +168,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onNavigateToDashboard,
 
                     {/* Watermark footer */}
                     <div className="text-center text-[8px] text-white/30 pt-2 border-t border-white/5">
-                      ⚡ Tạo Bio Link bởi QuickBio.vn
+                      ⚡ Tạo Bio Link bởi QuickBio
                     </div>
                   </div>
                 )}
@@ -303,6 +304,37 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onNavigateToDashboard,
                 "🚀 Mở khóa kho Canva 500+ Mẫu thiết kế bán hàng kéo thả, tạo banner Shopee/Facebook siêu lung linh trong 3 giây..."
               </div>
             </div>
+          </div>
+        </div>
+
+        {/* Top Creators Showroom */}
+        <div className="w-full max-w-5xl pt-20 pb-8 text-center space-y-8">
+          <div className="space-y-2">
+            <span className="text-[10px] uppercase font-extrabold tracking-widest text-brand-orange">Nhà sáng tạo tiêu biểu</span>
+            <h3 className="text-2xl sm:text-3xl font-extrabold text-white">Cộng Đồng QuickBio MMO Thịnh Vượng</h3>
+            <p className="text-sm text-white/50 max-w-xl mx-auto">Hàng ngàn Creator, Marketer đang xây dựng nguồn thu nhập thụ động bền vững từ sản phẩm số mỗi ngày.</p>
+          </div>
+          
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+            {[
+              { name: 'Nguyễn Tiến Luân', role: 'MMO Marketer', earning: '34.8Mđ', desc: 'Đã bán 500+ bộ Prompt ChatGPT & Canva Templates.', avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=100&h=100&q=80' },
+              { name: 'Khánh Vy', role: 'Content Creator', earning: '18.5Mđ', desc: 'Kiếm thu nhập thụ động từ việc chia sẻ file PDF bài giảng cực kỳ đơn giản.', avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=100&h=100&q=80' },
+              { name: 'Hoàng Minh', role: 'Designer / Freelancer', earning: '22.4Mđ', desc: 'Tuyển 50+ CTV cùng phân phối bộ preset chỉnh ảnh Lightroom cao cấp.', avatar: 'https://images.unsplash.com/photo-1599566150163-29194dcaad36?auto=format&fit=crop&w=100&h=100&q=80' }
+            ].map((creator, idx) => (
+              <div key={idx} className="bg-[#0f1422]/40 rounded-3xl border border-white/5 p-6 space-y-4 hover:border-brand-orange/20 transition-all duration-300 transform hover:-translate-y-1">
+                <div className="flex items-center gap-4">
+                  <img src={creator.avatar} alt={creator.name} className="w-12 h-12 rounded-full object-cover border border-white/10" />
+                  <div className="text-left">
+                    <h4 className="text-sm font-bold text-white">{creator.name}</h4>
+                    <p className="text-[10px] text-white/50">{creator.role}</p>
+                  </div>
+                  <div className="ml-auto bg-brand-orange/15 border border-brand-orange/25 text-brand-orange text-xs font-black px-2.5 py-1 rounded-xl">
+                    +{creator.earning}
+                  </div>
+                </div>
+                <p className="text-xs text-white/60 leading-relaxed text-left">{creator.desc}</p>
+              </div>
+            ))}
           </div>
         </div>
 
@@ -550,6 +582,39 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onNavigateToDashboard,
                 Nâng cấp Pro ngay
               </button>
             </div>
+          </div>
+        </div>
+
+        {/* FAQ Accordion Section */}
+        <div className="w-full max-w-4xl pt-20 pb-12 text-center space-y-12">
+          <div className="space-y-4">
+            <span className="text-[10px] uppercase font-extrabold tracking-widest text-brand-orange">Hỏi đáp thắc mắc</span>
+            <h3 className="text-3xl font-extrabold text-white">Những Câu Hỏi Thường Gặp</h3>
+            <p className="text-sm text-white/50 max-w-xl mx-auto">Giải đáp mọi thắc mắc của bạn về dòng tiền, cổng thanh toán và cách vận hành QuickBio.</p>
+          </div>
+
+          <div className="max-w-3xl mx-auto space-y-4 text-left">
+            {[
+              { q: 'Hệ thống đối soát tự động qua SePay vận hành thế nào?', a: 'Khi có khách hàng quét mã VietQR để mua sản phẩm, hệ thống SePay sẽ tự động phát hiện biến động số dư tài khoản của bạn thông qua API trong vòng 1-2 giây. QuickBio sẽ lập tức xác thực giao dịch, hiển thị link tải trực tiếp cho khách và tự động gửi email đính kèm file gốc cho khách.' },
+              { q: 'Tôi có phải chia sẻ doanh thu từ sản phẩm cho QuickBio không?', a: 'Không! Với tài khoản của bạn, dòng tiền quét mã VietQR chuyển khoản sẽ chảy trực tiếp 100% vào tài khoản ngân hàng cá nhân của chính bạn. Chúng tôi không qua trung gian giam vốn và không thu bất kỳ phí chiết khấu giao dịch nào.' },
+              { q: 'Hệ thống Affiliate ăn chia hoa hồng CTV tự động hoạt động thế nào?', a: 'Bạn có thể tuyển CTV quảng bá sản phẩm cho mình. Khi CTV chia sẻ link Bio kèm mã giới thiệu (ref) của họ, hệ thống sẽ tự động ghi nhận cookie của trình duyệt. Nếu khách mua bất kỳ sản phẩm nào trên Bio, hoa hồng sẽ tự động được ghi nhận vào tài khoản CTV của họ và bạn đối soát duyệt thanh toán dễ dàng tại Dashboard.' },
+              { q: 'QuickBio Pro có giá bao nhiêu và tôi có được hủy gói không?', a: 'Gói Pro có phí là 99.000đ/tháng mở khóa toàn bộ tính năng bán hàng không giới hạn, CTV Affiliate và trợ lý AI Gemini. Bạn có thể gia hạn theo tháng hoặc hủy bất cứ lúc nào ngay tại giao diện quản trị.' }
+            ].map((faq, idx) => (
+              <div key={idx} className="bg-[#0f1422]/40 rounded-2xl border border-white/5 overflow-hidden transition-all duration-300">
+                <button
+                  onClick={() => setOpenFaq(openFaq === idx ? null : idx)}
+                  className="w-full px-6 py-4 flex items-center justify-between text-white font-bold text-sm hover:bg-white/[0.02] transition-colors"
+                >
+                  <span>{faq.q}</span>
+                  <ChevronDown className={`w-4 h-4 text-white/50 transition-transform duration-300 ${openFaq === idx ? 'transform rotate-180 text-brand-orange' : ''}`} />
+                </button>
+                <div className={`transition-all duration-300 ease-in-out overflow-hidden ${openFaq === idx ? 'max-h-40 border-t border-white/5' : 'max-h-0'}`}>
+                  <p className="px-6 py-4 text-xs text-white/60 leading-relaxed bg-[#080b11]/30">
+                    {faq.a}
+                  </p>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </main>
