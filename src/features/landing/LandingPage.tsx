@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import { Sparkles, ArrowRight, Layers, ChevronDown } from 'lucide-react';
 import { AuthModal } from '../../components/AuthModal';
+import { AIVoiceWidget } from '../../components/AIVoiceWidget';
 
 interface LandingPageProps {
   onNavigateToDashboard: () => void;
@@ -629,6 +630,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onNavigateToDashboard,
         onClose={() => setShowAuthModal(false)} 
         onSuccess={handleAuthSuccess} 
       />
+      <AIVoiceWidget />
     </div>
   );
 };
