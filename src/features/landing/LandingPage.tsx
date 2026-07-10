@@ -7,9 +7,10 @@ import { AIVoiceWidget } from '../../components/AIVoiceWidget';
 interface LandingPageProps {
   onNavigateToDashboard: () => void;
   onNavigateToDemoBio: () => void;
+  onNavigateToAIVoice: () => void;
 }
 
-export const LandingPage: React.FC<LandingPageProps> = ({ onNavigateToDashboard, onNavigateToDemoBio }) => {
+export const LandingPage: React.FC<LandingPageProps> = ({ onNavigateToDashboard, onNavigateToDemoBio, onNavigateToAIVoice }) => {
   const { isAuthenticated, loading } = useAuth();
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [mockPhoneStep, setMockPhoneStep] = useState<'bio' | 'checkout' | 'paid'>('bio');
@@ -62,6 +63,14 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onNavigateToDashboard,
         </div>
 
         <div className="flex items-center gap-4">
+          <button 
+            onClick={onNavigateToAIVoice}
+            className="text-sm font-medium text-brand-orange hover:text-brand-coral transition-colors flex items-center gap-1 font-bold mr-2 touch-target"
+          >
+            <Sparkles className="w-3.5 h-3.5" />
+            <span>Tổng đài Lễ tân AI</span>
+          </button>
+
           <button 
             onClick={onNavigateToDemoBio}
             className="text-sm font-medium text-white/75 hover:text-white transition-colors"
