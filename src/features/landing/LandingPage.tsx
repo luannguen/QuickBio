@@ -1,8 +1,73 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import { Sparkles, ArrowRight, Layers, ChevronDown } from 'lucide-react';
 import { AuthModal } from '../../components/AuthModal';
 import { AIVoiceWidget } from '../../components/AIVoiceWidget';
+
+// ============================================================
+// TiltCard Component: Hiệu ứng Parallax 3D xoay theo con trỏ chuột
+// ============================================================
+interface TiltCardProps {
+  children: React.ReactNode;
+  className?: string;
+}
+
+const TiltCard: React.FC<TiltCardProps> = ({ children, className = '' }) => {
+  const cardRef = useRef<HTMLDivElement>(null);
+  const [coords, setCoords] = useState({ x: 0, y: 0 });
+  const [isHovered, setIsHovered] = useState(false);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!cardRef.current) return;
+    const rect = cardRef.current.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    
+    // Chuẩn hoá toạ độ từ -0.5 đến 0.5
+    const normX = (x / rect.width) - 0.5;
+    const normY = (y / rect.height) - 0.5;
+    
+    setCoords({ x: normX, y: normY });
+  };
+
+  const handleMouseEnter = () => setIsHovered(true);
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+    setCoords({ x: 0, y: 0 });
+  };
+
+  const rotateX = isHovered ? coords.y * -10 : 0; // Tối đa xoay 10 độ
+  const rotateY = isHovered ? coords.x * 10 : 0;
+  
+  const shineX = isHovered ? (coords.x + 0.5) * 100 : 50;
+  const shineY = isHovered ? (coords.y + 0.5) * 100 : 50;
+
+  return (
+    <div
+      ref={cardRef}
+      onMouseMove={handleMouseMove}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      className={`relative overflow-hidden transition-all duration-300 ease-out ${className}`}
+      style={{
+        transform: `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(${isHovered ? 1.015 : 1}, ${isHovered ? 1.015 : 1}, 1)`,
+        transformStyle: 'preserve-3d',
+      }}
+    >
+      {/* Lớp phản chiếu ánh sáng bóng bẩy */}
+      <div 
+        className="absolute inset-0 pointer-events-none opacity-0 hover:opacity-100 transition-opacity duration-300"
+        style={{
+          background: `radial-gradient(circle at ${shineX}% ${shineY}%, rgba(255, 107, 53, 0.05) 0%, transparent 65%)`,
+          zIndex: 5
+        }}
+      />
+      <div style={{ transform: 'translateZ(8px)', transformStyle: 'preserve-3d' }}>
+        {children}
+      </div>
+    </div>
+  );
+};
 
 interface LandingPageProps {
   onNavigateToDashboard: () => void;
@@ -91,8 +156,13 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onNavigateToDashboard,
       <main className="relative z-10 max-w-7xl mx-auto px-6 pt-12 pb-24 space-y-16">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
           {/* Left Column: Headlines */}
-          <div className="lg:col-span-7 text-left space-y-8">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-brand-orange/10 border border-brand-orange/20 text-xs font-semibold text-brand-orange">
+          <div className="lg:col-span-7 text-left space-y-8 relative">
+            {/* 3D Floating Graphic Orb */}
+            <div className="absolute right-4 top-[-60px] w-24 h-24 hidden md:block animate-float opacity-70 pointer-events-none z-0">
+              <img src="/digistore_3d.png" alt="3D Commerce Orb" className="w-full h-full object-contain" />
+            </div>
+
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-brand-orange/10 border border-brand-orange/20 text-xs font-semibold text-brand-orange relative z-10">
               <Sparkles className="w-3.5 h-3.5" />
               <span>Giải pháp SaaS MMO tự động hoá 100%</span>
             </div>
@@ -128,15 +198,21 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onNavigateToDashboard,
           </div>
 
           {/* Right Column: Interactive Mobile Mockup */}
-          <div className="lg:col-span-5 flex justify-center">
-            <div className="relative w-[280px] h-[570px] bg-[#0d111a] rounded-[45px] p-3 shadow-2xl border-[6px] border-white/10 ring-8 ring-black/40 overflow-hidden flex flex-col">
+          <div className="lg:col-span-5 flex justify-center [perspective:1200px]">
+            <div 
+              className="relative w-[280px] h-[570px] bg-[#0d111a] rounded-[45px] p-3 shadow-[20px_20px_60px_-10px_rgba(0,0,0,0.85),-10px_-10px_35px_rgba(255,255,255,0.02)] border-[6px] border-white/15 ring-8 ring-black/50 overflow-hidden flex flex-col transition-all duration-700 ease-out hover:[transform:rotateY(0deg)_rotateX(0deg)_translateZ(25px)] hover:shadow-brand-orange/15 hover:border-white/25 cursor-grab active:cursor-grabbing"
+              style={{
+                transform: 'rotateY(-18deg) rotateX(12deg) rotateZ(-3deg)',
+                transformStyle: 'preserve-3d',
+              }}
+            >
               {/* iPhone Notch */}
               <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-32 h-6 bg-black rounded-b-2xl z-20 flex items-center justify-center">
                 <div className="w-12 h-1 bg-white/20 rounded-full"></div>
               </div>
 
               {/* iPhone Screen Content */}
-              <div className="relative flex-1 rounded-[38px] overflow-hidden bg-[#080B11] border border-white/5 flex flex-col p-4 pt-8">
+              <div className="relative flex-1 rounded-[38px] overflow-hidden bg-[#080B11] border border-white/5 flex flex-col p-4 pt-8" style={{ transform: 'translateZ(10px)' }}>
                 {mockPhoneStep === 'bio' && (
                   <div className="flex-1 flex flex-col justify-between space-y-4 animate-fade-in">
                     {/* Header */}
@@ -238,83 +314,91 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onNavigateToDashboard,
         {/* Bento Grid Features */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-5xl pt-16">
           {/* Bento Card 1: Bio-Link Builder (width: md:col-span-2) */}
-          <div className="bg-[#0f1422]/60 rounded-3xl border border-white/5 p-8 text-left space-y-6 flex flex-col justify-between overflow-hidden relative group hover:border-brand-orange/30 transition-all duration-500">
-            <div className="absolute -inset-px bg-gradient-to-tr from-brand-orange/0 via-transparent to-brand-orange/10 rounded-3xl opacity-0 group-hover:opacity-100 transition duration-500 pointer-events-none"></div>
-            <div className="space-y-2">
-              <div className="text-[10px] uppercase font-extrabold tracking-widest text-brand-orange">Công cụ thiết kế</div>
-              <h3 className="text-xl font-extrabold text-white">Trình dựng Bio-Link kéo thả cực cuốn</h3>
-              <p className="text-sm text-white/50 max-w-md leading-relaxed">Tùy biến Avatar, màu nền, các mạng xã hội và xem trước giao diện trên điện thoại ngay lập tức.</p>
-            </div>
-            {/* Visual mini builder wireframe inside card */}
-            <div className="w-full bg-[#080b11]/80 rounded-2xl p-4 border border-white/10 flex items-center gap-4 transform translate-y-3 group-hover:translate-y-0 transition-transform duration-500">
-              <div className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex-shrink-0 flex items-center justify-center text-white/60">👤</div>
-              <div className="flex-1 space-y-1.5">
-                <div className="w-24 h-2.5 bg-white/10 rounded"></div>
-                <div className="w-32 h-1.5 bg-white/5 rounded"></div>
+          <TiltCard className="md:col-span-2 rounded-3xl">
+            <div className="bg-[#0f1422]/60 rounded-3xl border border-white/10 p-8 text-left space-y-6 flex flex-col justify-between overflow-hidden relative group hover:border-brand-orange/30 transition-all duration-500 h-full">
+              <div className="absolute -inset-px bg-gradient-to-tr from-brand-orange/0 via-transparent to-brand-orange/10 rounded-3xl opacity-0 group-hover:opacity-100 transition duration-500 pointer-events-none"></div>
+              <div className="space-y-2" style={{ transform: 'translateZ(15px)' }}>
+                <div className="text-[10px] uppercase font-extrabold tracking-widest text-brand-orange">Công cụ thiết kế</div>
+                <h3 className="text-xl font-extrabold text-white">Trình dựng Bio-Link kéo thả cực cuốn</h3>
+                <p className="text-sm text-white/50 max-w-md leading-relaxed">Tùy biến Avatar, màu nền, các mạng xã hội và xem trước giao diện trên điện thoại ngay lập tức.</p>
               </div>
-              <div className="flex gap-2">
-                <span className="w-2.5 h-2.5 rounded-full bg-[#FF6B35]"></span>
-                <span className="w-2.5 h-2.5 rounded-full bg-[#3B82F6]"></span>
-                <span className="w-2.5 h-2.5 rounded-full bg-[#7CB342]"></span>
+              {/* Visual mini builder wireframe inside card */}
+              <div className="w-full bg-[#080b11]/80 rounded-2xl p-4 border border-white/10 flex items-center gap-4 transform translate-y-3 group-hover:translate-y-0 transition-transform duration-500" style={{ transform: 'translateZ(20px)' }}>
+                <div className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex-shrink-0 flex items-center justify-center text-white/60">👤</div>
+                <div className="flex-1 space-y-1.5">
+                  <div className="w-24 h-2.5 bg-white/10 rounded"></div>
+                  <div className="w-32 h-1.5 bg-white/5 rounded"></div>
+                </div>
+                <div className="flex gap-2">
+                  <span className="w-2.5 h-2.5 rounded-full bg-[#FF6B35]"></span>
+                  <span className="w-2.5 h-2.5 rounded-full bg-[#3B82F6]"></span>
+                  <span className="w-2.5 h-2.5 rounded-full bg-[#7CB342]"></span>
+                </div>
               </div>
             </div>
-          </div>
+          </TiltCard>
 
           {/* Bento Card 2: VietQR Verification (width: md:col-span-1) */}
-          <div className="bg-[#0f1422]/60 rounded-3xl border border-white/5 p-8 text-left space-y-6 flex flex-col justify-between overflow-hidden relative group hover:border-[#8BC34A]/30 transition-all duration-500">
-            <div className="absolute -inset-px bg-gradient-to-tr from-[#8BC34A]/0 via-transparent to-[#8BC34A]/10 rounded-3xl opacity-0 group-hover:opacity-100 transition duration-500 pointer-events-none"></div>
-            <div className="space-y-2">
-              <div className="text-[10px] uppercase font-extrabold tracking-widest text-[#8BC34A]">Thanh toán tức thì</div>
-              <h3 className="text-xl font-extrabold text-white">Quét VietQR Tự động</h3>
-              <p className="text-sm text-white/50 leading-relaxed">Tiền về thẳng tài khoản ngân hàng cá nhân của bạn, không qua trung gian giam vốn.</p>
-            </div>
-            {/* Visual bank notification alert inside card */}
-            <div className="bg-[#8BC34A]/10 border border-[#8BC34A]/25 p-3.5 rounded-2xl flex items-center gap-3 transform translate-y-3 group-hover:translate-y-0 transition-transform duration-500">
-              <span className="text-xl">💰</span>
-              <div className="text-xs">
-                <div className="font-extrabold text-white">Biến động số dư MBBank</div>
-                <div className="text-[#8BC34A] font-extrabold font-mono">+49.000 VND (QB41500)</div>
+          <TiltCard className="md:col-span-1 rounded-3xl">
+            <div className="bg-[#0f1422]/60 rounded-3xl border border-white/10 p-8 text-left space-y-6 flex flex-col justify-between overflow-hidden relative group hover:border-[#8BC34A]/30 transition-all duration-500 h-full">
+              <div className="absolute -inset-px bg-gradient-to-tr from-[#8BC34A]/0 via-transparent to-[#8BC34A]/10 rounded-3xl opacity-0 group-hover:opacity-100 transition duration-500 pointer-events-none"></div>
+              <div className="space-y-2" style={{ transform: 'translateZ(15px)' }}>
+                <div className="text-[10px] uppercase font-extrabold tracking-widest text-[#8BC34A]">Thanh toán tức thì</div>
+                <h3 className="text-xl font-extrabold text-white">Quét VietQR Tự động</h3>
+                <p className="text-sm text-white/50 leading-relaxed">Tiền về thẳng tài khoản ngân hàng cá nhân của bạn, không qua trung gian giam vốn.</p>
+              </div>
+              {/* Visual bank notification alert inside card */}
+              <div className="bg-[#8BC34A]/10 border border-[#8BC34A]/25 p-3.5 rounded-2xl flex items-center gap-3 transform translate-y-3 group-hover:translate-y-0 transition-transform duration-500" style={{ transform: 'translateZ(20px)' }}>
+                <span className="text-xl">💰</span>
+                <div className="text-xs">
+                  <div className="font-extrabold text-white">Biến động số dư MBBank</div>
+                  <div className="text-[#8BC34A] font-extrabold font-mono">+49.000 VND (QB41500)</div>
+                </div>
               </div>
             </div>
-          </div>
+          </TiltCard>
 
           {/* Bento Card 3: Digital Goods Delivery (width: md:col-span-1) */}
-          <div className="bg-[#0f1422]/60 rounded-3xl border border-white/5 p-8 text-left space-y-6 flex flex-col justify-between overflow-hidden relative group hover:border-[#3b82f6]/30 transition-all duration-500">
-            <div className="absolute -inset-px bg-gradient-to-tr from-[#3b82f6]/0 via-transparent to-[#3b82f6]/10 rounded-3xl opacity-0 group-hover:opacity-100 transition duration-500 pointer-events-none"></div>
-            <div className="space-y-2">
-              <div className="text-[10px] uppercase font-extrabold tracking-widest text-[#3b82f6]">Giao hàng số</div>
-              <h3 className="text-xl font-extrabold text-white">Tự động bàn giao File</h3>
-              <p className="text-sm text-white/50 leading-relaxed">File tài liệu, khóa học được gửi trực tiếp qua email của khách hàng ngay khi thanh toán thành công.</p>
-            </div>
-            {/* Visual delivery simulation inside card */}
-            <div className="bg-white/[0.02] border border-white/5 p-3.5 rounded-2xl flex items-center gap-3 transform translate-y-3 group-hover:translate-y-0 transition-transform duration-500">
-              <span className="text-xl">📧</span>
-              <div className="text-[10px] space-y-0.5">
-                <div className="font-extrabold text-white">Đã gửi: 100+ Prompt ChatGPT...</div>
-                <div className="text-white/40 font-mono">Người nhận: luan.nguyen***@gmail.com</div>
+          <TiltCard className="md:col-span-1 rounded-3xl">
+            <div className="bg-[#0f1422]/60 rounded-3xl border border-white/10 p-8 text-left space-y-6 flex flex-col justify-between overflow-hidden relative group hover:border-[#3b82f6]/30 transition-all duration-500 h-full">
+              <div className="absolute -inset-px bg-gradient-to-tr from-[#3b82f6]/0 via-transparent to-[#3b82f6]/10 rounded-3xl opacity-0 group-hover:opacity-100 transition duration-500 pointer-events-none"></div>
+              <div className="space-y-2" style={{ transform: 'translateZ(15px)' }}>
+                <div className="text-[10px] uppercase font-extrabold tracking-widest text-[#3b82f6]">Giao hàng số</div>
+                <h3 className="text-xl font-extrabold text-white">Tự động bàn giao File</h3>
+                <p className="text-sm text-white/50 leading-relaxed">File tài liệu, khóa học được gửi trực tiếp qua email của khách hàng ngay khi thanh toán thành công.</p>
+              </div>
+              {/* Visual delivery simulation inside card */}
+              <div className="bg-white/[0.02] border border-white/5 p-3.5 rounded-2xl flex items-center gap-3 transform translate-y-3 group-hover:translate-y-0 transition-transform duration-500" style={{ transform: 'translateZ(20px)' }}>
+                <span className="text-xl">📧</span>
+                <div className="text-[10px] space-y-0.5">
+                  <div className="font-extrabold text-white">Đã gửi: 100+ Prompt ChatGPT...</div>
+                  <div className="text-white/40 font-mono">Người nhận: luan.nguyen***@gmail.com</div>
+                </div>
               </div>
             </div>
-          </div>
+          </TiltCard>
 
           {/* Bento Card 4: Gemini AI Assistant (width: md:col-span-2) */}
-          <div className="bg-[#0f1422]/60 rounded-3xl border border-white/5 p-8 text-left space-y-6 flex flex-col justify-between overflow-hidden relative group hover:border-brand-coral/30 transition-all duration-500">
-            <div className="absolute -inset-px bg-gradient-to-tr from-brand-coral/0 via-transparent to-brand-coral/10 rounded-3xl opacity-0 group-hover:opacity-100 transition duration-500 pointer-events-none"></div>
-            <div className="space-y-2">
-              <div className="text-[10px] uppercase font-extrabold tracking-widest text-brand-coral">Trí tuệ nhân tạo</div>
-              <h3 className="text-xl font-extrabold text-white">Viết Content bằng Gemini AI Pro</h3>
-              <p className="text-sm text-white/50 max-w-md leading-relaxed">Tự động tạo các bài viết bán hàng thôi miên trên Facebook để kéo traffic về Bio Link của bạn.</p>
-            </div>
-            {/* Visual AI Prompting inside card */}
-            <div className="bg-[#080b11]/80 rounded-2xl p-4 border border-white/10 flex flex-col gap-2 transform translate-y-3 group-hover:translate-y-0 transition-transform duration-500">
-              <div className="text-[9px] text-white/40 flex items-center justify-between">
-                <span>Prompt: "Viết bài tiếp thị Canva Template..."</span>
-                <span className="bg-brand-coral/20 text-brand-coral font-bold px-1.5 py-0.5 rounded text-[8px] font-mono">Gemini Pro</span>
+          <TiltCard className="md:col-span-2 rounded-3xl">
+            <div className="bg-[#0f1422]/60 rounded-3xl border border-white/10 p-8 text-left space-y-6 flex flex-col justify-between overflow-hidden relative group hover:border-brand-coral/30 transition-all duration-500 h-full">
+              <div className="absolute -inset-px bg-gradient-to-tr from-brand-coral/0 via-transparent to-brand-coral/10 rounded-3xl opacity-0 group-hover:opacity-100 transition duration-500 pointer-events-none"></div>
+              <div className="space-y-2" style={{ transform: 'translateZ(15px)' }}>
+                <div className="text-[10px] uppercase font-extrabold tracking-widest text-brand-coral">Trí tuệ nhân tạo</div>
+                <h3 className="text-xl font-extrabold text-white">Viết Content bằng Gemini AI Pro</h3>
+                <p className="text-sm text-white/50 max-w-md leading-relaxed">Tự động tạo các bài viết bán hàng thôi miên trên Facebook để kéo traffic về Bio Link của bạn.</p>
               </div>
-              <div className="text-[9px] text-white/70 italic line-clamp-2 leading-relaxed">
-                "🚀 Mở khóa kho Canva 500+ Mẫu thiết kế bán hàng kéo thả, tạo banner Shopee/Facebook siêu lung linh trong 3 giây..."
+              {/* Visual AI Prompting inside card */}
+              <div className="bg-[#080b11]/80 rounded-2xl p-4 border border-white/10 flex flex-col gap-2 transform translate-y-3 group-hover:translate-y-0 transition-transform duration-500" style={{ transform: 'translateZ(20px)' }}>
+                <div className="text-[9px] text-white/40 flex items-center justify-between">
+                  <span>Prompt: "Viết bài tiếp thị Canva Template..."</span>
+                  <span className="bg-brand-coral/20 text-brand-coral font-bold px-1.5 py-0.5 rounded text-[8px] font-mono">Gemini Pro</span>
+                </div>
+                <div className="text-[9px] text-white/70 italic line-clamp-2 leading-relaxed">
+                  "🚀 Mở khóa kho Canva 500+ Mẫu thiết kế bán hàng kéo thả, tạo banner Shopee/Facebook siêu lung linh trong 3 giây..."
+                </div>
               </div>
             </div>
-          </div>
+          </TiltCard>
         </div>
 
         {/* Top Creators Showroom */}
@@ -331,19 +415,21 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onNavigateToDashboard,
               { name: 'Khánh Vy', role: 'Content Creator', earning: '18.5Mđ', desc: 'Kiếm thu nhập thụ động từ việc chia sẻ file PDF bài giảng cực kỳ đơn giản.', avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=100&h=100&q=80' },
               { name: 'Hoàng Minh', role: 'Designer / Freelancer', earning: '22.4Mđ', desc: 'Tuyển 50+ CTV cùng phân phối bộ preset chỉnh ảnh Lightroom cao cấp.', avatar: 'https://images.unsplash.com/photo-1599566150163-29194dcaad36?auto=format&fit=crop&w=100&h=100&q=80' }
             ].map((creator, idx) => (
-              <div key={idx} className="bg-[#0f1422]/40 rounded-3xl border border-white/5 p-6 space-y-4 hover:border-brand-orange/20 transition-all duration-300 transform hover:-translate-y-1">
-                <div className="flex items-center gap-4">
-                  <img src={creator.avatar} alt={creator.name} className="w-12 h-12 rounded-full object-cover border border-white/10" />
-                  <div className="text-left">
-                    <h4 className="text-sm font-bold text-white">{creator.name}</h4>
-                    <p className="text-[10px] text-white/50">{creator.role}</p>
+              <TiltCard key={idx} className="rounded-3xl">
+                <div className="bg-[#0f1422]/40 rounded-3xl border border-white/10 p-6 space-y-4 hover:border-brand-orange/30 hover:shadow-lg hover:shadow-brand-orange/5 transition-all duration-300 h-full">
+                  <div className="flex items-center gap-4">
+                    <img src={creator.avatar} alt={creator.name} className="w-12 h-12 rounded-full object-cover border border-white/10 pointer-events-none" />
+                    <div className="text-left">
+                      <h4 className="text-sm font-bold text-white">{creator.name}</h4>
+                      <p className="text-[10px] text-white/50">{creator.role}</p>
+                    </div>
+                    <div className="ml-auto bg-brand-orange/15 border border-brand-orange/25 text-brand-orange text-xs font-black px-2.5 py-1 rounded-xl">
+                      +{creator.earning}
+                    </div>
                   </div>
-                  <div className="ml-auto bg-brand-orange/15 border border-brand-orange/25 text-brand-orange text-xs font-black px-2.5 py-1 rounded-xl">
-                    +{creator.earning}
-                  </div>
+                  <p className="text-xs text-white/60 leading-relaxed text-left">{creator.desc}</p>
                 </div>
-                <p className="text-xs text-white/60 leading-relaxed text-left">{creator.desc}</p>
-              </div>
+              </TiltCard>
             ))}
           </div>
         </div>
