@@ -197,7 +197,7 @@ Bên em đã tích hợp giải pháp này vào QuickBio:
 
         {/* Feature Grid */}
         <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-[#0c111d]/50 border border-white/5 p-6 rounded-2xl space-y-4 hover:border-brand-orange/20 transition-all duration-300">
+          <div className="bg-[#0c111d]/50 border border-white/10 p-6 rounded-2xl space-y-4 hover:border-brand-orange/30 hover:-translate-y-1 hover:shadow-lg hover:shadow-brand-orange/5 transition-all duration-300 ease-out cursor-pointer">
             <div className="w-12 h-12 rounded-xl bg-brand-orange/10 flex items-center justify-center text-brand-orange">
               <Clock className="w-6 h-6" />
             </div>
@@ -205,7 +205,7 @@ Bên em đã tích hợp giải pháp này vào QuickBio:
             <p className="text-xs text-white/50 leading-relaxed">Không bao giờ bỏ lỡ cuộc gọi đặt lịch của khách hàng, kể cả ngoài giờ làm việc, đêm khuya hay ngày nghỉ lễ.</p>
           </div>
 
-          <div className="bg-[#0c111d]/50 border border-white/5 p-6 rounded-2xl space-y-4 hover:border-brand-orange/20 transition-all duration-300">
+          <div className="bg-[#0c111d]/50 border border-white/10 p-6 rounded-2xl space-y-4 hover:border-brand-orange/30 hover:-translate-y-1 hover:shadow-lg hover:shadow-brand-orange/5 transition-all duration-300 ease-out cursor-pointer">
             <div className="w-12 h-12 rounded-xl bg-brand-orange/10 flex items-center justify-center text-brand-orange">
               <Zap className="w-6 h-6" />
             </div>
@@ -213,7 +213,7 @@ Bên em đã tích hợp giải pháp này vào QuickBio:
             <p className="text-xs text-white/50 leading-relaxed">Tự kết nối với cơ sở dữ liệu để tìm kiếm các khung giờ còn trống trong ngày và đề xuất trực tiếp cho khách chọn.</p>
           </div>
 
-          <div className="bg-[#0c111d]/50 border border-white/5 p-6 rounded-2xl space-y-4 hover:border-brand-orange/20 transition-all duration-300">
+          <div className="bg-[#0c111d]/50 border border-white/10 p-6 rounded-2xl space-y-4 hover:border-brand-orange/30 hover:-translate-y-1 hover:shadow-lg hover:shadow-brand-orange/5 transition-all duration-300 ease-out cursor-pointer">
             <div className="w-12 h-12 rounded-xl bg-brand-orange/10 flex items-center justify-center text-brand-orange">
               <DollarSign className="w-6 h-6" />
             </div>
@@ -223,7 +223,7 @@ Bên em đã tích hợp giải pháp này vào QuickBio:
         </section>
 
         {/* Outbound Call Demo Section */}
-        <section className="bg-gradient-to-b from-[#0f1422] to-[#080b11] border border-white/5 p-8 rounded-3xl space-y-8 max-w-xl mx-auto shadow-2xl relative">
+        <section className="bg-gradient-to-b from-[#0f1422] to-[#080b11] border border-white/10 p-8 rounded-3xl space-y-8 max-w-xl mx-auto shadow-2xl relative backdrop-blur-md">
           <div className="absolute top-4 right-4 text-xs font-bold text-brand-orange/40">DEMO TRỰC TIẾP</div>
           <div className="text-center space-y-2">
             <h2 className="text-xl font-bold">Hãy Để AI Gọi Điện Cho Bạn!</h2>
@@ -238,7 +238,7 @@ Bên em đã tích hợp giải pháp này vào QuickBio:
                 placeholder="Ví dụ: Nguyễn Văn A"
                 value={customerName}
                 onChange={(e) => setCustomerName(e.target.value)}
-                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-orange transition-colors"
+                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-orange focus:ring-2 focus:ring-brand-orange/20 transition-all duration-200"
                 required
               />
             </div>
@@ -249,7 +249,7 @@ Bên em đã tích hợp giải pháp này vào QuickBio:
                 placeholder="Ví dụ: 0912345678"
                 value={customerPhone}
                 onChange={(e) => setCustomerPhone(e.target.value)}
-                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-orange transition-colors"
+                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-orange focus:ring-2 focus:ring-brand-orange/20 transition-all duration-200"
                 required
               />
             </div>
@@ -288,7 +288,7 @@ Bên em đã tích hợp giải pháp này vào QuickBio:
         </section>
 
         {/* Affiliate Link Generator Section */}
-        <section className="bg-[#0a0f1d] border border-white/5 p-8 rounded-3xl space-y-6">
+        <section className="bg-[#0a0f1d]/85 border border-white/10 p-8 rounded-3xl space-y-6 backdrop-blur-md shadow-xl">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div className="space-y-1">
               <h2 className="text-lg font-bold flex items-center gap-2">
@@ -304,7 +304,7 @@ Bên em đã tích hợp giải pháp này vào QuickBio:
                 placeholder="Nhập mã CTV của bạn..."
                 value={affCode}
                 onChange={(e) => setAffCode(e.target.value)}
-                className="bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:border-brand-orange transition-colors w-full md:w-48"
+                className="bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:border-brand-orange focus:ring-2 focus:ring-brand-orange/20 transition-all duration-200 w-full md:w-48"
               />
               <button
                 onClick={handleCopyLink}
@@ -342,7 +342,7 @@ Bên em đã tích hợp giải pháp này vào QuickBio:
 
           <div className="space-y-6">
             {viralPosts.map((post, index) => (
-              <div key={index} className="bg-[#0a0f1d] border border-white/5 rounded-3xl p-6 space-y-4">
+              <div key={index} className="bg-[#0a0f1d]/80 border border-white/10 rounded-3xl p-6 space-y-4 hover:border-brand-orange/20 transition-colors duration-300">
                 <div className="flex justify-between items-center border-b border-white/5 pb-4">
                   <h4 className="text-sm font-bold text-brand-orange">{post.title}</h4>
                   <button

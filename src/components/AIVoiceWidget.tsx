@@ -6,6 +6,7 @@ export const AIVoiceWidget: React.FC = () => {
   const [isCallActive, setIsCallActive] = useState(false);
   const [connecting, setConnecting] = useState(false);
   const [isListening, setIsListening] = useState(false);
+  const [volume, setVolume] = useState(0);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   const vapiRef = useRef<Vapi | null>(null);
@@ -38,6 +39,7 @@ export const AIVoiceWidget: React.FC = () => {
         setIsCallActive(false);
         setConnecting(false);
         setIsListening(false);
+        setVolume(0);
       });
 
       vapiInstance.on('speech-start', () => {
@@ -48,11 +50,16 @@ export const AIVoiceWidget: React.FC = () => {
         setIsListening(false);
       });
 
+      vapiInstance.on('volume-level', (vol: number) => {
+        setVolume(vol);
+      });
+
       vapiInstance.on('error', (err: any) => {
         console.error('Vapi Web SDK Error:', err);
         setErrorMsg(err.message || 'Lỗi kết nối máy chủ thoại.');
         setIsCallActive(false);
         setConnecting(false);
+        setVolume(0);
       });
     } catch (e: any) {
       console.error('Khởi tạo Vapi thất bại:', e);
@@ -114,25 +121,29 @@ export const AIVoiceWidget: React.FC = () => {
       <div className="flex items-center gap-3">
         {/* Trạng thái sóng âm động khi đang gọi */}
         {isCallActive && (
-          <div className="bg-[#0f1422]/80 border border-white/5 backdrop-blur-md py-2 px-4 rounded-full flex items-center gap-2 shadow-lg animate-fade-in">
+          <div className="bg-[#0f1422]/80 border border-white/5 backdrop-blur-md py-2 px-4 rounded-full flex items-center gap-3 shadow-lg animate-fade-in">
             <span className="text-[10px] text-white/60 tracking-wider">
               {isListening ? 'AI ĐANG NGHE...' : 'AI ĐANG NÓI...'}
             </span>
-            <div className="flex gap-0.5 items-end h-3">
-              {[...Array(5)].map((_, i) => (
-                <div
-                  key={i}
-                  className={`w-0.5 bg-brand-orange rounded-full transition-all duration-300 ${
-                    isCallActive && isListening
-                      ? 'animate-[pulse_1s_infinite]'
-                      : 'h-1'
-                  }`}
-                  style={{
-                    height: isCallActive && isListening ? `${Math.floor(Math.random() * 8) + 4}px` : '4px',
-                    animationDelay: `${i * 0.15}s`
-                  }}
-                />
-              ))}
+            <div className="flex gap-1 items-end h-5">
+              {[...Array(5)].map((_, i) => {
+                // Tạo biên độ sóng nhảy múa theo volume thực của AI/Người nói
+                const baseHeight = 4;
+                const sensitivity = [12, 28, 40, 24, 14][i]; // Độ nhạy khác nhau cho từng cột
+                const computedHeight = isCallActive 
+                  ? Math.min(24, Math.floor(baseHeight + volume * sensitivity))
+                  : baseHeight;
+
+                return (
+                  <div
+                    key={i}
+                    className="w-0.75 bg-brand-orange rounded-full transition-all duration-75"
+                    style={{
+                      height: `${computedHeight}px`
+                    }}
+                  />
+                );
+              })}
             </div>
           </div>
         )}
@@ -140,7 +151,9 @@ export const AIVoiceWidget: React.FC = () => {
         {/* Nút cuộc gọi chính */}
         <button
           onClick={handleToggleCall}
-          className={`relative w-14 h-14 rounded-full flex items-center justify-center shadow-2xl transition-all duration-500 transform hover:scale-105 active:scale-95 ${
+          aria-label={isCallActive ? 'Kết thúc cuộc gọi với trợ lý ảo' : 'Bắt đầu cuộc gọi với trợ lý ảo'}
+          title={isCallActive ? 'Kết thúc cuộc gọi' : 'Bắt đầu trò chuyện'}
+          className={`relative w-14 h-14 rounded-full flex items-center justify-center shadow-2xl transition-all duration-500 transform hover:scale-105 active:scale-95 cursor-pointer touch-target ${
             isCallActive 
               ? 'bg-red-500 hover:bg-red-600 shadow-red-500/20' 
               : connecting
