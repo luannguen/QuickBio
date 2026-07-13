@@ -7,8 +7,9 @@ import { PublicBio } from './features/public-bio/PublicBio';
 import { KiemTienPage } from './features/landing/KiemTienPage';
 import { AIVoiceLandingPage } from './features/landing/AIVoiceLandingPage';
 import { AdminDashboard } from './features/admin/AdminDashboard';
+import { SamTayNguyenLanding } from './features/landing/SamTayNguyenLanding';
 
-type ViewType = 'landing' | 'dashboard' | 'bio-builder' | 'bio-public' | 'kiem-tien' | 'tong-dai-ai' | 'admin';
+type ViewType = 'landing' | 'dashboard' | 'bio-builder' | 'bio-public' | 'kiem-tien' | 'tong-dai-ai' | 'admin' | 'sam-tay-nguyen';
 
 function App() {
   const { user, loading } = useAuth();
@@ -16,7 +17,7 @@ function App() {
   // Tự động lấy slug từ path của URL (ví dụ: localhost:5173/luannguyen -> slug là luannguyen)
   const getSlugFromPath = () => {
     const path = window.location.pathname.replace(/^\/|\/$/g, '');
-    if (!path || ['dashboard', 'bio-builder', 'landing', 'kiem-tien', 'tong-dai-ai', 'admin'].includes(path)) {
+    if (!path || ['dashboard', 'bio-builder', 'landing', 'kiem-tien', 'tong-dai-ai', 'admin', 'sam-tay-nguyen'].includes(path)) {
       return null;
     }
     return path;
@@ -29,6 +30,7 @@ function App() {
     if (path === 'kiem-tien') return 'kiem-tien';
     if (path === 'tong-dai-ai') return 'tong-dai-ai';
     if (path === 'admin') return 'admin';
+    if (path === 'sam-tay-nguyen') return 'sam-tay-nguyen';
     if (path && !['landing'].includes(path)) {
       return 'bio-public';
     }
@@ -79,6 +81,8 @@ function App() {
           setView('tong-dai-ai');
         } else if (path === 'admin') {
           setView('admin');
+        } else if (path === 'sam-tay-nguyen') {
+          setView('sam-tay-nguyen');
         } else {
           setView('landing');
         }
@@ -105,6 +109,8 @@ function App() {
       window.history.pushState({}, '', '/tong-dai-ai');
     } else if (newView === 'admin') {
       window.history.pushState({}, '', '/admin');
+    } else if (newView === 'sam-tay-nguyen') {
+      window.history.pushState({}, '', '/sam-tay-nguyen');
     } else {
       window.history.pushState({}, '', '/');
     }
@@ -181,6 +187,13 @@ function App() {
     case 'admin':
       return (
         <AdminDashboard 
+          onNavigateToHome={() => navigateTo('landing')}
+        />
+      );
+
+    case 'sam-tay-nguyen':
+      return (
+        <SamTayNguyenLanding 
           onNavigateToHome={() => navigateTo('landing')}
         />
       );
