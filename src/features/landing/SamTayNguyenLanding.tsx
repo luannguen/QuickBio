@@ -61,60 +61,60 @@ export function SamTayNguyenLanding({ onNavigateToHome }: SamTayNguyenLandingPro
               label: 'Khởi nguồn',
               still: '/assets/sam/misty_tea_hills.png',
               accent: '#D4AF37',
-              eyebrow: 'Món quà sức khỏe từ đại ngàn',
-              title: 'Thân Tâm Hợp Nhất',
-              body: 'Trà sâm thảo dược kết hợp 4 loại danh sâm quý hiếm của vùng núi Tây Nguyên và Ấn Độ, mang lại giấc ngủ sâu, tinh thần thư giãn và nguồn sinh lực căng tràn.',
-              tags: ['100% Tự Nhiên', 'Không Chất Bảo Quản', 'Đất đỏ Bazan']
+              eyebrow: 'Câu chuyện Hapico Sâm',
+              title: 'Tỉnh Giấc Giữa Đại Ngàn',
+              body: 'Từ ngàn đời xưa, bazan đỏ rực nung mình dưới nắng gió Tây Nguyên đã nuôi dưỡng những mạch ngầm thảo dược vô giá. Mỗi búp trà sâm Hapico là sự giao hòa đất trời, đánh thức nguồn sinh lực nguyên bản ẩn sâu trong cơ thể bạn.',
+              tags: ['Đất đỏ Bazan', 'Tinh hoa đại ngàn', 'Sức sống nguyên bản']
             },
             {
               id: 'sam-an-do',
               label: 'Sâm Ấn Độ',
               still: '/assets/sam/ashwagandha_diorama.png',
               accent: '#E2A35D',
-              eyebrow: 'Thảo dược thần kỳ (Ashwagandha)',
-              title: 'Giải Phóng Căng Thẳng',
-              body: 'Ashwagandha giúp xoa dịu hệ thần kinh trung ương, điều hòa hormone stress cortisol hiệu quả, đem lại giấc ngủ ngon và phục hồi năng lượng tinh thần nhanh chóng.',
-              tags: ['Giảm lo âu', 'Giúp ngủ sâu', 'Thư giãn tâm trí']
+              eyebrow: 'Sâm Ấn Độ — Ashwagandha',
+              title: 'Tĩnh Lặng Giữa Giông Bão',
+              body: 'Áp lực cuộc sống hiện đại liên tục bòn rút năng lượng tinh thần mỗi ngày. Ashwagandha đóng vai trò như một chiếc khiên cổ xưa giúp xoa dịu hệ thần kinh trung ương, điều hòa hormone stress cortisol và khôi phục nhịp ngủ tự nhiên sâu sắc.',
+              tags: ['Hạ cortisol stress', 'Tái sinh giấc ngủ', 'Chữa lành cảm xúc']
             },
             {
               id: 'sam-bo-chinh',
               label: 'Sâm Bố Chính',
               still: '/assets/sam/sam_bo_chinh_diorama.png',
               accent: '#FF8E7A',
-              eyebrow: 'Sâm Tiến Vua thượng hạng',
-              title: 'Hồi Sinh Đề Kháng',
-              body: 'Tích lũy trọn vẹn tinh túy saponin và chất nhầy quý giá từ lòng đất đỏ bazan Tây Nguyên, giúp bồi bổ khí huyết, kiện tỳ vị và gia cố hệ miễn dịch vững vàng.',
-              tags: ['Tăng miễn dịch', 'Bồi bổ khí huyết', 'Nâng cao thể lực']
+              eyebrow: 'Sâm Tiến Vua — Sâm Bố Chính',
+              title: 'Vương Dược Tiến Vua',
+              body: 'Từng được các vương triều phong kiến coi là quốc bảo bồi bổ sức khỏe cho các bậc quân vương, Sâm Bố Chính dồi dào chất nhầy quý và hoạt tính Saponin, giúp củng cố vững chắc hàng rào đề kháng và hồi sinh thể trạng.',
+              tags: ['Saponin hoạt tính', 'Củng cố đề kháng', 'Bồi bổ khí huyết']
             },
             {
               id: 'linh-chi-do',
               label: 'Linh Chi Đỏ',
               still: '/assets/sam/linh_chi_diorama.png',
               accent: '#A94444',
-              eyebrow: 'Nấm Trường Thọ rừng sâu',
-              title: 'Thanh Lọc Thải Độc',
-              body: 'Linh Chi đỏ hỗ trợ tăng cường tế bào gan đào thải độc tố, điều hòa huyết áp, dọn sạch gốc tự do và ngăn ngừa quá trình lão hóa tự nhiên.',
-              tags: ['Đào thải độc tố', 'Mát gan lợi mật', 'Chống oxy hóa']
+              eyebrow: 'Nấm Trường Thọ — Linh Chi Đỏ',
+              title: 'Thanh Lọc Lại Tâm Hồn',
+              body: 'Một cơ thể khỏe mạnh đích thực bắt đầu từ sự thanh sạch sâu bên trong. Linh Chi Đỏ rừng sâu hỗ trợ đào thải mọi độc tố tích tụ lâu ngày do căng thẳng và thực phẩm bẩn, mang lại sự nhẹ nhõm nhẹ nhàng.',
+              tags: ['Đào thải độc tố gan', 'Mát gan thanh nhiệt', 'Ngăn gốc tự do']
             },
             {
               id: 'dinh-lang',
               label: 'Đinh Lăng',
               still: '/assets/sam/golden_ginseng_brew.png',
               accent: '#8CAF68',
-              eyebrow: 'Hoạt huyết dưỡng não',
-              title: 'Tuần Hoàn Sinh Lực',
-              body: 'Đinh Lăng cổ thụ lâu năm hỗ trợ kích thích lưu thông tuần hoàn máu não, đẩy lùi các triệu chứng đau đầu, mất tập trung và duy trì cơ thể dẻo dai.',
-              tags: ['Hoạt huyết dưỡng não', 'Tăng tuần hoàn', 'Tập trung trí óc']
+              eyebrow: 'Sâm của người Việt — Đinh Lăng',
+              title: 'Thông Suốt Mạch Khí Huyết',
+              body: 'Khi dòng chảy máu huyết không thông suốt, trí óc sẽ rơi vào sương mù mệt mỏi. Đinh Lăng cổ thụ hoạt huyết dưỡng não vượt trội, đẩy oxy đến từng tế bào thần kinh, khơi dậy tinh thần minh mẫn, sắc bén.',
+              tags: ['Hoạt huyết dưỡng não', 'Xua tan mệt mỏi', 'Tăng thể lực dẻo dai']
             },
             {
               id: 'thuong-tra',
               label: 'Đặt Mua',
               still: '/assets/sam/sam_tea_packaging.png',
               accent: '#D4AF37',
-              eyebrow: 'Hộp quà sức khỏe thượng hạng',
+              eyebrow: 'Hapico Sâm — Trà Sâm Thượng Hạng',
               title: 'Thưởng Trà An Yên',
-              body: 'Tinh tế từ hương vị đến quy cách đóng gói. Hapico Sâm cam kết mang lại trải nghiệm thiền trà đích thực với 100% thảo dược thiên nhiên.',
-              tags: ['Hộp 20 túi lọc', 'Dễ uống nóng/lạnh', 'Hương vị thảo mộc tự nhiên'],
+              body: 'Đón nhận hương vị đượm ngọt sâu lắng của đại ngàn Tây Nguyên trong từng túi lọc Hapico Sâm cao cấp. 100% thảo mộc tự nhiên, cam kết không sử dụng hương liệu nhân tạo hay chất bảo quản. Một món quà vàng bảo vệ sức khỏe vàng.',
+              tags: ['Hộp 20 túi lọc', '100% tự nhiên', 'Đánh thức thân tâm'],
               cta: {
                 primary: { label: 'Đặt mua ngay - 189K', href: '#buy' },
                 secondary: { label: 'Quay lại Trang chủ', href: '/' }
