@@ -6,8 +6,9 @@ import { BioBuilder } from './features/bio-builder/BioBuilder';
 import { PublicBio } from './features/public-bio/PublicBio';
 import { KiemTienPage } from './features/landing/KiemTienPage';
 import { AIVoiceLandingPage } from './features/landing/AIVoiceLandingPage';
+import { AdminDashboard } from './features/admin/AdminDashboard';
 
-type ViewType = 'landing' | 'dashboard' | 'bio-builder' | 'bio-public' | 'kiem-tien' | 'tong-dai-ai';
+type ViewType = 'landing' | 'dashboard' | 'bio-builder' | 'bio-public' | 'kiem-tien' | 'tong-dai-ai' | 'admin';
 
 function App() {
   const { user, loading } = useAuth();
@@ -15,7 +16,7 @@ function App() {
   // Tự động lấy slug từ path của URL (ví dụ: localhost:5173/luannguyen -> slug là luannguyen)
   const getSlugFromPath = () => {
     const path = window.location.pathname.replace(/^\/|\/$/g, '');
-    if (!path || ['dashboard', 'bio-builder', 'landing', 'kiem-tien', 'tong-dai-ai'].includes(path)) {
+    if (!path || ['dashboard', 'bio-builder', 'landing', 'kiem-tien', 'tong-dai-ai', 'admin'].includes(path)) {
       return null;
     }
     return path;
@@ -27,6 +28,7 @@ function App() {
     if (path === 'bio-builder') return 'bio-builder';
     if (path === 'kiem-tien') return 'kiem-tien';
     if (path === 'tong-dai-ai') return 'tong-dai-ai';
+    if (path === 'admin') return 'admin';
     if (path && !['landing'].includes(path)) {
       return 'bio-public';
     }
@@ -75,6 +77,8 @@ function App() {
           setView('kiem-tien');
         } else if (path === 'tong-dai-ai') {
           setView('tong-dai-ai');
+        } else if (path === 'admin') {
+          setView('admin');
         } else {
           setView('landing');
         }
@@ -99,6 +103,8 @@ function App() {
       window.history.pushState({}, '', '/kiem-tien');
     } else if (newView === 'tong-dai-ai') {
       window.history.pushState({}, '', '/tong-dai-ai');
+    } else if (newView === 'admin') {
+      window.history.pushState({}, '', '/admin');
     } else {
       window.history.pushState({}, '', '/');
     }
@@ -135,7 +141,6 @@ function App() {
         <Dashboard 
           onNavigateToBioBuilder={() => navigateTo('bio-builder')}
           onNavigateToBioPublic={(slug) => navigateTo('bio-public', slug)}
-          onNavigateToHome={() => navigateTo('landing')}
         />
       );
 
@@ -169,6 +174,13 @@ function App() {
     case 'tong-dai-ai':
       return (
         <AIVoiceLandingPage 
+          onNavigateToHome={() => navigateTo('landing')}
+        />
+      );
+
+    case 'admin':
+      return (
+        <AdminDashboard 
           onNavigateToHome={() => navigateTo('landing')}
         />
       );
