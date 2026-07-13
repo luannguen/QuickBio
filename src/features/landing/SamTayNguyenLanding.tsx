@@ -9,7 +9,7 @@ interface SamTayNguyenLandingProps {
 }
 
 const SAM_PRODUCT: Product = {
-  id: 'sam-tay-nguyen-pro',
+  id: '9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb7d',
   user_id: '', // Sẽ được gán động
   name: 'Hộp Trà Sâm Tây Nguyên Thượng Hạng (20 gói x 5g)',
   price: 189000,

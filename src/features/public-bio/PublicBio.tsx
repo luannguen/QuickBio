@@ -281,7 +281,7 @@ export const PublicBio: React.FC<PublicBioProps> = ({ slug, onNavigateToLanding,
               {products[0] && (
                 <div 
                   onClick={() => {
-                    if (products[0].id === 'sam-tay-nguyen-pro' && onNavigateToSam) {
+                    if (products[0].id === '9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb7d' && onNavigateToSam) {
                       onNavigateToSam();
                     } else {
                       setActiveProduct(products[0]);
@@ -355,7 +355,7 @@ export const PublicBio: React.FC<PublicBioProps> = ({ slug, onNavigateToLanding,
                   key={product.id} 
                   className="glass-card rounded-3xl p-5 border border-white/5 hover:border-brand-orange/20 hover:bg-white/[0.04] transition-all duration-300 flex flex-col sm:flex-row gap-5 transform hover:-translate-y-1 hover:shadow-2xl hover:shadow-black/40 relative overflow-hidden group text-left"
                   onClick={() => {
-                    if (product.id === 'sam-tay-nguyen-pro' && onNavigateToSam) {
+                    if (product.id === '9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb7d' && onNavigateToSam) {
                       onNavigateToSam();
                     } else {
                       setActiveProduct(product);
