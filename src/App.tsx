@@ -167,6 +167,7 @@ function App() {
         <PublicBio 
           slug={activeSlug}
           onNavigateToLanding={() => navigateTo('landing')}
+          onNavigateToSam={() => navigateTo('sam-tay-nguyen')}
         />
       );
 

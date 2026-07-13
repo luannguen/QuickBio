@@ -19,9 +19,10 @@ import {
 interface PublicBioProps {
   slug: string;
   onNavigateToLanding?: () => void;
+  onNavigateToSam?: () => void;
 }
 
-export const PublicBio: React.FC<PublicBioProps> = ({ slug, onNavigateToLanding }) => {
+export const PublicBio: React.FC<PublicBioProps> = ({ slug, onNavigateToLanding, onNavigateToSam }) => {
   const [bio, setBio] = useState<BioLink | null>(null);
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -279,7 +280,13 @@ export const PublicBio: React.FC<PublicBioProps> = ({ slug, onNavigateToLanding 
               {/* Featured Product Hero Banner */}
               {products[0] && (
                 <div 
-                  onClick={() => setActiveProduct(products[0])}
+                  onClick={() => {
+                    if (products[0].id === 'sam-tay-nguyen-pro' && onNavigateToSam) {
+                      onNavigateToSam();
+                    } else {
+                      setActiveProduct(products[0]);
+                    }
+                  }}
                   className="cursor-pointer bg-[#0f1422]/60 rounded-3xl border border-white/10 p-6 flex flex-col md:flex-row gap-6 relative overflow-hidden group hover:border-brand-orange/30 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-brand-orange/5 text-left"
                 >
                   {/* Glowing pulsing border shadow */}
@@ -347,7 +354,13 @@ export const PublicBio: React.FC<PublicBioProps> = ({ slug, onNavigateToLanding 
                 <div 
                   key={product.id} 
                   className="glass-card rounded-3xl p-5 border border-white/5 hover:border-brand-orange/20 hover:bg-white/[0.04] transition-all duration-300 flex flex-col sm:flex-row gap-5 transform hover:-translate-y-1 hover:shadow-2xl hover:shadow-black/40 relative overflow-hidden group text-left"
-                  onClick={() => setActiveProduct(product)}
+                  onClick={() => {
+                    if (product.id === 'sam-tay-nguyen-pro' && onNavigateToSam) {
+                      onNavigateToSam();
+                    } else {
+                      setActiveProduct(product);
+                    }
+                  }}
                 >
                   {/* Glowing background on hover */}
                   <div className="absolute inset-0 bg-gradient-to-tr from-brand-orange/0 via-white/0 to-brand-coral/0 group-hover:from-brand-orange/[0.02] group-hover:to-brand-coral/[0.02] transition-colors duration-500 pointer-events-none"></div>

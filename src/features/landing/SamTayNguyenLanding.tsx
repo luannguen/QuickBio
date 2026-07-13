@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { CheckoutModal } from '../../components/CheckoutModal';
 import { bioService } from '../../services/bioService';
 import type { Product } from '../../services/productService';
+import { supabase, isSupabaseConfigured, mockDb } from '../../services/supabase';
 
 interface SamTayNguyenLandingProps {
   onNavigateToHome: () => void;
@@ -29,6 +30,51 @@ export function SamTayNguyenLanding({ onNavigateToHome }: SamTayNguyenLandingPro
     bioService.getBioBySlug('luannguyen').then((bio) => {
       if (bio) {
         setCreatorId(bio.user_id);
+
+        // Đảm bảo sản phẩm Hapico Sâm tồn tại trong danh sách sản phẩm của admin
+        const syncProduct = async () => {
+          try {
+            if (isSupabaseConfigured && supabase) {
+              const { data } = await supabase
+                .from('products')
+                .select('id')
+                .eq('id', SAM_PRODUCT.id)
+                .maybeSingle();
+
+              if (!data) {
+                await supabase.from('products').insert({
+                  id: SAM_PRODUCT.id,
+                  user_id: bio.user_id,
+                  name: SAM_PRODUCT.name,
+                  description: SAM_PRODUCT.description,
+                  price: SAM_PRODUCT.price,
+                  cover_image_url: SAM_PRODUCT.cover_image_url,
+                  file_url: SAM_PRODUCT.file_url,
+                  status: 'active'
+                });
+              }
+            } else {
+              const products = mockDb.get('products');
+              const hasProduct = products.some((p: any) => p.id === SAM_PRODUCT.id);
+              if (!hasProduct) {
+                mockDb.insert('products', {
+                  id: SAM_PRODUCT.id,
+                  user_id: bio.user_id,
+                  name: SAM_PRODUCT.name,
+                  description: SAM_PRODUCT.description,
+                  price: SAM_PRODUCT.price,
+                  cover_image_url: SAM_PRODUCT.cover_image_url,
+                  file_url: SAM_PRODUCT.file_url,
+                  status: 'active'
+                });
+              }
+            }
+          } catch (error) {
+            console.error('Failed to sync Hapico Sam product:', error);
+          }
+        };
+
+        syncProduct();
       }
     });
 
@@ -64,7 +110,8 @@ export function SamTayNguyenLanding({ onNavigateToHome }: SamTayNguyenLandingPro
               eyebrow: 'Câu chuyện Hapico Sâm',
               title: 'Tỉnh Giấc Giữa Đại Ngàn',
               body: 'Từ ngàn đời xưa, bazan đỏ rực nung mình dưới nắng gió Tây Nguyên đã nuôi dưỡng những mạch ngầm thảo dược vô giá. Mỗi búp trà sâm Hapico là sự giao hòa đất trời, đánh thức nguồn sinh lực nguyên bản ẩn sâu trong cơ thể bạn.',
-              tags: ['Đất đỏ Bazan', 'Tinh hoa đại ngàn', 'Sức sống nguyên bản']
+              tags: ['Đất đỏ Bazan', 'Tinh hoa đại ngàn', 'Sức sống nguyên bản'],
+              objectPosition: 'center 45%'
             },
             {
               id: 'sam-an-do',
@@ -74,7 +121,8 @@ export function SamTayNguyenLanding({ onNavigateToHome }: SamTayNguyenLandingPro
               eyebrow: 'Sâm Ấn Độ — Ashwagandha',
               title: 'Tĩnh Lặng Giữa Giông Bão',
               body: 'Áp lực cuộc sống hiện đại liên tục bòn rút năng lượng tinh thần mỗi ngày. Ashwagandha đóng vai trò như một chiếc khiên cổ xưa giúp xoa dịu hệ thần kinh trung ương, điều hòa hormone stress cortisol và khôi phục nhịp ngủ tự nhiên sâu sắc.',
-              tags: ['Hạ cortisol stress', 'Tái sinh giấc ngủ', 'Chữa lành cảm xúc']
+              tags: ['Hạ cortisol stress', 'Tái sinh giấc ngủ', 'Chữa lành cảm xúc'],
+              objectPosition: 'center 58%'
             },
             {
               id: 'sam-bo-chinh',
@@ -84,7 +132,8 @@ export function SamTayNguyenLanding({ onNavigateToHome }: SamTayNguyenLandingPro
               eyebrow: 'Sâm Tiến Vua — Sâm Bố Chính',
               title: 'Vương Dược Tiến Vua',
               body: 'Từng được các vương triều phong kiến coi là quốc bảo bồi bổ sức khỏe cho các bậc quân vương, Sâm Bố Chính dồi dào chất nhầy quý và hoạt tính Saponin, giúp củng cố vững chắc hàng rào đề kháng và hồi sinh thể trạng.',
-              tags: ['Saponin hoạt tính', 'Củng cố đề kháng', 'Bồi bổ khí huyết']
+              tags: ['Saponin hoạt tính', 'Củng cố đề kháng', 'Bồi bổ khí huyết'],
+              objectPosition: 'center 56%'
             },
             {
               id: 'linh-chi-do',
@@ -94,7 +143,8 @@ export function SamTayNguyenLanding({ onNavigateToHome }: SamTayNguyenLandingPro
               eyebrow: 'Nấm Trường Thọ — Linh Chi Đỏ',
               title: 'Thanh Lọc Lại Tâm Hồn',
               body: 'Một cơ thể khỏe mạnh đích thực bắt đầu từ sự thanh sạch sâu bên trong. Linh Chi Đỏ rừng sâu hỗ trợ đào thải mọi độc tố tích tụ lâu ngày do căng thẳng và thực phẩm bẩn, mang lại sự nhẹ nhõm nhẹ nhàng.',
-              tags: ['Đào thải độc tố gan', 'Mát gan thanh nhiệt', 'Ngăn gốc tự do']
+              tags: ['Đào thải độc tố gan', 'Mát gan thanh nhiệt', 'Ngăn gốc tự do'],
+              objectPosition: 'center 54%'
             },
             {
               id: 'dinh-lang',
@@ -104,7 +154,8 @@ export function SamTayNguyenLanding({ onNavigateToHome }: SamTayNguyenLandingPro
               eyebrow: 'Sâm của người Việt — Đinh Lăng',
               title: 'Thông Suốt Mạch Khí Huyết',
               body: 'Khi dòng chảy máu huyết không thông suốt, trí óc sẽ rơi vào sương mù mệt mỏi. Đinh Lăng cổ thụ hoạt huyết dưỡng não vượt trội, đẩy oxy đến từng tế bào thần kinh, khơi dậy tinh thần minh mẫn, sắc bén.',
-              tags: ['Hoạt huyết dưỡng não', 'Xua tan mệt mỏi', 'Tăng thể lực dẻo dai']
+              tags: ['Hoạt huyết dưỡng não', 'Xua tan mệt mỏi', 'Tăng thể lực dẻo dai'],
+              objectPosition: 'center 62%'
             },
             {
               id: 'thuong-tra',
@@ -118,7 +169,8 @@ export function SamTayNguyenLanding({ onNavigateToHome }: SamTayNguyenLandingPro
               cta: {
                 primary: { label: 'Đặt mua ngay - 189K', href: '#buy' },
                 secondary: { label: 'Quay lại Trang chủ', href: '/' }
-              }
+              },
+              objectPosition: 'center 50%'
             }
           ]
         });
