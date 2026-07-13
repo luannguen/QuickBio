@@ -35,6 +35,31 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ product, creatorId
   const [orderBumpChecked, setOrderBumpChecked] = useState(false);
   const [bumpProduct, setBumpProduct] = useState<Product | null>(null);
   
+  const [showPromoInput, setShowPromoInput] = useState(false);
+
+  // Gesture States for Swipe-Down-To-Close on Mobile
+  const [touchStart, setTouchStart] = useState<number | null>(null);
+  const [touchEnd, setTouchEnd] = useState<number | null>(null);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchStart(e.targetTouches[0].clientY);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientY);
+  };
+
+  const handleTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    const distance = touchEnd - touchStart;
+    const isSwipeDown = distance > 100; // Swipe down threshold in px
+    if (isSwipeDown) {
+      onClose();
+    }
+    setTouchStart(null);
+    setTouchEnd(null);
+  };
+
   const pollingInterval = useRef<any>(null);
 
   // Countdown effect
@@ -182,7 +207,14 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ product, creatorId
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-      <div className="relative w-full max-w-md glass-card rounded-2xl overflow-hidden border border-white/10 animate-float-slow">
+      <div 
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+        className="relative w-full max-w-md glass-card rounded-2xl overflow-hidden border border-white/10 animate-float-slow touch-pan-x"
+      >
+        {/* Drag Handle for Swipe-Down-To-Close on Mobile */}
+        <div className="w-12 h-1 bg-white/20 rounded-full mx-auto mt-3 cursor-row-resize sm:hidden"></div>
         
         {/* Header */}
         <div className="flex justify-between items-center p-5 border-b border-white/5">
@@ -190,7 +222,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ product, creatorId
             <Sparkles className="w-5 h-5 text-brand-orange animate-pulse" />
             {step === 'form' ? 'Thông tin mua hàng' : step === 'qr' ? 'Thanh toán đơn hàng' : 'Thanh toán thành công'}
           </h3>
-          <button onClick={onClose} className="p-1 rounded-full hover:bg-white/10 text-white/60 hover:text-white transition-colors">
+          <button onClick={onClose} className="p-2 rounded-full hover:bg-white/10 text-white/60 hover:text-white transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center">
             <X className="w-5 h-5" />
           </button>
         </div>
@@ -198,16 +230,16 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ product, creatorId
         {/* Form điền thông tin */}
         {step === 'form' && (
           <form onSubmit={handleCheckout} className="p-6 space-y-4">
-            <div className="bg-brand-card/50 p-4 rounded-xl border border-white/5 flex gap-4">
+            <div className="bg-brand-card/50 p-3 rounded-xl border border-white/5 flex gap-3 text-left">
               <img 
                 src={product.cover_image_url || 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=150&h=100&q=80'} 
                 alt={product.name} 
-                className="w-20 h-20 object-cover rounded-lg border border-white/10"
+                className="w-14 h-14 object-cover rounded-lg border border-white/10"
               />
               <div className="flex-1 min-w-0">
-                <h4 className="font-medium text-white truncate">{product.name}</h4>
-                <p className="text-sm text-white/50 line-clamp-1 mt-1">{product.description}</p>
-                <div className="text-brand-orange font-semibold mt-2">
+                <h4 className="font-semibold text-white text-sm truncate">{product.name}</h4>
+                <p className="text-[11px] text-white/40 line-clamp-1 mt-0.5">{product.description}</p>
+                <div className="text-brand-orange font-bold text-xs mt-1 font-mono">
                   {product.price.toLocaleString('vi-VN')}đ
                 </div>
               </div>
@@ -228,7 +260,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ product, creatorId
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="Nhập họ tên đầy đủ"
-                  className="w-full px-4 py-3 rounded-xl text-white glass-input"
+                  className="w-full px-4 py-3 rounded-xl text-white glass-input min-h-[44px]"
                 />
               </div>
               <div>
@@ -238,7 +270,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ product, creatorId
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="name@example.com"
-                  className="w-full px-4 py-3 rounded-xl text-white glass-input"
+                  className="w-full px-4 py-3 rounded-xl text-white glass-input min-h-[44px]"
                 />
                 <span className="text-[11px] text-white/40 mt-1 block">Chúng tôi sẽ gửi link tải file trực tiếp về email này.</span>
               </div>
@@ -270,31 +302,43 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ product, creatorId
               </div>
             )}
 
-            {/* Promo Code Input */}
-            <div className="space-y-2">
-              <label className="block text-xs font-semibold text-white/60 uppercase tracking-wider">Mã giảm giá (Promo Code)</label>
-              <div className="flex gap-2">
-                <input 
-                  type="text" 
-                  value={promoCodeInput}
-                  onChange={(e) => setPromoCodeInput(e.target.value)}
-                  placeholder="Ví dụ: MMO50, QUICK20..."
-                  className="flex-1 px-4 py-2.5 rounded-xl text-white text-xs glass-input"
-                />
-                <button
+            {/* Promo Code Input - Collapsible */}
+            <div className="space-y-2 text-left">
+              {!showPromoInput ? (
+                <button 
                   type="button"
-                  onClick={handleApplyPromo}
-                  className="px-4 py-2 bg-white/5 hover:bg-white/10 text-white border border-white/10 text-xs font-bold rounded-xl transition-all"
+                  onClick={() => setShowPromoInput(true)}
+                  className="text-xs text-brand-orange hover:text-brand-coral font-bold flex items-center gap-1 transition-colors min-h-[38px]"
                 >
-                  Áp dụng
+                  <span>🏷️ Bạn có mã giảm giá?</span>
                 </button>
-              </div>
-              
-              {promoStatus === 'success' && (
-                <p className="text-[10px] text-green-400 font-medium">✓ Áp dụng mã giảm giá {appliedPromoCode} thành công! Giảm {appliedDiscount}%</p>
-              )}
-              {promoStatus === 'error' && (
-                <p className="text-[10px] text-red-400 font-medium">✗ Mã giảm giá không hợp lệ</p>
+              ) : (
+                <div className="space-y-1.5 animate-fade-in text-left">
+                  <label className="block text-[10px] font-semibold text-white/60 uppercase tracking-wider">Mã giảm giá (Promo Code)</label>
+                  <div className="flex gap-2">
+                    <input 
+                      type="text" 
+                      value={promoCodeInput}
+                      onChange={(e) => setPromoCodeInput(e.target.value)}
+                      placeholder="Ví dụ: MMO50, QUICK20..."
+                      className="flex-1 px-3 py-2 rounded-xl text-white text-xs glass-input"
+                    />
+                    <button
+                      type="button"
+                      onClick={handleApplyPromo}
+                      className="px-4 py-2 bg-white/5 hover:bg-white/10 text-white border border-white/10 text-xs font-bold rounded-xl transition-all min-h-[38px] flex items-center justify-center"
+                    >
+                      Áp dụng
+                    </button>
+                  </div>
+                  
+                  {promoStatus === 'success' && (
+                    <p className="text-[10px] text-green-400 font-medium">✓ Áp dụng mã giảm giá {appliedPromoCode} thành công! Giảm {appliedDiscount}%</p>
+                  )}
+                  {promoStatus === 'error' && (
+                    <p className="text-[10px] text-red-400 font-medium">✗ Mã giảm giá không hợp lệ</p>
+                  )}
+                </div>
               )}
             </div>
 
@@ -324,7 +368,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ product, creatorId
 
             <button 
               type="submit"
-              className="w-full py-4 bg-gradient-to-r from-brand-orange to-brand-coral hover:from-brand-coral hover:to-brand-orange text-white font-bold rounded-xl transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-brand-orange/20"
+              className="w-full py-4 bg-gradient-to-r from-brand-orange to-brand-coral hover:from-brand-coral hover:to-brand-orange text-white font-bold rounded-xl transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-brand-orange/20 min-h-[48px] touch-target"
             >
               Tiến hành thanh toán
             </button>

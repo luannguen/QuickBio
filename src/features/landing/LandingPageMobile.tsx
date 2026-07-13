@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Sparkles, ArrowRight, ChevronDown } from 'lucide-react';
+import { Sparkles, ArrowRight, ChevronDown, Home, Layers, Tag } from 'lucide-react';
 import { AuthModal } from '../../components/AuthModal';
 import { AIVoiceWidget } from '../../components/AIVoiceWidget';
 
@@ -21,6 +21,38 @@ export const LandingPageMobile: React.FC<LandingPageMobileProps> = ({
   const [mockPhoneStep, setMockPhoneStep] = useState<'bio' | 'checkout' | 'paid'>('bio');
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
+  // Gesture States for Phone Mockup
+  const [touchStart, setTouchStart] = useState<number | null>(null);
+  const [touchEnd, setTouchEnd] = useState<number | null>(null);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > 50;
+    const isRightSwipe = distance < -50;
+
+    if (isLeftSwipe) {
+      if (mockPhoneStep === 'bio') setMockPhoneStep('checkout');
+      else if (mockPhoneStep === 'checkout') setMockPhoneStep('paid');
+      else if (mockPhoneStep === 'paid') setMockPhoneStep('bio');
+    } else if (isRightSwipe) {
+      if (mockPhoneStep === 'paid') setMockPhoneStep('checkout');
+      else if (mockPhoneStep === 'checkout') setMockPhoneStep('bio');
+      else if (mockPhoneStep === 'bio') setMockPhoneStep('paid');
+    }
+
+    setTouchStart(null);
+    setTouchEnd(null);
+  };
+
   const handleStart = () => {
     if (isAuthenticated) {
       onNavigateToDashboard();
@@ -35,7 +67,7 @@ export const LandingPageMobile: React.FC<LandingPageMobileProps> = ({
   };
 
   return (
-    <div className="min-h-screen relative overflow-hidden bg-[#080B11] text-white pb-24">
+    <div className="min-h-screen relative overflow-hidden bg-[#080B11] text-white pb-28">
       {/* Background Glows */}
       <div className="absolute top-[-10%] left-[-15%] w-[300px] h-[300px] bg-brand-orange/10 rounded-full blur-[80px] pointer-events-none"></div>
       <div className="absolute bottom-[20%] right-[-15%] w-[300px] h-[300px] bg-brand-green/5 rounded-full blur-[80px] pointer-events-none"></div>
@@ -51,7 +83,7 @@ export const LandingPageMobile: React.FC<LandingPageMobileProps> = ({
         
         <button
           onClick={onNavigateToAIVoice}
-          className="text-xs font-bold text-brand-orange flex items-center gap-1 min-h-[44px] px-2"
+          className="text-xs font-bold text-brand-orange flex items-center gap-1 min-h-[44px] px-2 animate-pulse"
         >
           <Sparkles className="w-3.5 h-3.5" />
           Lễ tân AI
@@ -82,14 +114,14 @@ export const LandingPageMobile: React.FC<LandingPageMobileProps> = ({
           <div className="pt-2 flex flex-col gap-3 max-w-xs mx-auto">
             <button 
               onClick={handleStart}
-              className="w-full py-4.5 bg-gradient-to-r from-brand-orange to-brand-coral hover:from-brand-coral hover:to-brand-orange text-white font-bold rounded-xl shadow-lg flex items-center justify-center gap-2 text-xs min-h-[48px] touch-target"
+              className="w-full py-3.5 bg-gradient-to-r from-brand-orange to-brand-coral hover:from-brand-coral hover:to-brand-orange text-white font-bold rounded-xl shadow-lg flex items-center justify-center gap-2 text-xs min-h-[48px] touch-target"
             >
               <span>Bắt đầu tạo Bio miễn phí</span>
               <ArrowRight className="w-4 h-4" />
             </button>
             <button 
               onClick={onNavigateToDemoBio}
-              className="w-full py-4.5 bg-white/5 text-white font-bold rounded-xl border border-white/10 text-xs min-h-[48px] touch-target"
+              className="w-full py-3.5 bg-white/5 text-white font-bold rounded-xl border border-white/10 text-xs min-h-[48px] touch-target"
             >
               <span>Xem trang Bio cá nhân mẫu</span>
             </button>
@@ -98,7 +130,12 @@ export const LandingPageMobile: React.FC<LandingPageMobileProps> = ({
 
         {/* Mobile Phone Mockup */}
         <div className="flex justify-center pt-4">
-          <div className="relative w-[260px] h-[520px] bg-[#0d111a] rounded-[36px] p-2.5 shadow-2xl border-[4px] border-white/15 overflow-hidden flex flex-col">
+          <div 
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+            className="relative w-[260px] h-[520px] bg-[#0d111a] rounded-[36px] p-2.5 shadow-2xl border-[4px] border-white/15 overflow-hidden flex flex-col select-none touch-pan-y"
+          >
             <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-28 h-5 bg-black rounded-b-xl z-20 flex items-center justify-center">
               <div className="w-10 h-0.5 bg-white/20 rounded-full"></div>
             </div>
@@ -141,8 +178,9 @@ export const LandingPageMobile: React.FC<LandingPageMobileProps> = ({
                     </div>
                   </div>
 
-                  <div className="text-center text-[7px] text-white/30 pt-1.5 border-t border-white/5">
-                    ⚡ Tạo Bio Link bởi QuickBio
+                  <div className="text-center text-[7px] text-white/30 pt-1.5 border-t border-white/5 relative">
+                    <span>⚡ Tạo Bio Link bởi QuickBio</span>
+                    <span className="absolute bottom-[-14px] left-0 right-0 text-[6px] text-white/40 block text-center animate-pulse">👈 Vuốt ngang để đổi bước 👉</span>
                   </div>
                 </div>
               )}
@@ -200,7 +238,7 @@ export const LandingPageMobile: React.FC<LandingPageMobileProps> = ({
         </div>
 
         {/* Feature List (Mobile Bento alternative) */}
-        <div className="space-y-4 pt-4">
+        <div id="features" className="space-y-4 pt-4">
           <div className="px-1 text-xs font-black uppercase tracking-wider text-brand-orange">Tính năng cốt lõi</div>
           
           <div className="glass-card p-5 rounded-2xl border border-white/5 space-y-2">
@@ -245,7 +283,7 @@ export const LandingPageMobile: React.FC<LandingPageMobileProps> = ({
         </div>
 
         {/* Pricing Cards */}
-        <div className="space-y-6 pt-8">
+        <div id="pricing" className="space-y-6 pt-8">
           <div className="text-center space-y-2">
             <h3 className="text-lg font-extrabold text-white">Bảng Giá Dịch Vụ</h3>
             <p className="text-xs text-white/50">Lựa chọn gói dịch vụ phù hợp với bạn.</p>
@@ -330,22 +368,48 @@ export const LandingPageMobile: React.FC<LandingPageMobileProps> = ({
         <p>© 2026 QuickBio. All rights reserved.</p>
       </footer>
 
-      {/* Sticky Bottom Bar CTA (Thumb Zone) */}
-      <div className="fixed bottom-0 left-0 right-0 z-40 bg-[#0B0F19]/90 backdrop-blur-lg border-t border-white/5 p-3 flex gap-2 max-w-lg mx-auto shadow-2xl">
-        <button 
-          onClick={handleStart}
-          className="flex-1 py-3.5 bg-gradient-to-r from-brand-orange to-brand-coral text-white font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-lg shadow-brand-orange/10 min-h-[48px] touch-target"
-        >
-          <span>Tạo Bio & DigiStore</span>
-          <ArrowRight className="w-3.5 h-3.5" />
-        </button>
-        <button 
-          onClick={onNavigateToDemoBio}
-          className="px-4 py-3.5 bg-white/5 border border-white/10 text-white font-bold rounded-xl text-xs min-h-[48px] touch-target"
-        >
-          Demo
-        </button>
-      </div>
+      {/* Mobile Bottom Navigation Bar (Thumb Zone) */}
+      <nav className="fixed bottom-0 left-0 right-0 z-40 bg-[#0B0F19]/95 backdrop-blur-lg border-t border-white/5 px-2 py-2 pb-safe-bottom shadow-2xl">
+        <div className="flex items-center justify-around max-w-lg mx-auto h-14">
+          <button 
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            className="flex flex-col items-center justify-center text-white/60 hover:text-brand-orange transition-colors min-w-[60px] h-full"
+          >
+            <Home className="w-5 h-5 mb-1" />
+            <span className="text-[9px] font-bold">Trang chủ</span>
+          </button>
+          
+          <button 
+            onClick={() => {
+              const el = document.getElementById('features');
+              el?.scrollIntoView({ behavior: 'smooth' });
+            }}
+            className="flex flex-col items-center justify-center text-white/60 hover:text-brand-orange transition-colors min-w-[60px] h-full"
+          >
+            <Layers className="w-5 h-5 mb-1" />
+            <span className="text-[9px] font-bold">Tính năng</span>
+          </button>
+          
+          <button 
+            onClick={() => {
+              const el = document.getElementById('pricing');
+              el?.scrollIntoView({ behavior: 'smooth' });
+            }}
+            className="flex flex-col items-center justify-center text-white/60 hover:text-brand-orange transition-colors min-w-[60px] h-full"
+          >
+            <Tag className="w-5 h-5 mb-1" />
+            <span className="text-[9px] font-bold">Bảng giá</span>
+          </button>
+          
+          <button 
+            onClick={handleStart}
+            className="flex flex-col items-center justify-center text-white/60 hover:text-brand-orange transition-colors min-w-[60px] h-full"
+          >
+            <Sparkles className="w-5 h-5 mb-1 text-brand-orange animate-pulse" />
+            <span className="text-[9px] font-bold text-brand-orange">Tạo Bio</span>
+          </button>
+        </div>
+      </nav>
 
       <AuthModal 
         isOpen={showAuthModal} 
