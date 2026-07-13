@@ -221,7 +221,7 @@ export const PublicBio: React.FC<PublicBioProps> = ({ slug, onNavigateToLanding 
         {/* Profile Card */}
         <div className="text-center space-y-4 animate-float-slow">
           <div className="relative inline-block group">
-            <div className="absolute -inset-1 bg-gradient-to-r from-brand-orange via-brand-coral to-yellow-500 rounded-full blur-[15px] opacity-75 group-hover:opacity-100 transition-opacity duration-500"></div>
+            <div className="absolute -inset-1.5 bg-gradient-to-r from-brand-orange via-brand-coral to-yellow-500 rounded-full blur-[10px] opacity-60 group-hover:opacity-85 transition-opacity duration-500"></div>
             <img 
               src={bio.avatar_url || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&h=150&q=80'} 
               alt={bio.title} 
@@ -232,7 +232,7 @@ export const PublicBio: React.FC<PublicBioProps> = ({ slug, onNavigateToLanding 
             </div>
           </div>
           <div className="space-y-1">
-            <h1 className="text-2xl font-extrabold tracking-tight bg-gradient-to-b from-white to-white/80">{bio.title}</h1>
+            <h1 className="text-2xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-b from-white to-white/80">{bio.title}</h1>
             <p className="text-sm opacity-70 max-w-sm mx-auto leading-relaxed">{bio.bio_text}</p>
           </div>
         </div>
@@ -280,15 +280,10 @@ export const PublicBio: React.FC<PublicBioProps> = ({ slug, onNavigateToLanding 
               {products[0] && (
                 <div 
                   onClick={() => setActiveProduct(products[0])}
-                  className="cursor-pointer bg-[#0f1422]/60 rounded-3xl border border-brand-orange/30 p-6 flex flex-col md:flex-row gap-6 relative overflow-hidden group hover:border-brand-orange/50 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-brand-orange/10 text-left"
+                  className="cursor-pointer bg-[#0f1422]/60 rounded-3xl border border-white/10 p-6 flex flex-col md:flex-row gap-6 relative overflow-hidden group hover:border-brand-orange/30 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-brand-orange/5 text-left"
                 >
                   {/* Glowing pulsing border shadow */}
                   <div className="absolute -inset-px bg-gradient-to-tr from-brand-orange/5 via-transparent to-brand-coral/10 rounded-3xl opacity-100 group-hover:opacity-100 transition duration-500 pointer-events-none"></div>
-                  
-                  {/* Banner Badge */}
-                  <div className="absolute top-4 right-4 bg-brand-orange text-white text-[8px] font-black uppercase px-2.5 py-1 rounded-xl shadow-md border border-brand-orange/30 animate-pulse tracking-wider">
-                    ⭐ Siêu phẩm Nổi bật
-                  </div>
 
                   {/* Ảnh bìa nổi bật */}
                   {products[0].cover_image_url && (
@@ -298,6 +293,9 @@ export const PublicBio: React.FC<PublicBioProps> = ({ slug, onNavigateToLanding 
                         alt={products[0].name} 
                         className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                       />
+                      <div className="absolute top-2.5 left-2.5 bg-brand-orange/95 backdrop-blur-sm text-white text-[8px] font-black uppercase px-2 py-0.5 rounded-lg shadow-md border border-brand-orange/30 tracking-wider">
+                        ⭐ Nổi bật
+                      </div>
                     </div>
                   )}
 
@@ -334,7 +332,7 @@ export const PublicBio: React.FC<PublicBioProps> = ({ slug, onNavigateToLanding 
                       </div>
                       <button 
                         type="button"
-                        className="px-5 py-2.5 bg-gradient-to-r from-brand-orange to-brand-coral hover:from-brand-coral hover:to-brand-orange text-white text-xs font-bold rounded-xl shadow-md transition-all active:scale-95 flex items-center gap-1.5"
+                        className="px-5 bg-gradient-to-r from-brand-orange to-brand-coral hover:from-brand-coral hover:to-brand-orange text-white text-xs font-bold rounded-xl shadow-md transition-all active:scale-95 flex items-center justify-center gap-1.5 min-h-[44px]"
                       >
                         Sở hữu ngay
                         <ArrowRight className="w-3.5 h-3.5" />
@@ -405,7 +403,7 @@ export const PublicBio: React.FC<PublicBioProps> = ({ slug, onNavigateToLanding 
                       </div>
                       <button
                         type="button"
-                        className="px-4 py-2 bg-white/5 hover:bg-brand-orange hover:text-white text-white text-xs font-bold rounded-xl border border-white/10 hover:border-brand-orange/20 transition-all active:scale-95 flex items-center gap-1 touch-target"
+                        className="px-4 bg-white/5 hover:bg-brand-orange hover:text-white text-white text-xs font-bold rounded-xl border border-white/10 hover:border-brand-orange/20 transition-all active:scale-95 flex items-center justify-center gap-1 min-h-[44px]"
                       >
                         Mua ngay
                         <ArrowRight className="w-3 h-3" />
@@ -427,7 +425,7 @@ export const PublicBio: React.FC<PublicBioProps> = ({ slug, onNavigateToLanding 
               }
               onNavigateToLanding?.();
             }}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-panel border border-white/10 text-xs text-white/70 hover:text-white transition-all transform hover:scale-105 active:scale-95 shadow-md"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-panel border border-white/10 text-xs text-white/70 hover:text-white transition-all transform hover:scale-105 active:scale-95 shadow-md min-h-[44px]"
           >
             <Sparkles className="w-3.5 h-3.5 text-brand-orange animate-spin-slow" />
             <span>Tạo Bio Link & DigiStore miễn phí</span>
@@ -444,9 +442,12 @@ export const PublicBio: React.FC<PublicBioProps> = ({ slug, onNavigateToLanding 
         )}
 
         {/* Social Proof Toast */}
-        <div className={`fixed bottom-6 left-6 right-6 sm:left-auto sm:right-6 sm:w-80 glass-panel border border-white/10 rounded-xl p-4 shadow-2xl transition-all duration-700 z-50 ${showToast ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0 pointer-events-none'}`}>
+        <div className={`fixed top-20 left-4 right-4 sm:top-auto sm:bottom-6 sm:left-auto sm:right-6 sm:w-80 glass-panel border border-white/10 rounded-xl p-4 shadow-2xl transition-all duration-700 z-50 ${showToast ? 'translate-y-0 opacity-100' : 'translate-y-[-20px] sm:translate-y-10 opacity-0 pointer-events-none'}`}>
           <div className="flex items-start gap-3 relative">
-            <button onClick={() => setShowToast(false)} className="absolute -top-1 -right-1 text-white/40 hover:text-white transition-colors">
+            <button 
+              onClick={(e) => { e.stopPropagation(); setShowToast(false); }} 
+              className="absolute -top-2 -right-2 p-2.5 text-white/40 hover:text-white transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
+            >
               <X className="w-4 h-4" />
             </button>
             <div className="w-8 h-8 rounded-full bg-green-500/20 flex items-center justify-center flex-shrink-0 mt-0.5 border border-green-500/30">
@@ -468,3 +469,4 @@ export const PublicBio: React.FC<PublicBioProps> = ({ slug, onNavigateToLanding 
     </div>
   );
 };
+export default PublicBio;
