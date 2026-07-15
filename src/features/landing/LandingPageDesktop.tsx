@@ -125,7 +125,7 @@ export const LandingPageDesktop: React.FC<LandingPageDesktopProps> = ({
       <header className="relative z-10 max-w-7xl mx-auto px-6 py-6 flex justify-between items-center">
         <div className="flex items-center gap-2">
           <div className="w-10 h-10 bg-gradient-to-tr from-brand-orange to-brand-coral rounded-xl flex items-center justify-center shadow-lg shadow-brand-orange/20">
-            <Sparkles className="w-5 h-5 text-white animate-pulse" />
+            <Sparkles className="w-5 h-5 text-white" />
           </div>
           <span className="text-xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white to-white/70">
             QuickBio
@@ -242,7 +242,7 @@ export const LandingPageDesktop: React.FC<LandingPageDesktopProps> = ({
                           <span className="text-[10px] font-extrabold text-brand-orange">49.000đ</span>
                           <button 
                             onClick={() => setMockPhoneStep('checkout')}
-                            className="px-2.5 py-1.5 bg-brand-orange hover:bg-brand-coral text-white text-[9px] font-bold rounded-lg transition-all"
+                            className="px-2.5 py-1.5 bg-brand-orange hover:bg-brand-coral text-white text-[9px] font-bold rounded-lg transition-all min-h-[32px] flex items-center justify-center"
                           >
                             Mua ngay
                           </button>
@@ -272,7 +272,7 @@ export const LandingPageDesktop: React.FC<LandingPageDesktopProps> = ({
                     </div>
                     <button 
                       onClick={() => setMockPhoneStep('paid')}
-                      className="w-full py-2 bg-gradient-to-r from-brand-orange to-brand-coral hover:from-brand-coral hover:to-brand-orange text-white text-[9px] font-bold rounded-xl transition-all"
+                      className="w-full py-2 bg-gradient-to-r from-brand-orange to-brand-coral hover:from-brand-coral hover:to-brand-orange text-white text-[9px] font-bold rounded-xl transition-all min-h-[36px] flex items-center justify-center"
                     >
                       Bấm giả lập thanh toán thành công
                     </button>
@@ -703,7 +703,7 @@ export const LandingPageDesktop: React.FC<LandingPageDesktopProps> = ({
       </main>
 
       {/* Footer */}
-      <footer className="relative z-10 border-t border-white/5 mt-24 py-8 text-center text-white/40 text-sm">
+      <footer className="relative z-10 border-t border-white/5 mt-24 py-8 text-center text-white/65 text-sm">
         <p>© 2026 QuickBio DigiStore. All rights reserved.</p>
       </footer>
 

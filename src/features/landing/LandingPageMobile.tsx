@@ -83,7 +83,7 @@ export const LandingPageMobile: React.FC<LandingPageMobileProps> = ({
         
         <button
           onClick={onNavigateToAIVoice}
-          className="text-xs font-bold text-brand-orange flex items-center gap-1 min-h-[44px] px-2 animate-pulse"
+          className="text-xs font-bold text-brand-orange flex items-center gap-1 min-h-[44px] px-2 hover:text-brand-coral transition-colors"
         >
           <Sparkles className="w-3.5 h-3.5" />
           Lễ tân AI
@@ -170,7 +170,7 @@ export const LandingPageMobile: React.FC<LandingPageMobileProps> = ({
                         <span className="text-[9px] font-bold text-[#FF6B35]">49.000đ</span>
                         <button 
                           onClick={() => setMockPhoneStep('checkout')}
-                          className="px-2 py-1 bg-brand-orange text-white text-[8px] font-bold rounded-md"
+                          className="px-2 py-1 bg-brand-orange text-white text-[8px] font-bold rounded-md min-h-[32px] flex items-center justify-center"
                         >
                           Mua ngay
                         </button>
@@ -180,7 +180,7 @@ export const LandingPageMobile: React.FC<LandingPageMobileProps> = ({
 
                   <div className="text-center text-[7px] text-white/30 pt-1.5 border-t border-white/5 relative">
                     <span>⚡ Tạo Bio Link bởi QuickBio</span>
-                    <span className="absolute bottom-[-14px] left-0 right-0 text-[6px] text-white/40 block text-center animate-pulse">👈 Vuốt ngang để đổi bước 👉</span>
+                    <span className="absolute bottom-[-14px] left-0 right-0 text-[6px] text-white/40 block text-center animate-pulse">Vuốt ngang để đổi bước</span>
                   </div>
                 </div>
               )}
@@ -201,7 +201,7 @@ export const LandingPageMobile: React.FC<LandingPageMobileProps> = ({
                   </div>
                   <button 
                     onClick={() => setMockPhoneStep('paid')}
-                    className="w-full py-1.5 bg-gradient-to-r from-brand-orange to-brand-coral text-white text-[8px] font-bold rounded-lg"
+                    className="w-full py-1.5 bg-gradient-to-r from-brand-orange to-brand-coral text-white text-[8px] font-bold rounded-lg min-h-[36px] flex items-center justify-center"
                   >
                     Bấm giả lập thanh toán
                   </button>
@@ -347,7 +347,7 @@ export const LandingPageMobile: React.FC<LandingPageMobileProps> = ({
               <div key={idx} className="bg-[#0f1422]/40 rounded-xl border border-white/5 overflow-hidden">
                 <button
                   onClick={() => setOpenFaq(openFaq === idx ? null : idx)}
-                  className="w-full px-4 py-3 flex items-center justify-between text-left text-xs font-bold hover:bg-white/[0.01]"
+                  className="w-full px-4 py-4 flex items-center justify-between text-left text-xs font-bold hover:bg-white/[0.01]"
                 >
                   <span>{faq.q}</span>
                   <ChevronDown className={`w-3.5 h-3.5 text-white/50 flex-shrink-0 ml-2 transition-transform ${openFaq === idx ? 'transform rotate-180 text-brand-orange' : ''}`} />
@@ -364,7 +364,7 @@ export const LandingPageMobile: React.FC<LandingPageMobileProps> = ({
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-white/5 mt-16 py-6 text-center text-white/30 text-[11px]">
+      <footer className="border-t border-white/5 mt-16 py-6 text-center text-white/60 text-[11px]">
         <p>© 2026 QuickBio. All rights reserved.</p>
       </footer>
 

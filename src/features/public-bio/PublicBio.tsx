@@ -211,7 +211,7 @@ export const PublicBio: React.FC<PublicBioProps> = ({ slug, onNavigateToLanding,
       <div className="absolute bottom-[20%] right-[-20%] w-[350px] h-[350px] bg-brand-coral/5 rounded-full blur-[100px] pointer-events-none"></div>
 
       {/* Sticky Countdown Banner (FOMO) */}
-      <div className="absolute top-0 left-0 w-full bg-gradient-to-r from-brand-orange via-brand-coral to-brand-orange text-white text-xs sm:text-sm font-bold text-center py-3 px-4 shadow-lg flex items-center justify-center gap-2.5 z-50 border-b border-white/10 backdrop-blur-md">
+      <div className="fixed top-0 left-0 w-full bg-gradient-to-r from-brand-orange via-brand-coral to-brand-orange text-white text-xs sm:text-sm font-bold text-center py-3 px-4 shadow-lg flex items-center justify-center gap-2.5 z-50 border-b border-white/10 backdrop-blur-md">
         <Clock className="w-4 h-4 animate-pulse text-yellow-300" />
         <span className="tracking-wider">GIẢM GIÁ ĐỘC QUYỀN 50% KẾT THÚC SAU:</span>
         <span className="bg-black/35 px-3 py-1 rounded-md font-mono text-yellow-300 shadow-inner tracking-wider border border-white/10">{formatTime(timeLeft)}</span>
@@ -249,6 +249,7 @@ export const PublicBio: React.FC<PublicBioProps> = ({ slug, onNavigateToLanding,
                   href={url as string} 
                   target="_blank" 
                   rel="noopener noreferrer"
+                  aria-label={`Ghé thăm trang ${key}`}
                   className="w-12 h-12 rounded-2xl flex items-center justify-center bg-white/[0.03] hover:bg-gradient-to-tr hover:from-brand-orange/20 hover:to-brand-coral/20 border border-white/5 hover:border-brand-orange/30 text-white/70 hover:text-white transition-all duration-300 transform hover:scale-110 active:scale-95 hover:shadow-lg hover:shadow-brand-orange/5"
                 >
                   {getSocialIcon(key)}
@@ -319,7 +320,7 @@ export const PublicBio: React.FC<PublicBioProps> = ({ slug, onNavigateToLanding,
 
                     {/* Stock level pressure (CRO Scarcity) for Featured */}
                     <div className="space-y-1.5">
-                      <div className="flex justify-between items-center text-[10px] text-white/40">
+                      <div className="flex justify-between items-center text-[10px] text-white/65">
                         <span>Đã bán: 94% (Giới hạn 100 slot giá tốt)</span>
                         <span className="text-brand-orange font-bold font-mono">Chỉ còn 6 slot</span>
                       </div>
@@ -440,7 +441,7 @@ export const PublicBio: React.FC<PublicBioProps> = ({ slug, onNavigateToLanding,
             }}
             className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-panel border border-white/10 text-xs text-white/70 hover:text-white transition-all transform hover:scale-105 active:scale-95 shadow-md min-h-[44px]"
           >
-            <Sparkles className="w-3.5 h-3.5 text-brand-orange animate-spin-slow" />
+            <Sparkles className="w-3.5 h-3.5 text-brand-orange" />
             <span>Tạo Bio Link & DigiStore miễn phí</span>
           </button>
         </div>
