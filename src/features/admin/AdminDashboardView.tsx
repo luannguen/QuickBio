@@ -1,10 +1,10 @@
 import React, { useEffect } from 'react';
-import { useAdmin } from '../../hooks/useAdmin';
-import { useAuth } from '../../hooks/useAuth';
-import { Layout } from '../../components/layout/Layout';
-import { Button } from '../../components/ui/Button';
-import { Card } from '../../components/ui/Card';
-import { ThemeToggle } from '../../components/ui/ThemeToggle';
+import { useAdmin } from "@/shared/hooks/useAdmin";
+import { useAuth } from "@/shared/hooks/useAuth";
+import { Layout } from "@/app/layouts/Layout";
+import { Button } from "@/shared/ui/Button";
+import { Card } from "@/shared/ui/Card";
+import { ThemeToggle } from "@/shared/ui/ThemeToggle";
 import { 
   DollarSign, 
   Check, 

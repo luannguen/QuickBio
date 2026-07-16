@@ -1,4 +1,4 @@
-import type { Product } from '../../../services/productService';
+import type { Product } from "@/entities/product/api";
 import { BookOpen, Sparkles, Users, ShoppingBag } from 'lucide-react';
 
 interface MarketingTabProps {

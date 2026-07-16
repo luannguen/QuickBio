@@ -1,14 +1,14 @@
 import React from 'react';
 import { ShoppingBag, Sparkles, X, CheckCircle, Clock } from 'lucide-react';
-import type { BioLink } from '../../../services/bioService';
-import type { Product } from '../../../services/productService';
+import type { BioLink } from "@/entities/bio/api";
+import type { Product } from "@/entities/product/api";
 import { CountdownBanner } from './CountdownBanner';
 import { ProfileHeader } from './ProfileHeader';
 import { SocialLinks } from './SocialLinks';
 import { ProductHero } from './ProductHero';
 import { ProductGrid } from './ProductGrid';
 import { CheckoutModal } from '../../../components/CheckoutModal';
-import { Button } from '../../../components/ui/Button';
+import { Button } from "@/shared/ui/Button";
 
 interface PublicBioLayoutProps {
   bio: BioLink;

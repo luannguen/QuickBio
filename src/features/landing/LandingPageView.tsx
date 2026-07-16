@@ -2,11 +2,11 @@ import React, { useState, useRef } from 'react';
 import { Sparkles, ArrowRight, Layers, ChevronDown, Home, Tag } from 'lucide-react';
 import { AuthModal } from '../../components/AuthModal';
 import { AIVoiceWidget } from '../../components/AIVoiceWidget';
-import { useLandingMobile } from './hooks/useLandingMobile';
+import { useLandingMobile } from "./hooks/useLandingMobile";
 import { PhoneMockup } from './components/PhoneMockup';
-import { Button } from '../../components/ui/Button';
-import { Card } from '../../components/ui/Card';
-import { ThemeToggle } from '../../components/ui/ThemeToggle';
+import { Button } from "@/shared/ui/Button";
+import { Card } from "@/shared/ui/Card";
+import { ThemeToggle } from "@/shared/ui/ThemeToggle";
 
 // ============================================================
 // TiltCard Component: Parallax 3D mouse rotate effect

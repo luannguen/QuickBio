@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { productService } from '../services/productService';
-import type { Product } from '../services/productService';
-import { useOrders } from '../hooks/useOrders';
-import { useCart } from '../hooks/useCart';
+import { productService } from "@/entities/product/api";
+import type { Product } from "@/entities/product/api";
+import { useOrders } from "@/shared/hooks/useOrders";
+import { useCart } from "@/shared/hooks/useCart";
 import { Loader2, CheckCircle2, Download, AlertTriangle, X, Sparkles, Lock, Clock } from 'lucide-react';
-import { Button } from './ui/Button';
-import { Input } from './ui/Input';
-import { Label } from './ui/Label';
-import { Card } from './ui/Card';
+import { Button } from "@/shared/ui/Button";
+import { Input } from "@/shared/ui/Input";
+import { Label } from "@/shared/ui/Label";
+import { Card } from "@/shared/ui/Card";
 
 interface CheckoutModalProps {
   product: Product;

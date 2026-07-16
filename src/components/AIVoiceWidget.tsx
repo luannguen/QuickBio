@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Vapi from '@vapi-ai/web';
 import { Phone, PhoneOff, Sparkles, AlertCircle } from 'lucide-react';
-import { useVapiStore } from '../hooks/store';
+import { useVapiStore } from "@/shared/hooks/store";
 
 export const AIVoiceWidget: React.FC = () => {
   const { 

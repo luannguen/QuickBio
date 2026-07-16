@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { X, Mail, Lock } from 'lucide-react';
-import { supabase } from '../services/supabase';
-import { Button } from './ui/Button';
-import { Input } from './ui/Input';
-import { Label } from './ui/Label';
-import { Card } from './ui/Card';
+import { supabase } from "@/shared/api/supabase";
+import { Button } from "@/shared/ui/Button";
+import { Input } from "@/shared/ui/Input";
+import { Label } from "@/shared/ui/Label";
+import { Card } from "@/shared/ui/Card";
 
 interface AuthModalProps {
   isOpen: boolean;

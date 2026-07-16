@@ -1,16 +1,16 @@
 import React, { useState } from 'react';
-import type { Product } from '../../services/productService';
-import type { Order } from '../../services/orderService';
-import { Layout } from '../../components/layout/Layout';
+import type { Product } from "@/entities/product/api";
+import type { Order } from "@/entities/order/api";
+import { Layout } from "@/app/layouts/Layout";
 import { ProductsTab } from './components/ProductsTab';
 import { OrdersTab } from './components/OrdersTab';
 import { SepayTab } from './components/SepayTab';
 import { AffiliateTab } from './components/AffiliateTab';
 import { AiContentTab } from './components/AiContentTab';
 import { MarketingTab } from './components/MarketingTab';
-import { Button } from '../../components/ui/Button';
-import { Card } from '../../components/ui/Card';
-import { ThemeToggle } from '../../components/ui/ThemeToggle';
+import { Button } from "@/shared/ui/Button";
+import { Card } from "@/shared/ui/Card";
+import { ThemeToggle } from "@/shared/ui/ThemeToggle";
 import { 
   Sparkles, Eye, DollarSign, ShoppingBag, BookOpen, 
   Users, Menu, X, Settings, ChevronRight

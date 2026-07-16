@@ -1,7 +1,7 @@
 import React from 'react';
 import { ArrowRight } from 'lucide-react';
-import type { Product } from '../../../services/productService';
-import { Button } from '../../../components/ui/Button';
+import type { Product } from "@/entities/product/api";
+import { Button } from "@/shared/ui/Button";
 
 interface ProductHeroProps {
   product: Product;

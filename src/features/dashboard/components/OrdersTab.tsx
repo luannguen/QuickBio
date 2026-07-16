@@ -1,5 +1,5 @@
 import React from 'react';
-import type { Order } from '../../../services/orderService';
+import type { Order } from "@/entities/order/api";
 import { ShoppingBag, RefreshCw } from 'lucide-react';
 
 interface OrdersTabProps {

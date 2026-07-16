@@ -1,4 +1,4 @@
-import type { Product } from '../../../services/productService';
+import type { Product } from "@/entities/product/api";
 import { ShoppingBag, Plus, Eye, Trash2 } from 'lucide-react';
 
 interface ProductsTabProps {

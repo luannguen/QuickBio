@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import type { Product } from '../../../services/productService';
+import type { Product } from "@/entities/product/api";
 
 export const useSocialProof = (products: Product[]) => {
   const [showToast, setShowToast] = useState(false);

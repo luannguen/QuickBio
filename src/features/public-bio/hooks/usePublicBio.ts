@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
-import { bioService } from '../../../services/bioService';
-import type { BioLink } from '../../../services/bioService';
-import { productService } from '../../../services/productService';
-import type { Product } from '../../../services/productService';
+import { bioService } from "@/entities/bio/api";
+import type { BioLink } from "@/entities/bio/api";
+import { productService } from "@/entities/product/api";
+import type { Product } from "@/entities/product/api";
 import { useCountdown } from './useCountdown';
 import { useSocialProof } from './useSocialProof';
 
