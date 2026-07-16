@@ -11,14 +11,14 @@ interface AdminDashboardProps {
 export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigateToHome }) => {
   const { user, loading } = useAuth();
 
-  // List of emails allowed to log in as admin
+  // List of emails allowed to log in as admin (Fallback)
   const ADMIN_EMAILS = [
     'luan.nguyenthien@gmail.com', 
     'luannguyenthien@gmail.com', 
     'luannguyen@quickbio.vn'
   ];
 
-  const isAdmin = user && ADMIN_EMAILS.includes(user.email || '');
+  const isAdmin = user && (user.role === 'admin' || ADMIN_EMAILS.includes(user.email || ''));
 
   if (loading) {
     return (

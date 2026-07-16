@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState, useMemo } from 'react';
 import type { Order } from "@/entities/order/api";
-import { ShoppingBag, RefreshCw } from 'lucide-react';
+import { ShoppingBag, RefreshCw, Search, Filter } from 'lucide-react';
+import { Card } from "@/shared/ui/Card";
 
 interface OrdersTabProps {
   orders: Order[];
@@ -21,12 +22,42 @@ export const OrdersTab: React.FC<OrdersTabProps> = ({
   isSimulating,
   simulatorStatus
 }) => {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState<'all' | 'paid' | 'pending'>('all');
+
+  const filteredOrders = useMemo(() => {
+    return orders.filter(o => {
+      const matchStatus = statusFilter === 'all' || o.status === statusFilter;
+      const term = searchTerm.toLowerCase();
+      const matchSearch = 
+        o.customer_email?.toLowerCase().includes(term) ||
+        o.payment_code?.toLowerCase().includes(term) ||
+        o.customer_name?.toLowerCase().includes(term);
+      return matchStatus && matchSearch;
+    });
+  }, [orders, searchTerm, statusFilter]);
+
+  const totalPaidOrders = orders.filter(o => o.status === 'paid').length;
+  const totalRevenue = orders.filter(o => o.status === 'paid').reduce((sum, o) => sum + o.amount, 0);
+
   return (
     <div className="space-y-6">
-      <h3 className="text-base font-bold flex items-center gap-2">
-        <ShoppingBag className="w-5 h-5 text-brand-orange" />
-        Đơn hàng mua bán
-      </h3>
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <h3 className="text-base font-bold flex items-center gap-2">
+          <ShoppingBag className="w-5 h-5 text-brand-orange" />
+          Đơn hàng mua bán
+        </h3>
+        
+        {/* Mini stats */}
+        <div className="flex gap-4 text-xs">
+          <div className="bg-brand-card/50 px-3 py-1.5 rounded-lg border border-white/10">
+            <span className="text-white/50">Thành công:</span> <strong className="text-semantic-success ml-1">{totalPaidOrders}</strong>
+          </div>
+          <div className="bg-brand-card/50 px-3 py-1.5 rounded-lg border border-white/10">
+            <span className="text-white/50">Doanh thu:</span> <strong className="text-brand-orange ml-1">{totalRevenue.toLocaleString('vi-VN')}đ</strong>
+          </div>
+        </div>
+      </div>
 
       {orders.length === 0 ? (
         <div className="glass-panel p-10 rounded-2xl border border-white/5 text-center space-y-4">
@@ -37,49 +68,91 @@ export const OrdersTab: React.FC<OrdersTabProps> = ({
           </div>
         </div>
       ) : (
-        <div className="space-y-6">
-          {/* Order list table */}
-          <div className="overflow-x-auto rounded-2xl border border-white/5 bg-brand-card/10">
-            <table className="w-full text-left border-collapse text-xs">
-              <thead>
-                <tr className="border-b border-white/5 bg-white/[0.01] text-white/60 font-semibold">
-                  <th className="p-4">Khách hàng</th>
-                  <th className="p-4">Sản phẩm</th>
-                  <th className="p-4">Mã CK</th>
-                  <th className="p-4">Số tiền</th>
-                  <th className="p-4">Thời gian</th>
-                  <th className="p-4">Trạng thái</th>
-                </tr>
-              </thead>
-              <tbody>
-                {orders.map(o => (
-                  <tr key={o.id} className="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
-                    <td className="p-4">
-                      <div className="font-medium text-white">{o.customer_name}</div>
-                      <div className="text-[10px] text-white/40 mt-0.5">{o.customer_email}</div>
-                    </td>
-                    <td className="p-4 truncate max-w-[150px] font-medium text-white">{o.product?.name || 'Sản phẩm đã bị xóa'}</td>
-                    <td className="p-4"><span className="font-mono text-brand-orange bg-brand-orange/5 border border-brand-orange/15 px-1.5 py-0.5 rounded font-bold">{o.payment_code}</span></td>
-                    <td className="p-4 font-bold text-white">{o.amount.toLocaleString('vi-VN')}đ</td>
-                    <td className="p-4 text-white/50">{new Date(o.created_at).toLocaleString('vi-VN', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit' })}</td>
-                    <td className="p-4">
-                      <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold ${
-                        o.status === 'paid' 
-                          ? 'bg-green-500/10 text-green-400 border border-green-500/20' 
-                          : 'bg-yellow-500/10 text-yellow-400 border border-yellow-500/20'
-                      }`}>
-                        {o.status === 'paid' ? 'Đã nhận tiền' : 'Đang chờ'}
-                      </span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+        <div className="space-y-4">
+          {/* Filters */}
+          <div className="flex flex-col sm:flex-row gap-3">
+            <div className="relative flex-1">
+              <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-white/40" />
+              <input
+                type="text"
+                placeholder="Tìm email, mã đơn, tên..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full pl-9 pr-4 py-2 bg-[#080B11] border border-white/10 rounded-xl text-xs text-white placeholder-white/40 outline-none focus:border-brand-orange/50 transition-colors"
+              />
+            </div>
+            <div className="relative w-full sm:w-48">
+              <Filter className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-white/40" />
+              <select
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value as any)}
+                className="w-full pl-9 pr-4 py-2 bg-[#080B11] border border-white/10 rounded-xl text-xs text-white outline-none focus:border-brand-orange/50 appearance-none transition-colors"
+              >
+                <option value="all">Tất cả trạng thái</option>
+                <option value="paid">Đã thanh toán</option>
+                <option value="pending">Đang chờ</option>
+              </select>
+            </div>
           </div>
+
+          {/* Order list table */}
+          <Card className="p-0 overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse text-xs">
+                <thead>
+                  <tr className="border-b border-white/5 bg-white/[0.01] text-white/60 font-semibold uppercase tracking-wider">
+                    <th className="p-4">Khách hàng</th>
+                    <th className="p-4">Sản phẩm</th>
+                    <th className="p-4">Mã CK</th>
+                    <th className="p-4 text-right">Số tiền</th>
+                    <th className="p-4">Thời gian</th>
+                    <th className="p-4 text-center">Trạng thái</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-white/5">
+                  {filteredOrders.length === 0 ? (
+                    <tr>
+                      <td colSpan={6} className="p-8 text-center text-white/40">
+                        Không tìm thấy đơn hàng phù hợp
+                      </td>
+                    </tr>
+                  ) : (
+                    filteredOrders.map(o => (
+                      <tr key={o.id} className="hover:bg-white/[0.02] transition-colors">
+                        <td className="p-4">
+                          <div className="font-medium text-white">{o.customer_name}</div>
+                          <div className="text-[10px] text-white/40 mt-0.5">{o.customer_email}</div>
+                        </td>
+                        <td className="p-4 truncate max-w-[150px] font-medium text-white">{o.product?.name || 'Sản phẩm đã bị xóa'}</td>
+                        <td className="p-4">
+                          <span className="font-mono text-brand-orange bg-brand-orange/5 border border-brand-orange/15 px-1.5 py-0.5 rounded font-bold">
+                            {o.payment_code}
+                          </span>
+                        </td>
+                        <td className="p-4 font-bold text-white text-right">{o.amount.toLocaleString('vi-VN')}đ</td>
+                        <td className="p-4 text-white/50 text-[10px]">
+                          {new Date(o.created_at).toLocaleString('vi-VN')}
+                        </td>
+                        <td className="p-4 text-center">
+                          <span className={`inline-flex px-2 py-0.5 rounded-full text-[9px] font-bold ${
+                            o.status === 'paid' 
+                              ? 'bg-semantic-success/10 text-semantic-success border border-semantic-success/20' 
+                              : 'bg-semantic-warning/10 text-semantic-warning border border-semantic-warning/20'
+                          }`}>
+                            {o.status === 'paid' ? 'Đã thanh toán' : 'Đang chờ'}
+                          </span>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </Card>
 
           {/* Webhook simulator in tab */}
           {pendingOrders.length > 0 && (
-            <div className="bg-brand-orange/5 p-4 rounded-xl border border-brand-orange/10 space-y-3 max-w-md">
+            <div className="bg-brand-orange/5 p-4 rounded-xl border border-brand-orange/10 space-y-3 max-w-md mt-6">
               <div className="text-xs font-bold text-white flex items-center gap-1.5">
                 <RefreshCw className="w-3.5 h-3.5 text-brand-orange animate-spin-slow" />
                 Mô phỏng ngân hàng báo có

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useAdmin } from "@/shared/hooks/useAdmin";
 import { useAuth } from "@/shared/hooks/useAuth";
 import { Layout } from "@/app/layouts/Layout";
@@ -12,20 +12,48 @@ import {
   AlertTriangle, 
   ArrowLeft,
   Users,
-  ShieldCheck
+  ShieldCheck,
+  LayoutDashboard,
+  ShoppingCart,
+  TrendingUp,
+  Activity
 } from 'lucide-react';
 
 interface AdminDashboardViewProps {
   onNavigateToHome: () => void;
 }
 
+type TabType = 'overview' | 'users' | 'orders' | 'withdrawals';
+
 export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNavigateToHome }) => {
   const { user, signOut } = useAuth();
-  const { commissions, loading, error, loadAdminData, approveWithdrawal } = useAdmin();
+  const { 
+    commissions, 
+    stats,
+    users,
+    orders,
+    loading, 
+    error, 
+    loadAdminData,
+    loadDashboardStats,
+    loadUsers,
+    loadOrders,
+    approveWithdrawal 
+  } = useAdmin();
+
+  const [activeTab, setActiveTab] = useState<TabType>('overview');
 
   useEffect(() => {
-    loadAdminData();
-  }, [loadAdminData]);
+    if (activeTab === 'overview') {
+      loadDashboardStats();
+    } else if (activeTab === 'users') {
+      loadUsers();
+    } else if (activeTab === 'orders') {
+      loadOrders(100);
+    } else if (activeTab === 'withdrawals') {
+      loadAdminData();
+    }
+  }, [activeTab, loadDashboardStats, loadUsers, loadOrders, loadAdminData]);
 
   const handleApprove = async (userId: string, userName: string, amount: number) => {
     const confirmed = window.confirm(
@@ -42,37 +70,6 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
     }
   };
 
-  // Stats calculation
-  const totalPayoutRequested = commissions.reduce((sum, c) => sum + Number(c.amount), 0);
-  const totalRequestsCount = commissions.length;
-
-  const sidebarContent = (
-    <div className="space-y-1">
-      <div className="px-3 py-2 text-xs font-bold text-semantic-muted uppercase tracking-wider">
-        Menu Quản trị
-      </div>
-      <button
-        className="w-full px-4 py-3 rounded-xl text-left text-sm font-medium flex items-center gap-2 border bg-brand-orange/10 border-brand-orange/30 text-brand-orange"
-      >
-        <DollarSign className="w-4 h-4" />
-        <span>Duyệt Yêu Cầu Rút Tiền</span>
-        {totalRequestsCount > 0 && (
-          <span className="ml-auto bg-brand-orange text-white text-xs px-2 py-0.5 rounded-full font-bold">
-            {totalRequestsCount}
-          </span>
-        )}
-      </button>
-      
-      <button
-        onClick={onNavigateToHome}
-        className="w-full px-4 py-3 rounded-xl text-left text-sm font-medium flex items-center gap-2 text-semantic-muted hover:bg-muted/50 hover:text-foreground transition-all mt-4"
-      >
-        <ArrowLeft className="w-4 h-4" />
-        <span>Về trang chủ</span>
-      </button>
-    </div>
-  );
-
   const headerContent = (
     <div className="flex justify-between items-center w-full">
       <div className="flex items-center gap-3">
@@ -80,10 +77,10 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
           <ShieldCheck className="w-5 h-5 text-foreground" />
         </div>
         <div>
-          <h1 className="text-lg font-bold tracking-tight hidden lg:block">QuickBio Admin Console</h1>
+          <h1 className="text-lg font-bold tracking-tight hidden lg:block">SaaS Admin Console</h1>
           <h1 className="text-sm font-bold tracking-tight lg:hidden">Admin Console</h1>
-          <p className="text-xs text-semantic-muted hidden lg:block">Hệ thống quản lý đối soát và vận hành nền tảng</p>
-          <p className="text-[10px] text-brand-orange lg:hidden">Super Admin Control</p>
+          <p className="text-xs text-semantic-muted hidden lg:block">Quản trị toàn bộ nền tảng đa khách thuê</p>
+          <p className="text-[10px] text-brand-orange lg:hidden">Super Admin</p>
         </div>
       </div>
 
@@ -91,13 +88,13 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
         {user && (
           <div className="flex items-center gap-2 mr-2 lg:mr-4">
             <img 
-              src={user.avatar_url} 
-              alt={user.full_name} 
+              src={user.avatar_url || 'https://api.dicebear.com/7.x/avataaars/svg?seed=Admin'} 
+              alt={user.full_name || 'Admin'} 
               className="w-8 h-8 rounded-full border border-border"
             />
             <div className="text-right hidden sm:block">
-              <div className="text-xs font-bold">{user.full_name}</div>
-              <div className="text-[10px] text-brand-orange">Super Admin</div>
+              <div className="text-xs font-bold">{user.full_name || 'Admin'}</div>
+              <div className="text-[10px] text-brand-orange uppercase">Quản trị viên</div>
             </div>
           </div>
         )}
@@ -113,66 +110,253 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
     </div>
   );
 
-  const bottomNavContent = (
-    <>
+  const sidebarContent = (
+    <div className="space-y-1">
+      <div className="px-3 py-2 text-xs font-bold text-semantic-muted uppercase tracking-wider">
+        Menu Quản trị
+      </div>
       <button
-        onClick={loadAdminData}
-        className="flex flex-col items-center justify-center flex-1 min-h-[44px] text-brand-orange"
+        onClick={() => setActiveTab('overview')}
+        className={`w-full px-4 py-3 rounded-xl text-left text-sm font-medium flex items-center gap-3 transition-all ${
+          activeTab === 'overview' 
+            ? 'bg-brand-orange/10 text-brand-orange border border-brand-orange/30' 
+            : 'text-semantic-muted hover:bg-muted/50 hover:text-foreground border border-transparent'
+        }`}
       >
-        <DollarSign className="w-5 h-5" />
-        <span className="text-[10px] font-medium mt-1">Duyệt rút tiền</span>
+        <LayoutDashboard className="w-4 h-4" />
+        <span>Tổng quan</span>
       </button>
+
+      <button
+        onClick={() => setActiveTab('users')}
+        className={`w-full px-4 py-3 rounded-xl text-left text-sm font-medium flex items-center gap-3 transition-all ${
+          activeTab === 'users' 
+            ? 'bg-brand-orange/10 text-brand-orange border border-brand-orange/30' 
+            : 'text-semantic-muted hover:bg-muted/50 hover:text-foreground border border-transparent'
+        }`}
+      >
+        <Users className="w-4 h-4" />
+        <span>Người dùng (Tenants)</span>
+      </button>
+
+      <button
+        onClick={() => setActiveTab('orders')}
+        className={`w-full px-4 py-3 rounded-xl text-left text-sm font-medium flex items-center gap-3 transition-all ${
+          activeTab === 'orders' 
+            ? 'bg-brand-orange/10 text-brand-orange border border-brand-orange/30' 
+            : 'text-semantic-muted hover:bg-muted/50 hover:text-foreground border border-transparent'
+        }`}
+      >
+        <ShoppingCart className="w-4 h-4" />
+        <span>Đơn hàng hệ thống</span>
+      </button>
+      
+      <button
+        onClick={() => setActiveTab('withdrawals')}
+        className={`w-full px-4 py-3 rounded-xl text-left text-sm font-medium flex items-center gap-3 transition-all ${
+          activeTab === 'withdrawals' 
+            ? 'bg-brand-orange/10 text-brand-orange border border-brand-orange/30' 
+            : 'text-semantic-muted hover:bg-muted/50 hover:text-foreground border border-transparent'
+        }`}
+      >
+        <DollarSign className="w-4 h-4" />
+        <span>Duyệt Rút Tiền</span>
+        {commissions.length > 0 && (
+          <span className="ml-auto bg-brand-orange text-white text-[10px] px-2 py-0.5 rounded-full font-bold">
+            {commissions.length}
+          </span>
+        )}
+      </button>
+      
       <button
         onClick={onNavigateToHome}
-        className="flex flex-col items-center justify-center flex-1 min-h-[44px] text-semantic-muted hover:text-foreground"
+        className="w-full px-4 py-3 rounded-xl text-left text-sm font-medium flex items-center gap-3 text-semantic-muted hover:bg-muted/50 hover:text-foreground transition-all mt-4 border border-transparent"
       >
-        <ArrowLeft className="w-5 h-5" />
-        <span className="text-[10px] font-medium mt-1">Trang chủ</span>
+        <ArrowLeft className="w-4 h-4" />
+        <span>Về trang chủ</span>
+      </button>
+    </div>
+  );
+
+  const bottomNavContent = (
+    <>
+      <button onClick={() => setActiveTab('overview')} className={`flex flex-col items-center justify-center flex-1 min-h-[44px] ${activeTab === 'overview' ? 'text-brand-orange' : 'text-semantic-muted'}`}>
+        <LayoutDashboard className="w-5 h-5" />
+      </button>
+      <button onClick={() => setActiveTab('users')} className={`flex flex-col items-center justify-center flex-1 min-h-[44px] ${activeTab === 'users' ? 'text-brand-orange' : 'text-semantic-muted'}`}>
+        <Users className="w-5 h-5" />
+      </button>
+      <button onClick={() => setActiveTab('orders')} className={`flex flex-col items-center justify-center flex-1 min-h-[44px] ${activeTab === 'orders' ? 'text-brand-orange' : 'text-semantic-muted'}`}>
+        <ShoppingCart className="w-5 h-5" />
+      </button>
+      <button onClick={() => setActiveTab('withdrawals')} className={`flex flex-col items-center justify-center flex-1 min-h-[44px] ${activeTab === 'withdrawals' ? 'text-brand-orange' : 'text-semantic-muted'}`}>
+        <DollarSign className="w-5 h-5" />
       </button>
     </>
   );
 
-  return (
-    <Layout 
-      headerContent={headerContent} 
-      sidebarContent={sidebarContent}
-      bottomNavContent={bottomNavContent}
-    >
-      {/* Title & Stats */}
+  const renderOverview = () => (
+    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
+      <div className="flex items-center gap-3">
+        <Activity className="w-5 h-5 text-brand-orange" />
+        <h2 className="text-xl font-extrabold">Tổng Quan Nền Tảng</h2>
+      </div>
+      
+      {loading && !stats ? (
+        <div className="p-12 text-center">
+          <Loader2 className="w-8 h-8 animate-spin text-brand-orange mx-auto" />
+        </div>
+      ) : stats ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <Card className="p-5 flex flex-col gap-2">
+            <div className="text-xs text-semantic-muted uppercase font-bold">Tổng số User</div>
+            <div className="text-2xl font-black text-foreground flex items-center gap-2">
+              <Users className="w-5 h-5 text-semantic-info" />
+              {stats.total_users}
+            </div>
+          </Card>
+          <Card className="p-5 flex flex-col gap-2">
+            <div className="text-xs text-semantic-muted uppercase font-bold">Tổng đơn hàng</div>
+            <div className="text-2xl font-black text-foreground flex items-center gap-2">
+              <ShoppingCart className="w-5 h-5 text-semantic-success" />
+              {stats.total_orders}
+            </div>
+          </Card>
+          <Card className="p-5 flex flex-col gap-2">
+            <div className="text-xs text-semantic-muted uppercase font-bold">Tổng doanh thu hệ thống</div>
+            <div className="text-2xl font-black text-foreground flex items-center gap-2">
+              <TrendingUp className="w-5 h-5 text-brand-orange" />
+              {stats.total_revenue.toLocaleString('vi-VN')}đ
+            </div>
+          </Card>
+          <Card className="p-5 flex flex-col gap-2">
+            <div className="text-xs text-semantic-muted uppercase font-bold">Hoa hồng đã chi trả</div>
+            <div className="text-2xl font-black text-foreground flex items-center gap-2">
+              <DollarSign className="w-5 h-5 text-semantic-error" />
+              {stats.total_commissions_paid.toLocaleString('vi-VN')}đ
+            </div>
+          </Card>
+        </div>
+      ) : (
+        <Card className="p-8 text-center text-semantic-muted">
+          Không có dữ liệu
+        </Card>
+      )}
+    </div>
+  );
+
+  const renderUsers = () => (
+    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
+      <div className="flex items-center gap-3">
+        <Users className="w-5 h-5 text-brand-orange" />
+        <h2 className="text-xl font-extrabold">Quản Lý Users (Tenants)</h2>
+      </div>
+
+      <Card className="p-0 overflow-hidden">
+        {loading ? (
+           <div className="p-12 text-center"><Loader2 className="w-8 h-8 animate-spin text-brand-orange mx-auto" /></div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="border-b border-border bg-muted/50 text-xs text-semantic-muted uppercase font-medium tracking-wider">
+                  <th className="py-4 px-6">User / Tenant</th>
+                  <th className="py-4 px-6">Email</th>
+                  <th className="py-4 px-6">Ngày tham gia</th>
+                  <th className="py-4 px-6">Vai trò</th>
+                  <th className="py-4 px-6 text-right">Tổng Doanh Thu</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-white/5 text-sm">
+                {users.map(u => (
+                  <tr key={u.id} className="hover:bg-muted/50 transition-colors">
+                    <td className="py-4 px-6 flex items-center gap-3">
+                      <img src={u.avatar_url || 'https://api.dicebear.com/7.x/avataaars/svg?seed='+u.email} alt="" className="w-8 h-8 rounded-full border border-border" />
+                      <span className="font-bold">{u.full_name || 'N/A'}</span>
+                    </td>
+                    <td className="py-4 px-6 text-semantic-muted">{u.email}</td>
+                    <td className="py-4 px-6 text-xs">{new Date(u.created_at).toLocaleDateString('vi-VN')}</td>
+                    <td className="py-4 px-6">
+                      <span className={`px-2 py-1 rounded text-[10px] font-bold uppercase ${u.role === 'admin' ? 'bg-brand-orange/20 text-brand-orange' : 'bg-muted text-muted-foreground'}`}>
+                        {u.role}
+                      </span>
+                    </td>
+                    <td className="py-4 px-6 text-right font-bold text-foreground">
+                      {Number(u.total_revenue).toLocaleString('vi-VN')}đ
+                    </td>
+                  </tr>
+                ))}
+                {users.length === 0 && (
+                  <tr><td colSpan={5} className="py-8 text-center text-semantic-muted">Không có dữ liệu</td></tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </Card>
+    </div>
+  );
+
+  const renderOrders = () => (
+    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
+      <div className="flex items-center gap-3">
+        <ShoppingCart className="w-5 h-5 text-brand-orange" />
+        <h2 className="text-xl font-extrabold">Lịch Sử Đơn Hàng (Toàn Hệ Thống)</h2>
+      </div>
+
+      <Card className="p-0 overflow-hidden">
+        {loading ? (
+           <div className="p-12 text-center"><Loader2 className="w-8 h-8 animate-spin text-brand-orange mx-auto" /></div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="border-b border-border bg-muted/50 text-xs text-semantic-muted uppercase font-medium tracking-wider">
+                  <th className="py-4 px-6">Mã Giao Dịch</th>
+                  <th className="py-4 px-6">Sản Phẩm</th>
+                  <th className="py-4 px-6">Creator (Tenant)</th>
+                  <th className="py-4 px-6">Email Khách Hàng</th>
+                  <th className="py-4 px-6">Trạng Thái</th>
+                  <th className="py-4 px-6 text-right">Số Tiền</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-white/5 text-sm">
+                {orders.map(o => (
+                  <tr key={o.id} className="hover:bg-muted/50 transition-colors">
+                    <td className="py-4 px-6 font-mono text-xs">{o.payment_code}</td>
+                    <td className="py-4 px-6 font-medium">{o.product_name}</td>
+                    <td className="py-4 px-6 text-semantic-muted">{o.creator_name}</td>
+                    <td className="py-4 px-6 text-xs">{o.customer_email}</td>
+                    <td className="py-4 px-6">
+                      <span className={`px-2 py-1 rounded text-[10px] font-bold uppercase ${o.status === 'paid' ? 'bg-semantic-success/20 text-semantic-success' : 'bg-semantic-warning/20 text-semantic-warning'}`}>
+                        {o.status}
+                      </span>
+                    </td>
+                    <td className="py-4 px-6 text-right font-bold text-foreground">
+                      {Number(o.amount).toLocaleString('vi-VN')}đ
+                    </td>
+                  </tr>
+                ))}
+                {orders.length === 0 && (
+                  <tr><td colSpan={6} className="py-8 text-center text-semantic-muted">Không có đơn hàng nào</td></tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </Card>
+    </div>
+  );
+
+  const renderWithdrawals = () => (
+    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
         <div>
           <h2 className="text-xl lg:text-2xl font-extrabold tracking-tight">Yêu Cầu Rút Tiền Hoa Hồng</h2>
           <p className="text-xs text-semantic-muted mt-1">Duyệt các yêu cầu rút số dư hoa hồng từ các Cộng Tác Viên (CTV).</p>
         </div>
-
-        <div className="flex gap-3 lg:gap-4 w-full lg:w-auto">
-          <Card className="flex-1 lg:flex-none p-4 lg:px-5 flex items-center gap-3 lg:gap-4">
-            <div className="w-8 h-8 lg:w-10 lg:h-10 rounded-lg bg-brand-orange/10 flex items-center justify-center text-brand-orange">
-              <DollarSign className="w-4 h-4 lg:w-5 lg:h-5" />
-            </div>
-            <div>
-              <div className="text-[10px] text-semantic-muted uppercase font-bold tracking-wider">Tổng cần chi trả</div>
-              <div className="text-base lg:text-lg font-extrabold text-foreground">
-                {totalPayoutRequested.toLocaleString('vi-VN')}đ
-              </div>
-            </div>
-          </Card>
-          
-          <Card className="flex-1 lg:flex-none p-4 lg:px-5 flex items-center gap-3 lg:gap-4">
-            <div className="w-8 h-8 lg:w-10 lg:h-10 rounded-lg bg-semantic-info/10 flex items-center justify-center text-semantic-info">
-              <Users className="w-4 h-4 lg:w-5 lg:h-5" />
-            </div>
-            <div>
-              <div className="text-[10px] text-semantic-muted uppercase font-bold tracking-wider">Số yêu cầu</div>
-              <div className="text-base lg:text-lg font-extrabold text-foreground">
-                {totalRequestsCount} yêu cầu
-              </div>
-            </div>
-          </Card>
-        </div>
       </div>
 
-      {/* Main List */}
       <Card className="p-0 overflow-hidden">
         {loading ? (
           <div className="p-12 text-center space-y-3">
@@ -185,12 +369,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
               <AlertTriangle className="w-6 h-6" />
             </div>
             <p className="text-sm text-semantic-error font-semibold">{error}</p>
-            <Button 
-              onClick={loadAdminData}
-              variant="secondary"
-            >
-              Thử lại
-            </Button>
+            <Button onClick={loadAdminData} variant="secondary">Thử lại</Button>
           </div>
         ) : commissions.length === 0 ? (
           <div className="p-16 text-center space-y-3">
@@ -204,7 +383,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
           <div className="lg:overflow-x-auto hidden lg:block">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="border-b border-border bg-muted/50.02] text-xs text-semantic-muted uppercase font-medium tracking-wider">
+                <tr className="border-b border-border bg-muted/50 text-xs text-semantic-muted uppercase font-medium tracking-wider">
                   <th className="py-4 px-6">Cộng tác viên</th>
                   <th className="py-4 px-6">Số tiền rút</th>
                   <th className="py-4 px-6">Thông tin nhận tiền</th>
@@ -214,7 +393,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
               </thead>
               <tbody className="divide-y divide-white/5 text-sm">
                 {commissions.map((comm) => (
-                  <tr key={comm.id} className="hover:bg-muted/50.02] transition-colors">
+                  <tr key={comm.id} className="hover:bg-muted/50 transition-colors">
                     <td className="py-5 px-6">
                       <div className="font-bold text-foreground">{comm.profiles?.full_name || 'N/A'}</div>
                       <div className="text-xs text-semantic-muted mt-0.5">{comm.profiles?.email || 'N/A'}</div>
@@ -233,10 +412,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
                       {new Date(comm.created_at).toLocaleString('vi-VN')}
                     </td>
                     <td className="py-5 px-6 text-right">
-                      <Button
-                        onClick={() => handleApprove(comm.affiliate_id, comm.profiles?.full_name || 'CTV', Number(comm.amount))}
-                        className="ml-auto"
-                      >
+                      <Button onClick={() => handleApprove(comm.affiliate_id, comm.profiles?.full_name || 'CTV', Number(comm.amount))} className="ml-auto">
                         <Check className="w-4 h-4 mr-2" />
                         Duyệt chuyển
                       </Button>
@@ -247,46 +423,20 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
             </table>
           </div>
         )}
-        
-        {/* Mobile View for Commissions */}
-        {commissions.length > 0 && (
-          <div className="lg:hidden divide-y divide-white/5">
-            {commissions.map((comm) => (
-              <div key={comm.id} className="p-4 space-y-3">
-                <div className="flex justify-between items-start">
-                  <div>
-                    <h4 className="text-sm font-bold text-foreground">{comm.profiles?.full_name || 'N/A'}</h4>
-                    <p className="text-xs text-semantic-muted">{comm.profiles?.email || 'N/A'}</p>
-                  </div>
-                  <div className="text-sm font-bold text-brand-orange">
-                    {Number(comm.amount).toLocaleString('vi-VN')}đ
-                  </div>
-                </div>
-
-                <div className="bg-black/20 p-3 rounded-lg border border-border space-y-1">
-                  <div className="text-[10px] uppercase font-bold tracking-wider text-semantic-muted">Thông tin nhận tiền:</div>
-                  <div className="text-xs font-mono break-all text-muted-foreground select-all leading-normal">
-                    {comm.profiles?.payment_info || comm.payment_info || 'Chưa cung cấp'}
-                  </div>
-                </div>
-
-                <div className="flex justify-between items-center pt-2">
-                  <span className="text-xs text-semantic-muted">
-                    {new Date(comm.created_at).toLocaleDateString('vi-VN')}
-                  </span>
-                  
-                  <Button
-                    onClick={() => handleApprove(comm.affiliate_id, comm.profiles?.full_name || 'CTV', Number(comm.amount))}
-                  >
-                    <Check className="w-4 h-4 mr-2" />
-                    Duyệt chuyển
-                  </Button>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
       </Card>
+    </div>
+  );
+
+  return (
+    <Layout 
+      headerContent={headerContent} 
+      sidebarContent={sidebarContent}
+      bottomNavContent={bottomNavContent}
+    >
+      {activeTab === 'overview' && renderOverview()}
+      {activeTab === 'users' && renderUsers()}
+      {activeTab === 'orders' && renderOrders()}
+      {activeTab === 'withdrawals' && renderWithdrawals()}
     </Layout>
   );
 };
