@@ -22,6 +22,9 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ product, creatorId
   const [step, setStep] = useState<'form' | 'qr' | 'success'>('form');
   const [email, setEmail] = useState(customerEmail);
   const [name, setName] = useState(customerName);
+  const [shippingName, setShippingName] = useState(customerName);
+  const [shippingPhone, setShippingPhone] = useState('');
+  const [shippingAddress, setShippingAddress] = useState('');
   const [order, setOrder] = useState<any>(null);
   const [bankConfig, setBankConfig] = useState<any>(null);
   const [qrUrl, setQrUrl] = useState<string>('');
@@ -174,8 +177,23 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ product, creatorId
       return;
     }
     if (!email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      setValidationError('Vui lòng nhập email hợp lệ để nhận sản phẩm');
+      setValidationError('Vui lòng nhập email hợp lệ để nhận thông tin đơn hàng');
       return;
+    }
+
+    if (product.product_type === 'physical') {
+      if (!shippingName.trim()) {
+        setValidationError('Vui lòng nhập tên người nhận hàng');
+        return;
+      }
+      if (!shippingPhone.trim()) {
+        setValidationError('Vui lòng nhập số điện thoại nhận hàng');
+        return;
+      }
+      if (!shippingAddress.trim()) {
+        setValidationError('Vui lòng nhập địa chỉ nhận hàng');
+        return;
+      }
     }
 
     setCustomerInfo(name, email);
@@ -194,7 +212,10 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ product, creatorId
       customer_email: email,
       customer_name: name,
       amount: finalAmount,
-      referred_by: referrer
+      referred_by: referrer,
+      shipping_name: product.product_type === 'physical' ? shippingName : undefined,
+      shipping_phone: product.product_type === 'physical' ? shippingPhone : undefined,
+      shipping_address: product.product_type === 'physical' ? shippingAddress : undefined
     });
 
     if (newOrder) {
@@ -276,9 +297,48 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ product, creatorId
                   placeholder="name@example.com"
                   className="h-11"
                 />
-                <span className="text-[11px] text-white/40 mt-1 block">Chúng tôi sẽ gửi link tải file trực tiếp về email này.</span>
+                <span className="text-[11px] text-white/40 mt-1 block">Chúng tôi sẽ gửi email hóa đơn và cập nhật đơn hàng qua email này.</span>
               </div>
             </div>
+
+            {product.product_type === 'physical' && (
+              <div className="space-y-3 bg-blue-500/5 p-4 rounded-xl border border-blue-500/10">
+                <h4 className="text-xs font-bold text-blue-400 mb-2">Thông tin nhận hàng (Sản phẩm vật lý)</h4>
+                <div>
+                  <Label className="block text-[10px] font-semibold text-white/60 uppercase tracking-wider mb-2">Tên người nhận</Label>
+                  <Input 
+                    type="text" 
+                    value={shippingName}
+                    onChange={(e) => setShippingName(e.target.value)}
+                    placeholder="Nguyễn Văn A"
+                    className="h-11"
+                  />
+                </div>
+                <div>
+                  <Label className="block text-[10px] font-semibold text-white/60 uppercase tracking-wider mb-2">Số điện thoại</Label>
+                  <Input 
+                    type="text" 
+                    value={shippingPhone}
+                    onChange={(e) => setShippingPhone(e.target.value)}
+                    placeholder="0912345678"
+                    className="h-11"
+                  />
+                </div>
+                <div>
+                  <Label className="block text-[10px] font-semibold text-white/60 uppercase tracking-wider mb-2">Địa chỉ giao hàng chi tiết</Label>
+                  <Input 
+                    type="text" 
+                    value={shippingAddress}
+                    onChange={(e) => setShippingAddress(e.target.value)}
+                    placeholder="Số nhà, đường, phường/xã, quận/huyện, tỉnh/thành phố"
+                    className="h-11"
+                  />
+                </div>
+                <div className="text-[10px] text-blue-400/60 font-semibold italic mt-1">
+                  * Sản phẩm sẽ được giao đến địa chỉ này. Hiện tại shop miễn phí vận chuyển toàn quốc.
+                </div>
+              </div>
+            )}
 
             {/* Order Bump Card */}
             {bumpProduct && (
@@ -530,15 +590,21 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ product, creatorId
             </div>
 
             <div className="space-y-3">
-              <a 
-                href={product.file_url} 
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full py-4 bg-green-500 hover:bg-green-600 text-white font-bold rounded-xl flex items-center justify-center gap-2 transition-all duration-300 transform hover:scale-[1.02] shadow-lg shadow-green-500/20 text-sm animate-pulse"
-              >
-                <Download className="w-5 h-5" />
-                Tải xuống: {product.name}
-              </a>
+              {product.product_type === 'digital' && product.file_url ? (
+                <a 
+                  href={product.file_url} 
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full py-4 bg-green-500 hover:bg-green-600 text-white font-bold rounded-xl flex items-center justify-center gap-2 transition-all duration-300 transform hover:scale-[1.02] shadow-lg shadow-green-500/20 text-sm animate-pulse"
+                >
+                  <Download className="w-5 h-5" />
+                  Tải xuống: {product.name}
+                </a>
+              ) : product.product_type === 'physical' ? (
+                <div className="w-full py-4 bg-blue-500/10 border border-blue-500/20 text-blue-400 font-bold rounded-xl flex items-center justify-center gap-2 text-sm">
+                  🎉 Đơn hàng đang được đóng gói và gửi đi!
+                </div>
+              ) : null}
               {orderBumpChecked && bumpProduct && (
                 <a 
                   href={bumpProduct.file_url} 

@@ -7,7 +7,11 @@ export interface Product {
   description: string;
   price: number;
   cover_image_url: string;
-  file_url: string;
+  file_url?: string | null;
+  product_type: 'digital' | 'physical';
+  inventory_count: number;
+  is_unlimited: boolean;
+  weight_grams: number;
   status: 'active' | 'inactive';
   created_at: string;
   updated_at: string;

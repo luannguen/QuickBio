@@ -60,6 +60,9 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigateToBioBuilder, on
   const [prodPrice, setProdPrice] = useState(50000);
   const [prodCover, setProdCover] = useState('');
   const [prodFile, setProdFile] = useState('');
+  const [prodType, setProdType] = useState<'digital' | 'physical'>('digital');
+  const [prodInventory, setProdInventory] = useState(0);
+  const [prodIsUnlimited, setProdIsUnlimited] = useState(true);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
 
   // User slug cho link công khai
@@ -187,7 +190,8 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigateToBioBuilder, on
   // Action handlers
   const handleProductSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!prodName.trim() || !prodFile.trim()) return;
+    if (!prodName.trim()) return;
+    if (prodType === 'digital' && !prodFile.trim()) return;
 
     try {
       if (editingProduct) {
@@ -196,7 +200,11 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigateToBioBuilder, on
           description: prodDesc,
           price: prodPrice,
           cover_image_url: prodCover,
-          file_url: prodFile
+          file_url: prodType === 'digital' ? prodFile : null,
+          product_type: prodType,
+          inventory_count: prodInventory,
+          is_unlimited: prodIsUnlimited,
+          weight_grams: 0
         });
       } else {
         await productService.createProduct(user.id, {
@@ -204,7 +212,11 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigateToBioBuilder, on
           description: prodDesc,
           price: prodPrice,
           cover_image_url: prodCover,
-          file_url: prodFile,
+          file_url: prodType === 'digital' ? prodFile : null,
+          product_type: prodType,
+          inventory_count: prodInventory,
+          is_unlimited: prodIsUnlimited,
+          weight_grams: 0,
           status: 'active'
         });
       }
@@ -215,6 +227,9 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigateToBioBuilder, on
       setProdPrice(50000);
       setProdCover('');
       setProdFile('');
+      setProdType('digital');
+      setProdInventory(0);
+      setProdIsUnlimited(true);
       loadDashboardData();
     } catch (err) {
       console.error(err);
@@ -227,7 +242,10 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigateToBioBuilder, on
     setProdDesc(p.description);
     setProdPrice(p.price);
     setProdCover(p.cover_image_url);
-    setProdFile(p.file_url);
+    setProdFile(p.file_url || '');
+    setProdType(p.product_type || 'digital');
+    setProdInventory(p.inventory_count || 0);
+    setProdIsUnlimited(p.is_unlimited ?? true);
     setIsProductModalOpen(true);
   };
 
@@ -560,6 +578,9 @@ Giọng điệu: ${aiTone === 'expert' ? 'Chuyên sâu, logic' : aiTone === 'fun
       setProdPrice(50000);
       setProdCover('');
       setProdFile('');
+      setProdType('digital');
+      setProdInventory(0);
+      setProdIsUnlimited(true);
       setIsProductModalOpen(true);
     },
     onEditProductClick: handleEditProductClick,
@@ -694,6 +715,27 @@ Giọng điệu: ${aiTone === 'expert' ? 'Chuyên sâu, logic' : aiTone === 'fun
                   />
                 </div>
                 
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <Label className="block mb-1.5">Loại sản phẩm</Label>
+                  <div className="flex bg-black/20 p-1 rounded-xl border border-white/10">
+                    <button
+                      type="button"
+                      onClick={() => setProdType('digital')}
+                      className={`flex-1 py-2 text-sm font-semibold rounded-lg transition-colors ${prodType === 'digital' ? 'bg-brand-orange text-white' : 'text-white/50 hover:text-white'}`}
+                    >
+                      Sản phẩm số
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setProdType('physical')}
+                      className={`flex-1 py-2 text-sm font-semibold rounded-lg transition-colors ${prodType === 'physical' ? 'bg-brand-orange text-white' : 'text-white/50 hover:text-white'}`}
+                    >
+                      Sản phẩm vật lý
+                    </button>
+                  </div>
+                </div>
+
                 <div>
                   <Label className="block mb-1.5">Ảnh bìa sản phẩm</Label>
                   <ImageUploader 
@@ -705,17 +747,45 @@ Giọng điệu: ${aiTone === 'expert' ? 'Chuyên sâu, logic' : aiTone === 'fun
                 </div>
               </div>
 
-              <div>
-                <Label className="block mb-1.5">Đường dẫn file (Link tải zip, pdf...)</Label>
-                <Input 
-                  type="text"
-                  value={prodFile}
-                  onChange={(e) => setProdFile(e.target.value)}
-                  placeholder="Ví dụ: https://github.com/.../archive/main.zip"
-                  required
-                />
-                <span className="text-[10px] text-semantic-muted mt-1 block">Sau khi chuyển khoản thành công, hệ thống tự hiển thị link này để khách tải file.</span>
-              </div>
+              {prodType === 'digital' ? (
+                <div>
+                  <Label className="block mb-1.5">Đường dẫn file (Link tải zip, pdf...)</Label>
+                  <Input 
+                    type="text"
+                    value={prodFile}
+                    onChange={(e) => setProdFile(e.target.value)}
+                    placeholder="Ví dụ: https://github.com/.../archive/main.zip"
+                    required
+                  />
+                  <span className="text-[10px] text-semantic-muted mt-1 block">Sau khi chuyển khoản thành công, hệ thống tự hiển thị link này để khách tải file.</span>
+                </div>
+              ) : (
+                <div className="space-y-4 border-t border-white/10 pt-4 mt-4">
+                  <div className="flex items-center gap-3">
+                    <input 
+                      type="checkbox" 
+                      id="isUnlimited" 
+                      checked={prodIsUnlimited}
+                      onChange={(e) => setProdIsUnlimited(e.target.checked)}
+                      className="w-4 h-4 rounded bg-black/20 border-white/10 text-brand-orange focus:ring-brand-orange/50 focus:ring-offset-0"
+                    />
+                    <Label htmlFor="isUnlimited" className="cursor-pointer mb-0">Hàng luôn có sẵn (Vô hạn)</Label>
+                  </div>
+                  
+                  {!prodIsUnlimited && (
+                    <div>
+                      <Label className="block mb-1.5">Số lượng tồn kho</Label>
+                      <Input 
+                        type="number"
+                        value={prodInventory}
+                        onChange={(e) => setProdInventory(parseInt(e.target.value) || 0)}
+                        min={0}
+                        required={!prodIsUnlimited}
+                      />
+                    </div>
+                  )}
+                </div>
+              )}
 
               <Button 
                 type="submit"

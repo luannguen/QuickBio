@@ -12,6 +12,9 @@ export interface Order {
   created_at: string;
   paid_at?: string;
   referred_by?: string; // ID của affiliate giới thiệu
+  shipping_name?: string | null;
+  shipping_phone?: string | null;
+  shipping_address?: string | null;
   product?: Product; // Thông tin sản phẩm kèm theo
 }
 
@@ -84,6 +87,9 @@ export const orderService = {
     customer_name: string;
     amount: number;
     referred_by?: string;
+    shipping_name?: string;
+    shipping_phone?: string;
+    shipping_address?: string;
   }): Promise<Order | null> => {
     // Sinh mã thanh toán duy nhất dạng: QB + 5 chữ số ngẫu nhiên
     const randomNum = Math.floor(10000 + Math.random() * 90000);
@@ -99,7 +105,10 @@ export const orderService = {
           amount: orderData.amount,
           payment_code: paymentCode,
           status: 'pending',
-          referred_by: orderData.referred_by || null
+          referred_by: orderData.referred_by || null,
+          shipping_name: orderData.shipping_name || null,
+          shipping_phone: orderData.shipping_phone || null,
+          shipping_address: orderData.shipping_address || null
         })
         .select()
         .single();

@@ -19,7 +19,7 @@ export const ProductsTab: React.FC<ProductsTabProps> = ({
       <div className="flex justify-between items-center">
         <h3 className="text-base font-bold flex items-center gap-2">
           <ShoppingBag className="w-5 h-5 text-brand-orange" />
-          Danh sách sản phẩm số
+          Danh sách sản phẩm
         </h3>
         <button 
           onClick={onAddProductClick}
@@ -34,8 +34,8 @@ export const ProductsTab: React.FC<ProductsTabProps> = ({
         <div className="glass-panel p-10 rounded-2xl border border-white/5 text-center space-y-4">
           <ShoppingBag className="w-12 h-12 text-white/20 mx-auto" />
           <div className="space-y-1">
-            <h4 className="font-bold text-white text-sm">Chưa có sản phẩm số nào</h4>
-            <p className="text-xs text-white/40">Hãy tạo sản phẩm số đầu tiên (template, ebook...) để bán lấy doanh thu.</p>
+            <h4 className="font-bold text-white text-sm">Chưa có sản phẩm nào</h4>
+            <p className="text-xs text-white/40">Hãy tạo sản phẩm (số hoặc vật lý) đầu tiên để bán lấy doanh thu.</p>
           </div>
         </div>
       ) : (
@@ -57,16 +57,27 @@ export const ProductsTab: React.FC<ProductsTabProps> = ({
                 </div>
               </div>
               <div className="flex justify-between items-center pt-3 border-t border-white/5">
-                <span className="text-[10px] text-white/30 truncate max-w-[150px]">File: {p.file_url.slice(0, 20)}...</span>
+                <div className="flex items-center gap-2">
+                  <span className={`text-[10px] px-2 py-0.5 rounded font-semibold ${p.product_type === 'physical' ? 'bg-blue-500/10 text-blue-400' : 'bg-purple-500/10 text-purple-400'}`}>
+                    {p.product_type === 'physical' ? 'Vật lý' : 'SP Số'}
+                  </span>
+                  {p.product_type === 'physical' && (
+                    <span className="text-[10px] text-white/40">
+                      Kho: {p.is_unlimited ? '∞' : p.inventory_count}
+                    </span>
+                  )}
+                </div>
                 <div className="flex gap-2">
-                  <button
-                    onClick={() => window.open(p.file_url, '_blank')}
-                    className="px-2.5 py-1.5 bg-brand-orange/10 hover:bg-brand-orange/20 text-brand-orange border border-brand-orange/20 hover:border-brand-orange/40 text-xs font-semibold rounded-lg transition-colors flex items-center gap-1"
-                    title="Xem trước File Sản phẩm"
-                  >
-                    <Eye className="w-3.5 h-3.5" />
-                    Xem File
-                  </button>
+                  {p.product_type === 'digital' && p.file_url && (
+                    <button
+                      onClick={() => window.open(p.file_url || '', '_blank')}
+                      className="px-2.5 py-1.5 bg-brand-orange/10 hover:bg-brand-orange/20 text-brand-orange border border-brand-orange/20 hover:border-brand-orange/40 text-xs font-semibold rounded-lg transition-colors flex items-center gap-1"
+                      title="Xem trước File Sản phẩm"
+                    >
+                      <Eye className="w-3.5 h-3.5" />
+                      Xem File
+                    </button>
+                  )}
                   <button
                     onClick={() => onEditProductClick(p)}
                     className="px-2.5 py-1.5 hover:bg-white/5 border border-white/10 hover:border-white/20 text-xs font-semibold rounded-lg transition-colors"
