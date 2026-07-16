@@ -118,10 +118,10 @@ function App() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#080B11]">
+      <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="text-center space-y-3">
           <div className="w-10 h-10 border-2 border-brand-orange border-t-transparent rounded-full animate-spin mx-auto"></div>
-          <p className="text-sm text-white/50">Đang khởi tạo hệ thống...</p>
+          <p className="text-sm text-muted-foreground">Đang khởi tạo hệ thống...</p>
         </div>
       </div>
     );

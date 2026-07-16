@@ -24,10 +24,10 @@ export const PublicBio: React.FC<PublicBioProps> = ({ slug, onNavigateToLanding,
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#080B11]">
+      <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="text-center space-y-3">
           <Loader2 className="w-10 h-10 animate-spin text-brand-orange mx-auto" />
-          <p className="text-sm text-white/50">Đang tải trang cá nhân...</p>
+          <p className="text-sm text-muted-foreground">Đang tải trang cá nhân...</p>
         </div>
       </div>
     );
@@ -35,14 +35,14 @@ export const PublicBio: React.FC<PublicBioProps> = ({ slug, onNavigateToLanding,
 
   if (!bio) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#080B11] p-4 text-center">
-        <div className="max-w-sm glass-panel p-8 rounded-2xl border border-white/5 space-y-6">
+      <div className="min-h-screen flex items-center justify-center bg-background p-4 text-center">
+        <div className="max-w-sm glass-panel p-8 rounded-2xl border border-border space-y-6">
           <div className="w-16 h-16 bg-brand-orange/10 rounded-full flex items-center justify-center mx-auto text-brand-orange">
             <Compass className="w-8 h-8 animate-pulse" />
           </div>
           <div className="space-y-2">
-            <h2 className="text-xl font-bold text-white">Không tìm thấy trang</h2>
-            <p className="text-sm text-white/50">
+            <h2 className="text-xl font-bold text-foreground">Không tìm thấy trang</h2>
+            <p className="text-sm text-muted-foreground">
               Trang Bio Link này chưa được khởi tạo hoặc đã bị ẩn. Hãy tự tạo một trang cho riêng bạn!
             </p>
           </div>

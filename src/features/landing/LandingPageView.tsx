@@ -6,6 +6,7 @@ import { useLandingMobile } from './hooks/useLandingMobile';
 import { PhoneMockup } from './components/PhoneMockup';
 import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
+import { ThemeToggle } from '../../components/ui/ThemeToggle';
 
 // ============================================================
 // TiltCard Component: Parallax 3D mouse rotate effect
@@ -98,7 +99,7 @@ export const LandingPageView: React.FC<LandingPageViewProps> = ({
   } = useLandingMobile(isAuthenticated, onNavigateToDashboard);
 
   return (
-    <div className="min-h-screen relative overflow-hidden bg-[#080B11] text-white bg-[linear-gradient(to_right,rgba(255,255,255,0.015)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.015)_1px,transparent_1px)] bg-[size:40px_40px] pb-28 lg:pb-0">
+    <div className="min-h-screen relative overflow-hidden bg-background text-foreground bg-[linear-gradient(to_right,rgba(255,255,255,0.015)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.015)_1px,transparent_1px)] bg-[size:40px_40px] pb-28 lg:pb-0">
       <style>{`
         @keyframes float-slow {
           0%, 100% { transform: translateY(0px) rotate(0deg); }
@@ -121,10 +122,10 @@ export const LandingPageView: React.FC<LandingPageViewProps> = ({
       <div className="absolute bottom-[20%] right-[-15%] lg:bottom-[-10%] lg:right-[-10%] w-[300px] h-[300px] lg:w-[500px] lg:h-[500px] bg-brand-green/10 rounded-full blur-[80px] lg:blur-[100px] pointer-events-none"></div>
 
       {/* Navigation Header */}
-      <header className="relative z-10 max-w-7xl mx-auto px-4 lg:px-6 py-4 lg:py-6 flex justify-between items-center border-b lg:border-none border-white/5 bg-brand-card/10 lg:bg-transparent backdrop-blur-md lg:backdrop-blur-none">
+      <header className="relative z-10 max-w-7xl mx-auto px-4 lg:px-6 py-4 lg:py-6 flex justify-between items-center border-b lg:border-none border-border bg-brand-card/10 lg:bg-transparent backdrop-blur-md lg:backdrop-blur-none">
         <div className="flex items-center gap-1.5 lg:gap-2">
           <div className="w-8 h-8 lg:w-10 lg:h-10 bg-gradient-to-tr from-brand-orange to-brand-coral rounded-lg lg:rounded-xl flex items-center justify-center shadow-lg shadow-brand-orange/20">
-            <Sparkles className="w-4.5 h-4.5 lg:w-5 lg:h-5 text-white" />
+            <Sparkles className="w-4.5 h-4.5 lg:w-5 lg:h-5 text-foreground" />
           </div>
           <span className="text-base lg:text-xl font-black tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white to-white/70">
             QuickBio
@@ -156,6 +157,8 @@ export const LandingPageView: React.FC<LandingPageViewProps> = ({
           >
             {loading ? 'Đang tải...' : isAuthenticated ? 'Vào Dashboard' : 'Trải nghiệm Demo'}
           </Button>
+
+          <ThemeToggle />
         </div>
       </header>
 
@@ -169,14 +172,14 @@ export const LandingPageView: React.FC<LandingPageViewProps> = ({
               <span>SaaS MMO Tự động hoá 100%</span>
             </div>
 
-            <h1 className="text-3xl sm:text-6xl font-extrabold tracking-tight leading-[1.12] text-white">
+            <h1 className="text-3xl sm:text-6xl font-extrabold tracking-tight leading-[1.12] text-foreground">
               Giải phóng thu nhập từ <br className="hidden lg:block" />
               <span className="bg-clip-text text-transparent bg-gradient-to-r from-brand-orange to-brand-coral">
                 Lượng Follow
               </span> của bạn
             </h1>
 
-            <p className="text-xs sm:text-lg text-white/60 leading-relaxed max-w-sm lg:max-w-xl mx-auto lg:mx-0">
+            <p className="text-xs sm:text-lg text-muted-foreground leading-relaxed max-w-sm lg:max-w-xl mx-auto lg:mx-0">
               Xây dựng cửa hàng sản phẩm số trên Bio-Link chỉ trong 30 giây. Khách quét mã VietQR thanh toán - Tiền về bank của bạn - Tự động bàn giao file tức thì.
             </p>
 
@@ -204,7 +207,7 @@ export const LandingPageView: React.FC<LandingPageViewProps> = ({
              {/* Desktop version (with 3D rotation) */}
              <div className="hidden lg:flex w-full justify-center">
               <div 
-                className="relative w-[280px] h-[570px] bg-[#0d111a] rounded-[45px] p-3 shadow-[20px_20px_60px_-10px_rgba(0,0,0,0.85),-10px_-10px_35px_rgba(255,255,255,0.02)] border-[6px] border-white/15 ring-8 ring-black/50 overflow-hidden flex flex-col transition-all duration-700 ease-out hover:[transform:rotateY(0deg)_rotateX(0deg)_translateZ(25px)] hover:shadow-brand-orange/15 hover:border-white/25 cursor-grab active:cursor-grabbing"
+                className="relative w-[280px] h-[570px] bg-card rounded-[45px] p-3 shadow-[20px_20px_60px_-10px_rgba(0,0,0,0.85),-10px_-10px_35px_rgba(255,255,255,0.02)] border-[6px] border-border ring-8 ring-black/50 overflow-hidden flex flex-col transition-all duration-700 ease-out hover:[transform:rotateY(0deg)_rotateX(0deg)_translateZ(25px)] hover:shadow-brand-orange/15 hover:border-border cursor-grab active:cursor-grabbing"
                 style={{
                   transform: 'rotateY(-18deg) rotateX(12deg) rotateZ(-3deg)',
                   transformStyle: 'preserve-3d',
@@ -212,41 +215,41 @@ export const LandingPageView: React.FC<LandingPageViewProps> = ({
               >
                 {/* iPhone Notch */}
                 <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-32 h-6 bg-black rounded-b-2xl z-20 flex items-center justify-center">
-                  <div className="w-12 h-1 bg-white/20 rounded-full"></div>
+                  <div className="w-12 h-1 bg-muted/50 rounded-full"></div>
                 </div>
 
                 {/* iPhone Screen Content */}
-                <div className="relative flex-1 rounded-[38px] overflow-hidden bg-[#080B11] border border-white/5 flex flex-col p-4 pt-8" style={{ transform: 'translateZ(10px)' }}>
+                <div className="relative flex-1 rounded-[38px] overflow-hidden bg-background border border-border flex flex-col p-4 pt-8" style={{ transform: 'translateZ(10px)' }}>
                   {mockPhoneStep === 'bio' && (
                     <div className="flex-1 flex flex-col justify-between space-y-4">
                       <div className="text-center space-y-2 mt-2">
                         <img 
                           src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=80&h=80&q=80" 
                           alt="Avatar" 
-                          className="w-16 h-16 rounded-full mx-auto object-cover border border-white/10"
+                          className="w-16 h-16 rounded-full mx-auto object-cover border border-border"
                         />
                         <div>
-                          <h4 className="text-xs font-bold text-white">Luan Nguyen</h4>
-                          <p className="text-[10px] text-white/50">Tài liệu & Công cụ MMO chuyên nghiệp</p>
+                          <h4 className="text-xs font-bold text-foreground">Luan Nguyen</h4>
+                          <p className="text-[10px] text-muted-foreground">Tài liệu & Công cụ MMO chuyên nghiệp</p>
                         </div>
                       </div>
 
                       <div className="flex-1 flex flex-col justify-center">
-                        <div className="glass-card p-3 rounded-xl border border-white/10 space-y-2.5">
+                        <div className="glass-card p-3 rounded-xl border border-border space-y-2.5">
                           <img 
                             src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=300&q=80" 
                             alt="ChatGPT Ebook"
                             className="w-full h-24 object-cover rounded-lg"
                           />
                           <div className="space-y-1 text-left">
-                            <h5 className="text-[10px] font-bold text-white leading-snug line-clamp-1">100+ Prompt ChatGPT Thôi Miên</h5>
-                            <p className="text-[9px] text-white/40 line-clamp-2">Bấm viết kịch bản, content chốt sale trong 3 giây.</p>
+                            <h5 className="text-[10px] font-bold text-foreground leading-snug line-clamp-1">100+ Prompt ChatGPT Thôi Miên</h5>
+                            <p className="text-[9px] text-muted-foreground line-clamp-2">Bấm viết kịch bản, content chốt sale trong 3 giây.</p>
                           </div>
                           <div className="flex justify-between items-center pt-1">
                             <span className="text-[10px] font-extrabold text-brand-orange">49.000đ</span>
                             <button 
                               onClick={() => setMockPhoneStep('checkout')}
-                              className="px-2.5 py-1.5 bg-brand-orange hover:bg-brand-coral text-white text-[9px] font-bold rounded-lg transition-all min-h-[32px] flex items-center justify-center"
+                              className="px-2.5 py-1.5 bg-brand-orange hover:bg-brand-coral text-foreground text-[9px] font-bold rounded-lg transition-all min-h-[32px] flex items-center justify-center"
                             >
                               Mua ngay
                             </button>
@@ -254,7 +257,7 @@ export const LandingPageView: React.FC<LandingPageViewProps> = ({
                         </div>
                       </div>
 
-                      <div className="text-center text-[8px] text-white/30 pt-2 border-t border-white/5">
+                      <div className="text-center text-[8px] text-muted-foreground pt-2 border-t border-border">
                         ⚡ Tạo Bio Link bởi QuickBio
                       </div>
                     </div>
@@ -263,7 +266,7 @@ export const LandingPageView: React.FC<LandingPageViewProps> = ({
                   {mockPhoneStep === 'checkout' && (
                     <div className="flex-1 flex flex-col justify-between space-y-4 text-center">
                       <h5 className="text-[11px] font-bold text-brand-orange">Quét Mã VietQR Chuyển Khoản</h5>
-                      <div className="w-36 h-36 bg-white p-2 rounded-xl mx-auto flex items-center justify-center border border-white/15">
+                      <div className="w-36 h-36 bg-white p-2 rounded-xl mx-auto flex items-center justify-center border border-border">
                         <img 
                           src={`https://api.vietqr.io/image/970422-11301442277-hFpQhC9.jpg?accountName=NGUYEN%20THIEN%20LUAN&amount=49000&addInfo=QB41500`}
                           alt="VietQR"
@@ -271,8 +274,8 @@ export const LandingPageView: React.FC<LandingPageViewProps> = ({
                         />
                       </div>
                       <div className="space-y-1 text-xs">
-                        <div className="text-[9px] text-white/50">Số tiền: <strong className="text-white">49.000đ</strong></div>
-                        <div className="text-[9px] text-white/50">Nội dung: <strong className="text-brand-orange font-mono">QB41500</strong></div>
+                        <div className="text-[9px] text-muted-foreground">Số tiền: <strong className="text-foreground">49.000đ</strong></div>
+                        <div className="text-[9px] text-muted-foreground">Nội dung: <strong className="text-brand-orange font-mono">QB41500</strong></div>
                       </div>
                       <button 
                         onClick={() => setMockPhoneStep('paid')}
@@ -290,19 +293,19 @@ export const LandingPageView: React.FC<LandingPageViewProps> = ({
                       </div>
                       <div className="space-y-1">
                         <h5 className="text-[11px] font-bold text-green-400">Thanh Toán Thành Công!</h5>
-                        <p className="text-[9px] text-white/50 max-w-[180px]">File sản phẩm đã được tự động giao qua email.</p>
+                        <p className="text-[9px] text-muted-foreground max-w-[180px]">File sản phẩm đã được tự động giao qua email.</p>
                       </div>
                       <a 
                         href="https://quick-bio-lilac.vercel.app/downloads/100-prompt-chatgpt.html"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="px-4 py-2 bg-white/5 hover:bg-white/10 text-white border border-white/10 text-[9px] font-bold rounded-xl transition-all"
+                        className="px-4 py-2 bg-muted/50 hover:bg-muted/50 text-foreground border border-border text-[9px] font-bold rounded-xl transition-all"
                       >
                         📥 Tải File Ebook
                       </a>
                       <button 
                         onClick={() => setMockPhoneStep('bio')}
-                        className="text-[9px] text-white/30 hover:text-white underline pt-4"
+                        className="text-[9px] text-muted-foreground hover:text-foreground underline pt-4"
                       >
                         Quay lại trang Bio
                       </button>
@@ -331,19 +334,19 @@ export const LandingPageView: React.FC<LandingPageViewProps> = ({
             <Card className="p-5 lg:p-8 text-left space-y-2 lg:space-y-6 flex flex-col justify-between overflow-hidden relative group hover:border-brand-orange/30 transition-all duration-500 h-full">
               <div className="space-y-2">
                 <div className="hidden lg:block text-[10px] uppercase font-extrabold tracking-widest text-brand-orange">Công cụ thiết kế</div>
-                <h3 className="text-sm lg:text-xl font-bold lg:font-extrabold text-white flex items-center gap-2">
+                <h3 className="text-sm lg:text-xl font-bold lg:font-extrabold text-foreground flex items-center gap-2">
                   <span className="w-2 h-2 rounded-full bg-brand-orange lg:hidden"></span>
                   Trình dựng Bio-Link kéo thả
                 </h3>
-                <p className="text-xs lg:text-sm text-white/50 max-w-md leading-relaxed">
+                <p className="text-xs lg:text-sm text-muted-foreground max-w-md leading-relaxed">
                   Tùy biến Avatar, màu nền, nút bấm xã hội và xem trước hiển thị di động tức thì ngay trong màn hình soạn thảo.
                 </p>
               </div>
-              <div className="hidden lg:flex w-full bg-[#080b11]/80 rounded-2xl p-4 border border-white/10 items-center gap-4 transform translate-y-3 group-hover:translate-y-0 transition-transform duration-500">
-                <div className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex-shrink-0 flex items-center justify-center text-white/60">👤</div>
+              <div className="hidden lg:flex w-full bg-background/80 rounded-2xl p-4 border border-border items-center gap-4 transform translate-y-3 group-hover:translate-y-0 transition-transform duration-500">
+                <div className="w-10 h-10 rounded-full bg-muted/50 border border-border flex-shrink-0 flex items-center justify-center text-muted-foreground">👤</div>
                 <div className="flex-1 space-y-1.5">
-                  <div className="w-24 h-2.5 bg-white/10 rounded"></div>
-                  <div className="w-32 h-1.5 bg-white/5 rounded"></div>
+                  <div className="w-24 h-2.5 bg-muted/50 rounded"></div>
+                  <div className="w-32 h-1.5 bg-muted/50 rounded"></div>
                 </div>
                 <div className="flex gap-2">
                   <span className="w-2.5 h-2.5 rounded-full bg-[#FF6B35]"></span>
@@ -358,18 +361,18 @@ export const LandingPageView: React.FC<LandingPageViewProps> = ({
             <Card className="p-5 lg:p-8 text-left space-y-2 lg:space-y-6 flex flex-col justify-between overflow-hidden relative group hover:border-[#8BC34A]/30 transition-all duration-500 h-full">
               <div className="space-y-2">
                 <div className="hidden lg:block text-[10px] uppercase font-extrabold tracking-widest text-[#8BC34A]">Thanh toán tức thì</div>
-                <h3 className="text-sm lg:text-xl font-bold lg:font-extrabold text-white flex items-center gap-2">
+                <h3 className="text-sm lg:text-xl font-bold lg:font-extrabold text-foreground flex items-center gap-2">
                   <span className="w-2 h-2 rounded-full bg-[#8BC34A] lg:hidden"></span>
                   Quét VietQR Tự động
                 </h3>
-                <p className="text-xs lg:text-sm text-white/50 leading-relaxed">
+                <p className="text-xs lg:text-sm text-muted-foreground leading-relaxed">
                   Tiền về thẳng tài khoản ngân hàng cá nhân của bạn, không qua trung gian giam vốn.
                 </p>
               </div>
               <div className="hidden lg:flex bg-[#8BC34A]/10 border border-[#8BC34A]/25 p-3.5 rounded-2xl items-center gap-3 transform translate-y-3 group-hover:translate-y-0 transition-transform duration-500">
                 <span className="text-xl">💰</span>
                 <div className="text-xs">
-                  <div className="font-extrabold text-white">Biến động số dư MBBank</div>
+                  <div className="font-extrabold text-foreground">Biến động số dư MBBank</div>
                   <div className="text-[#8BC34A] font-extrabold font-mono">+49.000 VND</div>
                 </div>
               </div>
@@ -380,18 +383,18 @@ export const LandingPageView: React.FC<LandingPageViewProps> = ({
             <Card className="p-5 lg:p-8 text-left space-y-2 lg:space-y-6 flex flex-col justify-between overflow-hidden relative group hover:border-[#3b82f6]/30 transition-all duration-500 h-full">
               <div className="space-y-2">
                 <div className="hidden lg:block text-[10px] uppercase font-extrabold tracking-widest text-[#3b82f6]">Giao hàng số</div>
-                <h3 className="text-sm lg:text-xl font-bold lg:font-extrabold text-white flex items-center gap-2">
+                <h3 className="text-sm lg:text-xl font-bold lg:font-extrabold text-foreground flex items-center gap-2">
                   <span className="w-2 h-2 rounded-full bg-[#3B82F6] lg:hidden"></span>
                   Tự động bàn giao File
                 </h3>
-                <p className="text-xs lg:text-sm text-white/50 leading-relaxed">
+                <p className="text-xs lg:text-sm text-muted-foreground leading-relaxed">
                   File tài liệu, khóa học được gửi trực tiếp qua email của khách ngay khi thanh toán thành công.
                 </p>
               </div>
-              <div className="hidden lg:flex bg-white/[0.02] border border-white/5 p-3.5 rounded-2xl items-center gap-3 transform translate-y-3 group-hover:translate-y-0 transition-transform duration-500">
+              <div className="hidden lg:flex bg-muted/50.02] border border-border p-3.5 rounded-2xl items-center gap-3 transform translate-y-3 group-hover:translate-y-0 transition-transform duration-500">
                 <span className="text-xl">📧</span>
                 <div className="text-[10px] space-y-0.5">
-                  <div className="font-extrabold text-white">Đã gửi: 100+ Prompt ChatGPT...</div>
+                  <div className="font-extrabold text-foreground">Đã gửi: 100+ Prompt ChatGPT...</div>
                 </div>
               </div>
             </Card>
@@ -401,20 +404,20 @@ export const LandingPageView: React.FC<LandingPageViewProps> = ({
             <Card className="p-5 lg:p-8 text-left space-y-2 lg:space-y-6 flex flex-col justify-between overflow-hidden relative group hover:border-brand-coral/30 transition-all duration-500 h-full">
               <div className="space-y-2">
                 <div className="hidden lg:block text-[10px] uppercase font-extrabold tracking-widest text-brand-coral">Trí tuệ nhân tạo</div>
-                <h3 className="text-sm lg:text-xl font-bold lg:font-extrabold text-white flex items-center gap-2">
+                <h3 className="text-sm lg:text-xl font-bold lg:font-extrabold text-foreground flex items-center gap-2">
                    <span className="w-2 h-2 rounded-full bg-brand-coral lg:hidden"></span>
                   Sáng tạo Content AI
                 </h3>
-                <p className="text-xs lg:text-sm text-white/50 max-w-md leading-relaxed">
+                <p className="text-xs lg:text-sm text-muted-foreground max-w-md leading-relaxed">
                   Tự động tạo các bài viết bán hàng thôi miên trên Facebook để kéo traffic về Bio Link của bạn.
                 </p>
               </div>
-              <div className="hidden lg:flex bg-[#080b11]/80 rounded-2xl p-4 border border-white/10 flex-col gap-2 transform translate-y-3 group-hover:translate-y-0 transition-transform duration-500">
-                <div className="text-[9px] text-white/40 flex items-center justify-between">
+              <div className="hidden lg:flex bg-background/80 rounded-2xl p-4 border border-border flex-col gap-2 transform translate-y-3 group-hover:translate-y-0 transition-transform duration-500">
+                <div className="text-[9px] text-muted-foreground flex items-center justify-between">
                   <span>Prompt: "Viết bài tiếp thị Canva Template..."</span>
                   <span className="bg-brand-coral/20 text-brand-coral font-bold px-1.5 py-0.5 rounded text-[8px] font-mono">Gemini Pro</span>
                 </div>
-                <div className="text-[9px] text-white/70 italic line-clamp-2 leading-relaxed">
+                <div className="text-[9px] text-muted-foreground italic line-clamp-2 leading-relaxed">
                   "🚀 Mở khóa kho Canva 500+ Mẫu thiết kế bán hàng kéo thả, tạo banner Shopee/Facebook siêu lung linh..."
                 </div>
               </div>
@@ -426,8 +429,8 @@ export const LandingPageView: React.FC<LandingPageViewProps> = ({
         <div className="hidden lg:block w-full max-w-5xl pt-20 pb-8 text-center space-y-8 mx-auto">
           <div className="space-y-2">
             <span className="text-[10px] uppercase font-extrabold tracking-widest text-brand-orange">Nhà sáng tạo tiêu biểu</span>
-            <h3 className="text-2xl sm:text-3xl font-extrabold text-white">Cộng Đồng QuickBio MMO Thịnh Vượng</h3>
-            <p className="text-sm text-white/50 max-w-xl mx-auto">Hàng ngàn Creator, Marketer đang xây dựng nguồn thu nhập thụ động bền vững từ sản phẩm số mỗi ngày.</p>
+            <h3 className="text-2xl sm:text-3xl font-extrabold text-foreground">Cộng Đồng QuickBio MMO Thịnh Vượng</h3>
+            <p className="text-sm text-muted-foreground max-w-xl mx-auto">Hàng ngàn Creator, Marketer đang xây dựng nguồn thu nhập thụ động bền vững từ sản phẩm số mỗi ngày.</p>
           </div>
           
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
@@ -439,16 +442,16 @@ export const LandingPageView: React.FC<LandingPageViewProps> = ({
               <TiltCard key={idx} className="rounded-3xl">
                 <Card className="p-6 space-y-4 hover:border-brand-orange/30 hover:shadow-lg hover:shadow-brand-orange/5 transition-all duration-300 h-full">
                   <div className="flex items-center gap-4">
-                    <img src={creator.avatar} alt={creator.name} className="w-12 h-12 rounded-full object-cover border border-white/10 pointer-events-none" />
+                    <img src={creator.avatar} alt={creator.name} className="w-12 h-12 rounded-full object-cover border border-border pointer-events-none" />
                     <div className="text-left">
-                      <h4 className="text-sm font-bold text-white">{creator.name}</h4>
-                      <p className="text-[10px] text-white/50">{creator.role}</p>
+                      <h4 className="text-sm font-bold text-foreground">{creator.name}</h4>
+                      <p className="text-[10px] text-muted-foreground">{creator.role}</p>
                     </div>
                     <div className="ml-auto bg-brand-orange/15 border border-brand-orange/25 text-brand-orange text-xs font-black px-2.5 py-1 rounded-xl">
                       +{creator.earning}
                     </div>
                   </div>
-                  <p className="text-xs text-white/60 leading-relaxed text-left">{creator.desc}</p>
+                  <p className="text-xs text-muted-foreground leading-relaxed text-left">{creator.desc}</p>
                 </Card>
               </TiltCard>
             ))}
@@ -458,29 +461,29 @@ export const LandingPageView: React.FC<LandingPageViewProps> = ({
         {/* Pricing Table Section */}
         <div id="pricing" className="w-full max-w-5xl pt-8 lg:pt-24 lg:pb-12 text-center space-y-6 lg:space-y-12 mx-auto">
           <div className="space-y-2 lg:space-y-4">
-            <h3 className="text-lg lg:text-3xl font-extrabold text-white">
+            <h3 className="text-lg lg:text-3xl font-extrabold text-foreground">
               <span className="hidden lg:inline">Bắt Đầu Tạo Thu Nhập Ngay Hôm Nay</span>
               <span className="lg:hidden">Bảng Giá Dịch Vụ</span>
             </h3>
-            <p className="text-xs lg:text-sm text-white/50 max-w-xl mx-auto">
+            <p className="text-xs lg:text-sm text-muted-foreground max-w-xl mx-auto">
               Lựa chọn gói dịch vụ phù hợp nhất với nhu cầu kinh doanh sản phẩm số của bạn.
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-8 max-w-3xl mx-auto">
             {/* Gói Free */}
-            <Card className="p-6 lg:p-8 text-left space-y-4 lg:space-y-6 flex flex-col justify-between relative overflow-hidden transition-all hover:border-white/10 hover:shadow-2xl">
+            <Card className="p-6 lg:p-8 text-left space-y-4 lg:space-y-6 flex flex-col justify-between relative overflow-hidden transition-all hover:border-border hover:shadow-2xl">
               <div className="space-y-4">
                 <div className="flex justify-between items-center lg:block">
-                  <h4 className="text-sm lg:text-lg font-bold text-white">QuickBio Free</h4>
-                  <span className="text-lg font-black text-white lg:hidden">0đ</span>
-                  <p className="hidden lg:block text-xs text-white/50 mt-1">Dành cho người mới bắt đầu trải nghiệm MMO.</p>
+                  <h4 className="text-sm lg:text-lg font-bold text-foreground">QuickBio Free</h4>
+                  <span className="text-lg font-black text-foreground lg:hidden">0đ</span>
+                  <p className="hidden lg:block text-xs text-muted-foreground mt-1">Dành cho người mới bắt đầu trải nghiệm MMO.</p>
                 </div>
                 <div className="hidden lg:flex items-baseline gap-1">
-                  <span className="text-3xl font-extrabold text-white">0đ</span>
-                  <span className="text-xs text-white/40">/ trọn đời</span>
+                  <span className="text-3xl font-extrabold text-foreground">0đ</span>
+                  <span className="text-xs text-muted-foreground">/ trọn đời</span>
                 </div>
-                <ul className="space-y-2 lg:space-y-3 pt-0 lg:pt-4 lg:border-t border-white/5 text-[11px] lg:text-xs text-white/70">
+                <ul className="space-y-2 lg:space-y-3 pt-0 lg:pt-4 lg:border-t border-border text-[11px] lg:text-xs text-muted-foreground">
                   <li className="flex items-center gap-2">
                     <span className="text-brand-orange font-bold">✓</span>
                     <span>Tạo 1 trang Bio-Link cơ bản</span>
@@ -489,12 +492,12 @@ export const LandingPageView: React.FC<LandingPageViewProps> = ({
                     <span className="text-brand-orange font-bold">✓</span>
                     <span>Đăng tối đa 1 sản phẩm số</span>
                   </li>
-                  <li className="flex items-center gap-2 text-white/20 lg:text-white/30">
+                  <li className="flex items-center gap-2 text-muted-foreground lg:text-muted-foreground">
                     <span className="hidden lg:inline">✗</span>
                     <span className="lg:hidden">✗ Không có Sáng tạo AI (Gemini)</span>
                     <span className="hidden lg:inline">Không có Sáng tạo AI (Gemini)</span>
                   </li>
-                  <li className="hidden lg:flex items-center gap-2 text-white/30">
+                  <li className="hidden lg:flex items-center gap-2 text-muted-foreground">
                     <span>✗</span>
                     <span>Không có hệ thống CTV Affiliate</span>
                   </li>
@@ -516,18 +519,18 @@ export const LandingPageView: React.FC<LandingPageViewProps> = ({
               </div>
               <div className="space-y-4">
                 <div className="flex justify-between items-center lg:block">
-                  <h4 className="text-sm lg:text-lg font-bold text-white flex items-center gap-1.5 lg:gap-2">
+                  <h4 className="text-sm lg:text-lg font-bold text-foreground flex items-center gap-1.5 lg:gap-2">
                     QuickBio Pro
                     <Sparkles className="w-3.5 h-3.5 lg:w-4 lg:h-4 text-brand-orange" />
                   </h4>
-                  <span className="text-lg font-black text-brand-orange lg:hidden">99.000đ<span className="text-[10px] text-white/50 font-normal">/th</span></span>
-                  <p className="hidden lg:block text-xs text-white/50 mt-1">Đầy đủ vũ khí MMO đỉnh cao để kiếm tiền thụ động.</p>
+                  <span className="text-lg font-black text-brand-orange lg:hidden">99.000đ<span className="text-[10px] text-muted-foreground font-normal">/th</span></span>
+                  <p className="hidden lg:block text-xs text-muted-foreground mt-1">Đầy đủ vũ khí MMO đỉnh cao để kiếm tiền thụ động.</p>
                 </div>
                 <div className="hidden lg:flex items-baseline gap-1">
-                  <span className="text-3xl font-extrabold text-white">99.000đ</span>
-                  <span className="text-xs text-white/40">/ tháng</span>
+                  <span className="text-3xl font-extrabold text-foreground">99.000đ</span>
+                  <span className="text-xs text-muted-foreground">/ tháng</span>
                 </div>
-                <ul className="space-y-2 lg:space-y-3 pt-0 lg:pt-4 lg:border-t border-brand-orange/10 text-[11px] lg:text-xs text-white/70">
+                <ul className="space-y-2 lg:space-y-3 pt-0 lg:pt-4 lg:border-t border-brand-orange/10 text-[11px] lg:text-xs text-muted-foreground">
                   <li className="flex items-center gap-2">
                     <span className="text-brand-orange font-bold">✓</span>
                     <span>Đăng bán sản phẩm KHÔNG giới hạn</span>
@@ -560,8 +563,8 @@ export const LandingPageView: React.FC<LandingPageViewProps> = ({
         <div className="w-full max-w-4xl pt-8 lg:pt-20 pb-12 text-center space-y-4 lg:space-y-12 mx-auto">
           <div className="space-y-1 lg:space-y-4">
             <span className="hidden lg:block text-[10px] uppercase font-extrabold tracking-widest text-brand-orange">Hỏi đáp thắc mắc</span>
-            <h3 className="text-base lg:text-3xl font-extrabold text-white">Hỏi đáp thắc mắc</h3>
-            <p className="text-[11px] lg:text-sm text-white/50 max-w-xl mx-auto">Giải đáp nhanh về QuickBio.</p>
+            <h3 className="text-base lg:text-3xl font-extrabold text-foreground">Hỏi đáp thắc mắc</h3>
+            <p className="text-[11px] lg:text-sm text-muted-foreground max-w-xl mx-auto">Giải đáp nhanh về QuickBio.</p>
           </div>
 
           <div className="max-w-3xl mx-auto space-y-3 lg:space-y-4 text-left">
@@ -571,16 +574,16 @@ export const LandingPageView: React.FC<LandingPageViewProps> = ({
               { q: 'Hệ thống Affiliate ăn chia hoa hồng CTV tự động hoạt động thế nào?', a: 'Bạn có thể tuyển CTV quảng bá sản phẩm cho mình. Khi CTV chia sẻ link Bio kèm mã giới thiệu (ref) của họ, hệ thống sẽ tự động ghi nhận cookie của trình duyệt. Nếu khách mua bất kỳ sản phẩm nào trên Bio, hoa hồng sẽ tự động được ghi nhận vào tài khoản CTV của họ và bạn đối soát duyệt thanh toán dễ dàng tại Dashboard.' },
               { q: 'QuickBio Pro có giá bao nhiêu và tôi có được hủy gói không?', a: 'Gói Pro có phí là 99.000đ/tháng mở khóa toàn bộ tính năng bán hàng không giới hạn, CTV Affiliate và trợ lý AI Gemini. Bạn có thể gia hạn theo tháng hoặc hủy bất cứ lúc nào ngay tại giao diện quản trị.' }
             ].map((faq, idx) => (
-              <div key={idx} className="bg-[#0f1422]/40 rounded-xl lg:rounded-2xl border border-white/5 overflow-hidden transition-all duration-300">
+              <div key={idx} className="bg-card/40 rounded-xl lg:rounded-2xl border border-border overflow-hidden transition-all duration-300">
                 <button
                   onClick={() => toggleFaq(idx)}
-                  className="w-full px-4 lg:px-6 py-4 flex items-center justify-between text-white font-bold text-xs lg:text-sm hover:bg-white/[0.02] transition-colors text-left"
+                  className="w-full px-4 lg:px-6 py-4 flex items-center justify-between text-foreground font-bold text-xs lg:text-sm hover:bg-muted/50.02] transition-colors text-left"
                 >
                   <span>{faq.q}</span>
-                  <ChevronDown className={`w-3.5 h-3.5 lg:w-4 lg:h-4 text-white/50 transition-transform duration-300 flex-shrink-0 ml-2 ${openFaq === idx ? 'transform rotate-180 text-brand-orange' : ''}`} />
+                  <ChevronDown className={`w-3.5 h-3.5 lg:w-4 lg:h-4 text-muted-foreground transition-transform duration-300 flex-shrink-0 ml-2 ${openFaq === idx ? 'transform rotate-180 text-brand-orange' : ''}`} />
                 </button>
-                <div className={`transition-all duration-300 ease-in-out overflow-hidden ${openFaq === idx ? 'max-h-40 border-t border-white/5' : 'max-h-0'}`}>
-                  <p className="px-4 lg:px-6 py-3 lg:py-4 text-[11px] lg:text-xs text-white/60 leading-relaxed bg-[#080b11]/30">
+                <div className={`transition-all duration-300 ease-in-out overflow-hidden ${openFaq === idx ? 'max-h-40 border-t border-border' : 'max-h-0'}`}>
+                  <p className="px-4 lg:px-6 py-3 lg:py-4 text-[11px] lg:text-xs text-muted-foreground leading-relaxed bg-background/30">
                     {faq.a}
                   </p>
                 </div>
@@ -591,16 +594,16 @@ export const LandingPageView: React.FC<LandingPageViewProps> = ({
       </main>
 
       {/* Footer */}
-      <footer className="relative z-10 border-t border-white/5 mt-16 lg:mt-24 py-6 lg:py-8 text-center text-white/60 text-[11px] lg:text-sm">
+      <footer className="relative z-10 border-t border-border mt-16 lg:mt-24 py-6 lg:py-8 text-center text-muted-foreground text-[11px] lg:text-sm">
         <p>© 2026 QuickBio. All rights reserved.</p>
       </footer>
 
       {/* Mobile Bottom Navigation Bar (Thumb Zone) - Hidden on lg */}
-      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#0B0F19]/95 backdrop-blur-lg border-t border-white/5 px-2 py-2 pb-safe-bottom shadow-2xl">
+      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-card/95 backdrop-blur-lg border-t border-border px-2 py-2 pb-safe-bottom shadow-2xl">
         <div className="flex items-center justify-around max-w-lg mx-auto h-14">
           <button 
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-            className="flex flex-col items-center justify-center text-white/60 hover:text-brand-orange transition-colors min-w-[60px] h-full"
+            className="flex flex-col items-center justify-center text-muted-foreground hover:text-brand-orange transition-colors min-w-[60px] h-full"
           >
             <Home className="w-5 h-5 mb-1" />
             <span className="text-[9px] font-bold">Trang chủ</span>
@@ -611,7 +614,7 @@ export const LandingPageView: React.FC<LandingPageViewProps> = ({
               const el = document.getElementById('features');
               el?.scrollIntoView({ behavior: 'smooth' });
             }}
-            className="flex flex-col items-center justify-center text-white/60 hover:text-brand-orange transition-colors min-w-[60px] h-full"
+            className="flex flex-col items-center justify-center text-muted-foreground hover:text-brand-orange transition-colors min-w-[60px] h-full"
           >
             <Layers className="w-5 h-5 mb-1" />
             <span className="text-[9px] font-bold">Tính năng</span>
@@ -622,7 +625,7 @@ export const LandingPageView: React.FC<LandingPageViewProps> = ({
               const el = document.getElementById('pricing');
               el?.scrollIntoView({ behavior: 'smooth' });
             }}
-            className="flex flex-col items-center justify-center text-white/60 hover:text-brand-orange transition-colors min-w-[60px] h-full"
+            className="flex flex-col items-center justify-center text-muted-foreground hover:text-brand-orange transition-colors min-w-[60px] h-full"
           >
             <Tag className="w-5 h-5 mb-1" />
             <span className="text-[9px] font-bold">Bảng giá</span>
@@ -630,7 +633,7 @@ export const LandingPageView: React.FC<LandingPageViewProps> = ({
           
           <button 
             onClick={handleStart}
-            className="flex flex-col items-center justify-center text-white/60 hover:text-brand-orange transition-colors min-w-[60px] h-full"
+            className="flex flex-col items-center justify-center text-muted-foreground hover:text-brand-orange transition-colors min-w-[60px] h-full"
           >
             <Sparkles className="w-5 h-5 mb-1 text-brand-orange animate-pulse" />
             <span className="text-[9px] font-bold text-brand-orange">Tạo Bio</span>

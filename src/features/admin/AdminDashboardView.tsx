@@ -4,6 +4,7 @@ import { useAuth } from '../../hooks/useAuth';
 import { Layout } from '../../components/layout/Layout';
 import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
+import { ThemeToggle } from '../../components/ui/ThemeToggle';
 import { 
   DollarSign, 
   Check, 
@@ -64,7 +65,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
       
       <button
         onClick={onNavigateToHome}
-        className="w-full px-4 py-3 rounded-xl text-left text-sm font-medium flex items-center gap-2 text-semantic-muted hover:bg-white/5 hover:text-white transition-all mt-4"
+        className="w-full px-4 py-3 rounded-xl text-left text-sm font-medium flex items-center gap-2 text-semantic-muted hover:bg-muted/50 hover:text-foreground transition-all mt-4"
       >
         <ArrowLeft className="w-4 h-4" />
         <span>Về trang chủ</span>
@@ -76,7 +77,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
     <div className="flex justify-between items-center w-full">
       <div className="flex items-center gap-3">
         <div className="w-10 h-10 bg-brand-orange rounded-xl flex items-center justify-center">
-          <ShieldCheck className="w-5 h-5 text-white" />
+          <ShieldCheck className="w-5 h-5 text-foreground" />
         </div>
         <div>
           <h1 className="text-lg font-bold tracking-tight hidden lg:block">QuickBio Admin Console</h1>
@@ -92,7 +93,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
             <img 
               src={user.avatar_url} 
               alt={user.full_name} 
-              className="w-8 h-8 rounded-full border border-white/10"
+              className="w-8 h-8 rounded-full border border-border"
             />
             <div className="text-right hidden sm:block">
               <div className="text-xs font-bold">{user.full_name}</div>
@@ -107,6 +108,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
         >
           Đăng xuất
         </Button>
+        <ThemeToggle />
       </div>
     </div>
   );
@@ -122,7 +124,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
       </button>
       <button
         onClick={onNavigateToHome}
-        className="flex flex-col items-center justify-center flex-1 min-h-[44px] text-semantic-muted hover:text-white"
+        className="flex flex-col items-center justify-center flex-1 min-h-[44px] text-semantic-muted hover:text-foreground"
       >
         <ArrowLeft className="w-5 h-5" />
         <span className="text-[10px] font-medium mt-1">Trang chủ</span>
@@ -150,7 +152,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
             </div>
             <div>
               <div className="text-[10px] text-semantic-muted uppercase font-bold tracking-wider">Tổng cần chi trả</div>
-              <div className="text-base lg:text-lg font-extrabold text-white">
+              <div className="text-base lg:text-lg font-extrabold text-foreground">
                 {totalPayoutRequested.toLocaleString('vi-VN')}đ
               </div>
             </div>
@@ -162,7 +164,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
             </div>
             <div>
               <div className="text-[10px] text-semantic-muted uppercase font-bold tracking-wider">Số yêu cầu</div>
-              <div className="text-base lg:text-lg font-extrabold text-white">
+              <div className="text-base lg:text-lg font-extrabold text-foreground">
                 {totalRequestsCount} yêu cầu
               </div>
             </div>
@@ -195,14 +197,14 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
             <div className="w-12 h-12 bg-semantic-success/10 border border-semantic-success/20 rounded-full flex items-center justify-center text-semantic-success mx-auto">
               <Check className="w-6 h-6" />
             </div>
-            <h3 className="text-sm font-bold text-white">Không có yêu cầu nào cần duyệt</h3>
+            <h3 className="text-sm font-bold text-foreground">Không có yêu cầu nào cần duyệt</h3>
             <p className="text-xs text-semantic-muted max-w-xs mx-auto">Tất cả các yêu cầu rút tiền từ CTV đã được giải quyết hoặc chưa có yêu cầu mới.</p>
           </div>
         ) : (
           <div className="lg:overflow-x-auto hidden lg:block">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="border-b border-white/5 bg-white/[0.02] text-xs text-semantic-muted uppercase font-medium tracking-wider">
+                <tr className="border-b border-border bg-muted/50.02] text-xs text-semantic-muted uppercase font-medium tracking-wider">
                   <th className="py-4 px-6">Cộng tác viên</th>
                   <th className="py-4 px-6">Số tiền rút</th>
                   <th className="py-4 px-6">Thông tin nhận tiền</th>
@@ -212,9 +214,9 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
               </thead>
               <tbody className="divide-y divide-white/5 text-sm">
                 {commissions.map((comm) => (
-                  <tr key={comm.id} className="hover:bg-white/[0.02] transition-colors">
+                  <tr key={comm.id} className="hover:bg-muted/50.02] transition-colors">
                     <td className="py-5 px-6">
-                      <div className="font-bold text-white">{comm.profiles?.full_name || 'N/A'}</div>
+                      <div className="font-bold text-foreground">{comm.profiles?.full_name || 'N/A'}</div>
                       <div className="text-xs text-semantic-muted mt-0.5">{comm.profiles?.email || 'N/A'}</div>
                     </td>
                     <td className="py-5 px-6">
@@ -223,7 +225,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
                       </div>
                     </td>
                     <td className="py-5 px-6 max-w-xs">
-                      <div className="bg-black/20 px-3 py-2 rounded-lg border border-white/5 text-xs font-mono select-all text-white/80">
+                      <div className="bg-black/20 px-3 py-2 rounded-lg border border-border text-xs font-mono select-all text-muted-foreground">
                         {comm.profiles?.payment_info || comm.payment_info || 'Chưa cung cấp'}
                       </div>
                     </td>
@@ -253,7 +255,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
               <div key={comm.id} className="p-4 space-y-3">
                 <div className="flex justify-between items-start">
                   <div>
-                    <h4 className="text-sm font-bold text-white">{comm.profiles?.full_name || 'N/A'}</h4>
+                    <h4 className="text-sm font-bold text-foreground">{comm.profiles?.full_name || 'N/A'}</h4>
                     <p className="text-xs text-semantic-muted">{comm.profiles?.email || 'N/A'}</p>
                   </div>
                   <div className="text-sm font-bold text-brand-orange">
@@ -261,9 +263,9 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
                   </div>
                 </div>
 
-                <div className="bg-black/20 p-3 rounded-lg border border-white/5 space-y-1">
+                <div className="bg-black/20 p-3 rounded-lg border border-border space-y-1">
                   <div className="text-[10px] uppercase font-bold tracking-wider text-semantic-muted">Thông tin nhận tiền:</div>
-                  <div className="text-xs font-mono break-all text-white/90 select-all leading-normal">
+                  <div className="text-xs font-mono break-all text-muted-foreground select-all leading-normal">
                     {comm.profiles?.payment_info || comm.payment_info || 'Chưa cung cấp'}
                   </div>
                 </div>

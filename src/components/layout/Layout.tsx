@@ -16,7 +16,7 @@ export const Layout: React.FC<LayoutProps> = ({
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col font-sans pb-24 lg:pb-0">
       {/* Top Header */}
-      <header className="border-b border-white/5 bg-brand-card/30 backdrop-blur-md sticky top-0 z-40">
+      <header className="border-b border-border bg-card/30 backdrop-blur-md sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 lg:px-6 py-3 lg:py-4 flex items-center justify-between">
           <div className="w-full">
             {headerContent}
@@ -43,7 +43,7 @@ export const Layout: React.FC<LayoutProps> = ({
 
       {/* Mobile Bottom Navigation Bar - Mobile only */}
       {bottomNavContent && (
-        <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-brand-dark/90 backdrop-blur-lg border-t border-white/5 px-4 py-2 pb-safe-bottom shadow-2xl">
+        <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-background/90 backdrop-blur-lg border-t border-border px-4 py-2 pb-safe-bottom shadow-2xl">
           <div className="flex items-center justify-around max-w-lg mx-auto h-14">
             {bottomNavContent}
           </div>

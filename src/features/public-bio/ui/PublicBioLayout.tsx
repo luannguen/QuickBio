@@ -71,7 +71,7 @@ export const PublicBioLayout: React.FC<PublicBioLayoutProps> = ({
           </div>
 
           {products.length === 0 ? (
-            <div className="glass-card rounded-3xl p-10 text-center border border-white/5 space-y-2">
+            <div className="glass-card rounded-3xl p-10 text-center border border-border space-y-2">
               <p className="text-sm opacity-50">Hiện chưa có sản phẩm nào được đăng bán.</p>
             </div>
           ) : (
@@ -107,7 +107,7 @@ export const PublicBioLayout: React.FC<PublicBioLayoutProps> = ({
               onNavigateToLanding?.();
             }}
             variant="ghost"
-            className="rounded-full glass-panel border border-white/10 text-xs text-white/70 hover:text-white hover:bg-white/5 min-h-[44px]"
+            className="rounded-full glass-panel border border-border text-xs text-muted-foreground hover:text-foreground hover:bg-muted/50 min-h-[44px]"
           >
             <Sparkles className="w-3.5 h-3.5 text-brand-orange mr-2" />
             <span>Tạo Bio Link & DigiStore miễn phí</span>
@@ -125,7 +125,7 @@ export const PublicBioLayout: React.FC<PublicBioLayoutProps> = ({
 
         {/* Social Proof Toast */}
         <div
-          className={`fixed top-20 left-4 right-4 sm:top-auto sm:bottom-6 sm:left-auto sm:right-6 sm:w-80 glass-panel border border-white/10 rounded-xl p-4 shadow-2xl transition-all duration-700 z-50 ${
+          className={`fixed top-20 left-4 right-4 sm:top-auto sm:bottom-6 sm:left-auto sm:right-6 sm:w-80 glass-panel border border-border rounded-xl p-4 shadow-2xl transition-all duration-700 z-50 ${
             showToast ? 'translate-y-0 opacity-100' : 'translate-y-[-20px] sm:translate-y-10 opacity-0 pointer-events-none'
           }`}
         >
@@ -135,7 +135,7 @@ export const PublicBioLayout: React.FC<PublicBioLayoutProps> = ({
                 e.stopPropagation();
                 // Ta ẩn toast trực tiếp bằng cách click
               }}
-              className="absolute -top-2 -right-2 p-2.5 text-white/40 hover:text-white transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
+              className="absolute -top-2 -right-2 p-2.5 text-muted-foreground hover:text-foreground transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
               aria-label="Đóng thông báo"
             >
               <X className="w-4 h-4" />
@@ -144,11 +144,11 @@ export const PublicBioLayout: React.FC<PublicBioLayoutProps> = ({
               <CheckCircle className="w-5 h-5 text-green-400" />
             </div>
             <div className="space-y-0.5 pr-4">
-              <p className="text-sm font-bold text-white">
-                {toastData.name} <span className="font-normal text-white/70">vừa chốt sale</span>
+              <p className="text-sm font-bold text-foreground">
+                {toastData.name} <span className="font-normal text-muted-foreground">vừa chốt sale</span>
               </p>
               <p className="text-xs text-brand-orange font-medium line-clamp-1">{toastData.product}</p>
-              <p className="text-[10px] text-white/40 font-medium flex items-center gap-1">
+              <p className="text-[10px] text-muted-foreground font-medium flex items-center gap-1">
                 <Clock className="w-3 h-3" /> {toastData.time}
               </p>
             </div>

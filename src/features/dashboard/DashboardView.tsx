@@ -10,6 +10,7 @@ import { AiContentTab } from './components/AiContentTab';
 import { MarketingTab } from './components/MarketingTab';
 import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
+import { ThemeToggle } from '../../components/ui/ThemeToggle';
 import { 
   Sparkles, Eye, DollarSign, ShoppingBag, BookOpen, 
   Users, Menu, X, Settings, ChevronRight
@@ -145,13 +146,13 @@ export const DashboardView: React.FC<DashboardViewProps> = (props) => {
           className={`w-full px-4 py-3.5 rounded-xl text-left text-sm font-medium flex items-center justify-between border transition-all ${
             activeTab === tab.id 
               ? 'bg-brand-orange/10 border-brand-orange/30 text-brand-orange' 
-              : 'bg-transparent border-transparent text-semantic-muted hover:bg-white/5 hover:text-white'
+              : 'bg-transparent border-transparent text-semantic-muted hover:bg-muted/50 hover:text-foreground'
           }`}
         >
           <span>{tab.name}</span>
           {tab.count !== undefined && (
             <span className={`px-2 py-0.5 rounded-full text-xs ${
-              activeTab === tab.id ? 'bg-brand-orange/20 text-brand-orange' : 'bg-white/5 text-semantic-muted'
+              activeTab === tab.id ? 'bg-brand-orange/20 text-brand-orange' : 'bg-muted/50 text-semantic-muted'
             }`}>
               {tab.count}
             </span>
@@ -165,7 +166,7 @@ export const DashboardView: React.FC<DashboardViewProps> = (props) => {
     <div className="flex justify-between items-center w-full">
       <div className="flex items-center gap-3">
         <div className="w-10 h-10 bg-brand-orange rounded-xl flex items-center justify-center">
-          <Sparkles className="w-5 h-5 text-white" />
+          <Sparkles className="w-5 h-5 text-foreground" />
         </div>
         <div>
           <h1 className="text-lg font-bold tracking-tight hidden lg:block">QuickBio Console</h1>
@@ -199,6 +200,7 @@ export const DashboardView: React.FC<DashboardViewProps> = (props) => {
         >
           Đăng xuất
         </Button>
+        <ThemeToggle />
       </div>
     </div>
   );
@@ -288,10 +290,10 @@ export const DashboardView: React.FC<DashboardViewProps> = (props) => {
           <img 
             src={user.avatar_url} 
             alt={user.full_name} 
-            className="w-16 h-16 rounded-full object-cover border-2 border-white/15"
+            className="w-16 h-16 rounded-full object-cover border-2 border-border"
           />
           <div>
-            <h2 className="text-xl font-bold text-white flex items-center gap-2">
+            <h2 className="text-xl font-bold text-foreground flex items-center gap-2">
               Chào, {user.full_name}!
               <span className={`text-xs px-2 py-0.5 rounded-full border ${
                 userPlan === 'pro'
@@ -332,7 +334,7 @@ export const DashboardView: React.FC<DashboardViewProps> = (props) => {
             <span className="text-[10px] lg:text-xs text-semantic-muted font-bold uppercase tracking-wider">Tổng Doanh Thu</span>
             <DollarSign className="w-5 h-5 text-brand-orange hidden lg:block" />
           </div>
-          <div className="text-2xl lg:text-3xl font-extrabold text-white">
+          <div className="text-2xl lg:text-3xl font-extrabold text-foreground">
             {totalRevenue.toLocaleString('vi-VN')} <span className="text-sm lg:text-lg font-medium text-brand-orange">VND</span>
           </div>
           <p className="text-[10px] text-semantic-muted hidden lg:block">Dòng tiền chảy thẳng về tài khoản ngân hàng của bạn.</p>
@@ -343,7 +345,7 @@ export const DashboardView: React.FC<DashboardViewProps> = (props) => {
             <span className="text-[10px] lg:text-xs text-semantic-muted font-bold uppercase tracking-wider">Đơn thành công</span>
             <ShoppingBag className="w-5 h-5 text-semantic-success hidden lg:block" />
           </div>
-          <div className="text-2xl lg:text-3xl font-extrabold text-white">
+          <div className="text-2xl lg:text-3xl font-extrabold text-foreground">
             {totalOrders} <span className="text-sm lg:text-lg font-medium text-semantic-muted">đơn</span>
           </div>
           <p className="text-[10px] text-semantic-muted hidden lg:block">Mở khóa link tải file và tự động gửi mail thành công.</p>
@@ -354,7 +356,7 @@ export const DashboardView: React.FC<DashboardViewProps> = (props) => {
             <span className="text-xs text-semantic-muted font-bold uppercase tracking-wider">Sản phẩm đang bán</span>
             <BookOpen className="w-5 h-5 text-semantic-info" />
           </div>
-          <div className="text-3xl font-extrabold text-white">
+          <div className="text-3xl font-extrabold text-foreground">
             {products.length} <span className="text-lg font-medium text-semantic-muted">mục</span>
           </div>
           <p className="text-[10px] text-semantic-muted">Quản lý và cập nhật dễ dàng mọi lúc.</p>
@@ -468,17 +470,17 @@ export const DashboardView: React.FC<DashboardViewProps> = (props) => {
       {/* Mobile "More" Drawer Menu Sheet Overlay */}
       {isMoreMenuOpen && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex justify-end animate-fade-in lg:hidden">
-          <div className="w-[80vw] max-w-sm h-full bg-brand-card border-l border-white/5 p-6 flex flex-col justify-between shadow-2xl relative">
+          <div className="w-[80vw] max-w-sm h-full bg-brand-card border-l border-border p-6 flex flex-col justify-between shadow-2xl relative">
             <button 
               onClick={() => setIsMoreMenuOpen(false)}
-              className="absolute top-4 right-4 text-semantic-muted hover:text-white p-2"
+              className="absolute top-4 right-4 text-semantic-muted hover:text-foreground p-2"
             >
               <X className="w-5 h-5" />
             </button>
 
             <div className="space-y-6 pt-10">
               <div className="space-y-1">
-                <h3 className="font-extrabold text-sm text-white">Tính năng mở rộng</h3>
+                <h3 className="font-extrabold text-sm text-foreground">Tính năng mở rộng</h3>
                 <p className="text-[10px] text-semantic-muted">Chọn cấu hình hoặc thiết lập công cụ bổ sung.</p>
               </div>
 
@@ -494,7 +496,7 @@ export const DashboardView: React.FC<DashboardViewProps> = (props) => {
                     className={`w-full p-3.5 rounded-xl border text-left text-sm font-medium flex items-center gap-3 transition-colors ${
                       activeTab === item.id 
                         ? 'bg-brand-orange/10 border-brand-orange/30 text-brand-orange' 
-                        : 'bg-transparent border-white/5 text-semantic-muted hover:bg-white/5 hover:text-white'
+                        : 'bg-transparent border-border text-semantic-muted hover:bg-muted/50 hover:text-foreground'
                     }`}
                   >
                     {item.icon}
@@ -505,7 +507,7 @@ export const DashboardView: React.FC<DashboardViewProps> = (props) => {
               </div>
             </div>
 
-            <div className="space-y-3 pt-6 border-t border-white/5">
+            <div className="space-y-3 pt-6 border-t border-border">
               <Button 
                 onClick={() => {
                   onNavigateToBioBuilder();
