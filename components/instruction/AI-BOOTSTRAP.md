@@ -1,83 +1,35 @@
-# AI BOOTSTRAP - Hệ Thống Điều Phối Agent
+# 🤖 AI BOOTSTRAP - Hệ Thống Điều Phối Trung Tâm (V2)
 
-Tệp này là entry point (điểm khởi đầu) bắt buộc cho mọi hoạt động của Agent trong dự án. Bạn **KHÔNG ĐƯỢC PHÉP** bỏ qua bước đọc file này khi nhận task mới.
+**Đây là entry point (điểm khởi đầu) BẮT BUỘC cho mọi hoạt động của Agent trong dự án.**
+Bạn **KHÔNG ĐƯỢC PHÉP** bỏ qua file này khi nhận task mới.
 
-## MỤC TIÊU
-- Đảm bảo Agent luôn tuân thủ quy trình chuẩn trước khi bắt đầu viết code.
-- Phân luồng task về đúng Skill/Instruction cần thiết.
-- Tránh tình trạng Agent làm việc dựa trên trí nhớ mơ hồ hoặc giả định sai lệch về kiến trúc.
-
----
-
-## 🚦 ROUTING RULES (BẮT BUỘC)
-
-Khi nhận một task, Agent phải phân tích yêu cầu để kích hoạt các Skill tương ứng.
-
-### 0. Luồng Nền Tảng (The Foundation Pipeline) - BẮT BUỘC VỚI MỌI TASK
+## 1. 🚦 LUỒNG KHỞI ĐỘNG (BOOTSTRAP PIPELINE)
 
 **[TRIGGER] MỌI TASK (Không có ngoại lệ)**
 
-**[ACTION] BẮT BUỘC THỰC HIỆN CÁC BƯỚC SAU TRƯỚC KHI LÀM BẤT CỨ ĐIỀU GÌ (BLOCKER):**
-1. **Đọc Project Memory Skill**: Truy cập `components/instruction/skills/project-memory/SKILL.md` và tuân thủ tuyệt đối quy trình trong đó.
-2. **Nạp Bối Cảnh (Context Retrieval)**: Mở `components/instruction/project-memory/INDEX.md` và đọc các file phù hợp (CONTEXT, ADR, DEBT) để nạp bộ nhớ dự án vào phiên làm việc hiện tại, tránh hiện tượng "mất trí nhớ" (Context loss).
-3. **Tiếp Tục Routing**: Sau khi hoàn tất 2 bước trên, mới tiếp tục phân loại task vào Luồng UI/UX hoặc Backend bên dưới.
+Khi nhận được yêu cầu từ User, Agent BẮT BUỘC thực hiện tuần tự 2 bước sau TRƯỚC KHI sinh ra bất kỳ đoạn code nào:
+
+### Bước 1: Nạp Hiến Pháp (Constitution)
+- Đọc file `PROJECT-CONSTITUTION.md` để nắm các Đạo luật Bất biến (Immutable Laws) và giới hạn hành vi.
+- Đọc file `APPROVAL-GATES.md` để biết những ranh giới cấm kỵ phải hỏi User.
+
+### Bước 2: Kích Hoạt Orchestrator (Điều Phối)
+- Mở file `SKILL-REGISTRY.md` và `WORKFLOW-REGISTRY.md` để biết danh sách các kỹ năng và quy trình hiện có.
+- Mở và thực thi đúng luồng của `skills/project-orchestrator/SKILL.md`.
 
 ---
 
-### 1. Luồng UI/UX & Giao diện (The UI/UX Pipeline)
+## 2. 🧠 TRÁCH NHIỆM CỦA AGENT TẠI BƯỚC NÀY
+Tại file Bootstrap này, trách nhiệm duy nhất của bạn là **Tự nhận thức mình là Orchestrator**. 
 
-**[TRIGGER] Nếu task chứa hoặc tác động đến bất kỳ yếu tố nào sau đây:**
-`UI`, `UX`, `page`, `layout`, `component`, `form`, `table`, `dashboard`, `navigation`, `responsive`, `styling`, `theme`, `typography`, `modal`, `dialog`, `drawer`, `accessibility`, `animation`, `visual`, `interaction`, `loading state`, `empty state`, `error state`.
+Bạn không cần tự giải quyết vấn đề của User ngay lập tức. Bạn cần:
+1. Đọc hiểu ý User.
+2. Trích xuất bối cảnh (Project Memory).
+3. Đánh giá rủi ro (Risk Assessment).
+4. Phân công đúng Capability Skills, Domain Skills và Workflow (Từ 2 file Registry).
 
-**[ACTION] BẮT BUỘC THỰC HIỆN CÁC BƯỚC SAU (BLOCKER):**
-1. **Đọc UI/UX Production Skill**: Đọc toàn bộ các file trong `components/instruction/skills/uiux_luan/` (bao gồm `SKILL.md`, `RULES.md`, `CHECKLIST.md`, `ANTI-PATTERNS.md`, `PATTERNS.md`).
-2. **Tìm kiếm Pattern/Component**: Tìm kiếm trong codebase các component/pattern hiện có tương tự với yêu cầu.
-3. **Tạo UX Decision Summary**: Lập một bản tóm tắt quyết định UX (ngắn gọn) trước khi code.
-4. **Pre-Implementation Checklist**: Đánh giá theo checklist trước khi code.
-5. **Thực thi Code**: Code tuân thủ nghiêm ngặt các RULES (đặc biệt là mức BLOCKER và MUST).
-6. **Post-Implementation Validation**: Chạy checklist sau khi code (responsive, accessibility, states).
-7. **Ngoại lệ (nếu có)**: Ghi lại bất kỳ ngoại lệ nào vi phạm MUST/BLOCKER kèm theo lý do.
-8. **Tự cập nhật (Self-Correction)**: Đề xuất cập nhật Skill/Patterns nếu phát hiện logic có thể tái sử dụng.
-
-> 🛑 **CHẶN (ENFORCEMENT)**: Tuyệt đối **KHÔNG ĐƯỢC** output code liên quan đến giao diện (UI/UX) nếu chưa hoàn thành bước đọc UIUX_luan Skill và phân tích tái sử dụng (reuse analysis).
+> 🛑 **ENFORCEMENT BLOCKER**: Nếu bạn output code giải quyết vấn đề ngay lập tức mà chưa thông qua Orchestrator và Workflow tương ứng, bạn đang vi phạm nghiêm trọng `PROJECT-CONSTITUTION`.
 
 ---
 
-### 2. Luồng Backend (The Backend Pipeline)
-
-**[TRIGGER] Nếu task chứa hoặc tác động đến bất kỳ yếu tố nào sau đây:**
-`backend`, `API`, `database`, `schema`, `entity`, `model`, `repository`, `service`, `server function`, `integration`, `authentication`, `authorization`, `permission`, `RBAC`, `multi-tenant`, `webhook`, `payment`, `order`, `inventory`, `transaction`, `queue`, `event`, `background job`, `cron`, `automation`, `storage`, `file`, `Supabase`, `PostgreSQL`, `RLS`.
-
-**[ACTION] BẮT BUỘC THỰC HIỆN CÁC BƯỚC SAU (BLOCKER):**
-1. **Đọc Backend Production Engineering Skill**: Đọc toàn bộ các file trong `components/instruction/skills/backend-production/` (bao gồm `SKILL.md`, `RULES.md`, `ARCHITECTURE.md`, `DATA_AND_TRANSACTION.md`, `API_AND_SECURITY.md`, `RELIABILITY_AND_OBSERVABILITY.md`, `ANTI-PATTERNS.md`, `CHECKLIST.md`).
-2. **Khảo sát Schema/DB hiện tại**: Kiểm tra bảng liên quan, các khóa ngoại (Foreign Keys), và Row Level Security (RLS).
-3. **Phân tích giao dịch (Transaction Analysis)**: Cảnh báo ngay nếu tác vụ ghi nhiều bảng (multi-table mutation) mà không dùng Transaction / RPC.
-4. **Đánh giá bảo mật**: Bắt buộc thêm bước verify (JWT hoặc Webhook Signature).
-5. **Thực thi Code**: Tuân thủ nghiêm ngặt chuẩn REST/Serverless và Data Consistency.
-6. **Pre-commit Checklist**: Tự đánh giá bằng `CHECKLIST.md` của backend.
-
-> 🛑 **CHẶN (ENFORCEMENT)**: Tuyệt đối **KHÔNG ĐƯỢC** output code API, Service, hoặc Schema nếu chưa nạp đủ Backend Production Engineering Skill và qua bước Validation bảo mật.
-
----
-
-## 🛠 QUY TRÌNH TASK CLASSIFICATION (Dành cho mọi task)
-
-1. **Nhận Task**: Đọc kỹ yêu cầu từ người dùng.
-2. **Phân loại**:
-   - Đây là task tạo mới hay sửa đổi?
-   - Thuộc tầng nào (UI, Logic, Service, Database)?
-   - Có thay đổi luồng người dùng (UX flow) không?
-3. **Route**: Dựa vào phân loại, tìm đến các thư mục instruction tương ứng (VD: `skills/uiux_luan` cho giao diện).
-4. **Discovery**: Đọc các file liên quan (như Tailwind config, Base components).
-5. **Plan & Execute**: Phải có kế hoạch rõ ràng trước khi viết dòng code đầu tiên.
-
----
-
-## 🔄 CƠ CHẾ TỰ CẬP NHẬT (EVOLUTION)
-
-Agent có trách nhiệm theo dõi và cập nhật file trong thư mục `instruction` (đặc biệt là các Skill) khi phát hiện:
-- Các Shared Component mới hình thành.
-- Lỗi lặp lại nhiều lần (cần đưa vào Anti-patterns).
-- Quy chuẩn mới trong dự án.
-
-Việc cập nhật phải được ghi chú rõ trong `CHANGELOG.md` của từng Skill.
+*Chuyển giao quyền điều khiển cho `project-orchestrator` ngay bây giờ.*

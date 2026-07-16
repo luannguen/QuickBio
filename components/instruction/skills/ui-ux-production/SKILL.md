@@ -1,13 +1,15 @@
 ---
-id: "uiux_luan"
+id: "ui-ux-production"
 name: "UI/UX Production Engineering Skill"
-version: "1.0.0"
-description: "Phân tích, thiết kế, triển khai và kiểm tra giao diện production dựa trên design system, UX flow, accessibility, responsive, performance và kiến trúc thực tế của dự án."
+version: "2.0.0"
+description: "Phân tích, thiết kế, triển khai và kiểm tra giao diện production."
 ---
 
-# UI/UX Production Engineering Skill (UIUX_luan)
+# 🎨 UI/UX Production Engineering Skill
 
-Đây là Skill cốt lõi và **bắt buộc** phải sử dụng đối với toàn bộ các tác vụ có liên quan đến giao diện (UI) và trải nghiệm người dùng (UX) trong dự án. Skill này không phải là lời khuyên, mà là hệ thống tiêu chuẩn kỹ thuật.
+**Layer:** 3 - Capability Skills  
+**Status:** Active  
+**Risk Level:** Medium
 
 ## 🎯 PURPOSE
 Đảm bảo chất lượng production cho toàn bộ giao diện: tính nhất quán, khả năng tái sử dụng component, chuẩn responsive, accessibility, và xử lý triệt để các trạng thái của UI (loading, empty, error) tránh technical debt.

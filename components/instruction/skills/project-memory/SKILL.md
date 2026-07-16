@@ -1,13 +1,15 @@
 ---
 id: "project-memory"
 name: "Project Memory & Continuity Engineering Skill"
-version: "1.0.0"
-description: "Bộ quy tắc quản trị tri thức và trí nhớ của dự án. Ép buộc các tác vụ AI phải nạp bối cảnh từ file thực tế thay vì bộ nhớ ngắn hạn (chat context)."
+version: "2.0.0"
+description: "Bộ quy tắc quản trị tri thức và trí nhớ của dự án."
 ---
 
 # 🧠 Project Memory & Continuity Engineering Skill
 
-**Mức độ áp dụng:** **BLOCKER (CHẶN)** - BẮT BUỘC VỚI MỌI TASK.
+**Layer:** 3 - Capability Skills  
+**Status:** Active  
+**Risk Level:** Low
 
 ## 🎯 PURPOSE (MỤC ĐÍCH)
 Kỹ năng này hoạt động như Hệ điều hành Bộ nhớ Dự án (Project Memory OS). Nó giải quyết tình trạng "mất trí nhớ" của AI khi phiên làm việc bị xóa hoặc cắt bớt (truncated context).

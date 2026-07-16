@@ -1,10 +1,15 @@
-# ⚙️ Backend Production Engineering Skill (QuickBio)
-
-**Mô tả:** Bộ quy tắc và hướng dẫn tối cao dành cho kiến trúc Backend của QuickBio (dựa trên Supabase, PostgreSQL và Vercel Serverless Functions).
-**Phiên bản:** 1.0.0
-**Mức độ áp dụng:** **BẮT BUỘC (MANDATORY)** cho mọi Agent hoặc Engineer thao tác với Backend.
-
 ---
+id: "backend-production"
+name: "Backend Production Engineering Skill"
+version: "2.0.0"
+description: "Quy tắc và hướng dẫn tối cao dành cho kiến trúc Backend (Supabase, PostgreSQL, Serverless Functions)."
+---
+
+# ⚙️ Backend Production Engineering Skill
+
+**Layer:** 3 - Capability Skills  
+**Status:** Active  
+**Risk Level:** High
 
 ## 🎯 1. Mục Tiêu (Goal)
 
