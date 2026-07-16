@@ -17,6 +17,7 @@ import { useVapiStore } from "@/shared/hooks/store";
 import { Button } from "@/shared/ui/Button";
 import { Input } from "@/shared/ui/Input";
 import { Label } from "@/shared/ui/Label";
+import { GlobalHeader } from "@/shared/components/layout/GlobalHeader";
 
 // ============================================================
 // 1. TiltCard Component: Hiệu ứng Parallax 3D xoay theo con trỏ chuột
@@ -322,25 +323,11 @@ Bên em đã tích hợp giải pháp này vào QuickBio:
       <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-indigo-500/10 rounded-full blur-[100px] pointer-events-none"></div>
 
       {/* Header */}
-      <header className="relative z-10 max-w-7xl mx-auto px-6 py-6 flex justify-between items-center">
-        <Button 
-          onClick={onNavigateToHome}
-          variant="ghost"
-          className="flex items-center gap-2 text-sm group"
-        >
-          <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-          <span>Quay lại Trang chủ</span>
-        </Button>
-
-        <div className="flex items-center gap-2">
-          <div className="w-9 h-9 bg-gradient-to-tr from-brand-orange to-brand-coral rounded-lg flex items-center justify-center">
-            <Volume2 className="w-4.5 h-4.5 text-white animate-pulse" />
-          </div>
-          <span className="text-lg font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white to-white/70">
-            QuickBio AI Voice
-          </span>
-        </div>
-      </header>
+      <div className="relative z-40 bg-[#080B11]/80 backdrop-blur-md border-b border-white/5">
+        <GlobalHeader 
+          onNavigateToHome={onNavigateToHome}
+        />
+      </div>
 
       {/* Main Content */}
       <main className="relative z-10 max-w-5xl mx-auto px-6 pt-8 pb-24 space-y-16">

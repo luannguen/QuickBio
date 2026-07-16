@@ -140,5 +140,47 @@ export const productService = {
       // Giả lập upload: Chuyển thành Blob URL để xem trước ngay tại máy
       return URL.createObjectURL(file);
     }
+  },
+
+  // --- ADMIN ENDPOINTS ---
+
+  // Lấy tất cả sản phẩm trong hệ thống (Chỉ dành cho Admin)
+  adminGetAllProducts: async (): Promise<Product[]> => {
+    if (isSupabaseConfigured && supabase) {
+      const { data, error } = await supabase
+        .from('products')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Error fetching all products as admin:', error);
+        return [];
+      }
+      return data as Product[];
+    } else {
+      return mockDb.get('products');
+    }
+  },
+
+  // Admin thay đổi trạng thái sản phẩm hoặc xóa sản phẩm (Moderate)
+  adminModerateProduct: async (productId: string, updates: Partial<Product>): Promise<boolean> => {
+    if (isSupabaseConfigured && supabase) {
+      const { error } = await supabase
+        .from('products')
+        .update({
+          ...updates,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', productId);
+
+      if (error) {
+        console.error('Error moderating product:', error);
+        return false;
+      }
+      return true;
+    } else {
+      mockDb.update('products', productId, updates);
+      return true;
+    }
   }
 };

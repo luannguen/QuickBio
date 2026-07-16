@@ -7,9 +7,10 @@ import { PublicBio } from "@/pages/PublicBioPage";
 import { KiemTienPage } from "@/pages/KiemTienPage";
 import { AIVoiceLandingPage } from "@/pages/AIVoiceLandingPage";
 import { AdminDashboard } from "@/pages/AdminPage";
-import { SamTayNguyenLanding } from "@/pages/SamTayNguyenLanding";
+import { BlogPage } from "@/pages/BlogPage";
+import { ArticleDetailPage } from "@/pages/ArticleDetailPage";
 
-type ViewType = 'landing' | 'dashboard' | 'bio-builder' | 'bio-public' | 'kiem-tien' | 'tong-dai-ai' | 'admin' | 'sam-tay-nguyen';
+type ViewType = 'landing' | 'dashboard' | 'bio-builder' | 'bio-public' | 'kiem-tien' | 'tong-dai-ai' | 'admin' | 'sam-tay-nguyen' | 'blog' | 'article';
 
 function App() {
   const { user, loading } = useAuth();
@@ -17,20 +18,24 @@ function App() {
   // Tự động lấy slug từ path của URL (ví dụ: localhost:5173/luannguyen -> slug là luannguyen)
   const getSlugFromPath = () => {
     const path = window.location.pathname.replace(/^\/|\/$/g, '');
-    if (!path || ['dashboard', 'bio-builder', 'landing', 'kiem-tien', 'tong-dai-ai', 'admin', 'sam-tay-nguyen'].includes(path)) {
+    const firstSegment = path.split('/')[0];
+    if (!path || ['dashboard', 'bio-builder', 'landing', 'kiem-tien', 'tong-dai-ai', 'admin', 'sam-tay-nguyen', 'blog', 'article'].includes(firstSegment)) {
       return null;
     }
-    return path;
+    return path; // User bio slug
   };
 
   const getInitialView = (): ViewType => {
     const path = window.location.pathname.replace(/^\/|\/$/g, '');
-    if (path === 'dashboard') return 'dashboard';
-    if (path === 'bio-builder') return 'bio-builder';
-    if (path === 'kiem-tien') return 'kiem-tien';
-    if (path === 'tong-dai-ai') return 'tong-dai-ai';
-    if (path === 'admin') return 'admin';
-    if (path === 'sam-tay-nguyen') return 'sam-tay-nguyen';
+    const firstSegment = path.split('/')[0];
+    if (firstSegment === 'dashboard') return 'dashboard';
+    if (firstSegment === 'bio-builder') return 'bio-builder';
+    if (firstSegment === 'kiem-tien') return 'kiem-tien';
+    if (firstSegment === 'tong-dai-ai') return 'tong-dai-ai';
+    if (firstSegment === 'admin') return 'admin';
+    if (firstSegment === 'sam-tay-nguyen') return 'sam-tay-nguyen';
+    if (firstSegment === 'blog') return 'blog';
+    if (firstSegment === 'article') return 'article';
     if (path && !['landing'].includes(path)) {
       return 'bio-public';
     }
@@ -40,6 +45,18 @@ function App() {
   const initialSlug = getSlugFromPath();
   const [view, setView] = useState<ViewType>(getInitialView());
   const [activeSlug, setActiveSlug] = useState<string>(initialSlug || 'luannguyen');
+  const [activeArticleSlug, setActiveArticleSlug] = useState<string>(() => {
+    const path = window.location.pathname.replace(/^\/|\/$/g, '');
+    const segments = path.split('/');
+    if (segments[0] === 'article' && segments[1]) return segments[1];
+    return '';
+  });
+  const [activeBlogSlug, setActiveBlogSlug] = useState<string>(() => {
+    const path = window.location.pathname.replace(/^\/|\/$/g, '');
+    const segments = path.split('/');
+    if (segments[0] === 'blog' && segments[1]) return segments[1];
+    return 'platform';
+  });
 
   // Xử lý Tiếp thị Liên kết (Affiliate Tracking)
   useEffect(() => {
@@ -71,18 +88,25 @@ function App() {
         setView('bio-public');
       } else {
         const path = window.location.pathname.replace(/^\/|\/$/g, '');
-        if (path === 'dashboard' && user) {
+        const firstSegment = path.split('/')[0];
+        if (firstSegment === 'dashboard' && user) {
           setView('dashboard');
-        } else if (path === 'bio-builder' && user) {
+        } else if (firstSegment === 'bio-builder' && user) {
           setView('bio-builder');
-        } else if (path === 'kiem-tien') {
+        } else if (firstSegment === 'kiem-tien') {
           setView('kiem-tien');
-        } else if (path === 'tong-dai-ai') {
+        } else if (firstSegment === 'tong-dai-ai') {
           setView('tong-dai-ai');
-        } else if (path === 'admin') {
+        } else if (firstSegment === 'admin') {
           setView('admin');
-        } else if (path === 'sam-tay-nguyen') {
+        } else if (firstSegment === 'sam-tay-nguyen') {
           setView('sam-tay-nguyen');
+        } else if (firstSegment === 'blog') {
+          setActiveBlogSlug(path.split('/')[1] || 'platform');
+          setView('blog');
+        } else if (firstSegment === 'article') {
+          setActiveArticleSlug(path.split('/')[1] || '');
+          setView('article');
         } else {
           setView('landing');
         }
@@ -93,12 +117,18 @@ function App() {
     return () => window.removeEventListener('popstate', handlePopState);
   }, [user]);
 
-  // Hàm chuyển đổi trang và cập nhật URL trình duyệt (không reload)
-  const navigateTo = (newView: ViewType, slug?: string) => {
+  const navigateTo = (newView: ViewType, slug?: string, extra?: string) => {
     setView(newView);
     if (newView === 'bio-public' && slug) {
       setActiveSlug(slug);
       window.history.pushState({}, '', `/${slug}`);
+    } else if (newView === 'blog') {
+      const bSlug = slug || 'platform';
+      setActiveBlogSlug(bSlug);
+      window.history.pushState({}, '', `/blog${bSlug !== 'platform' ? `/${bSlug}` : ''}`);
+    } else if (newView === 'article' && slug) {
+      setActiveArticleSlug(slug);
+      window.history.pushState({}, '', `/article/${slug}`);
     } else if (newView === 'dashboard') {
       window.history.pushState({}, '', '/dashboard');
     } else if (newView === 'bio-builder') {
@@ -195,6 +225,23 @@ function App() {
     case 'sam-tay-nguyen':
       return (
         <SamTayNguyenLanding 
+          onNavigateToHome={() => navigateTo('landing')}
+        />
+      );
+    case 'blog':
+      return (
+        <BlogPage 
+          slug={activeBlogSlug}
+          onNavigateToHome={() => navigateTo('landing')}
+          onNavigateToArticle={(s) => navigateTo('article', s)}
+        />
+      );
+
+    case 'article':
+      return (
+        <ArticleDetailPage 
+          articleSlug={activeArticleSlug}
+          onNavigateBack={() => window.history.back()}
           onNavigateToHome={() => navigateTo('landing')}
         />
       );

@@ -8,6 +8,7 @@ import { SepayTab } from './components/SepayTab';
 import { AffiliateTab } from './components/AffiliateTab';
 import { AiContentTab } from './components/AiContentTab';
 import { MarketingTab } from './components/MarketingTab';
+import { ArticlesTab } from './components/ArticlesTab';
 import { Button } from "@/shared/ui/Button";
 import { Card } from "@/shared/ui/Card";
 import { ThemeToggle } from "@/shared/ui/ThemeToggle";
@@ -17,8 +18,8 @@ import {
 } from 'lucide-react';
 
 interface DashboardViewProps {
-  activeTab: 'products' | 'orders' | 'sepay' | 'affiliate' | 'ai-content' | 'marketing';
-  setActiveTab: (tab: 'products' | 'orders' | 'sepay' | 'affiliate' | 'ai-content' | 'marketing') => void;
+  activeTab: 'products' | 'orders' | 'sepay' | 'affiliate' | 'ai-content' | 'marketing' | 'articles';
+  setActiveTab: (tab: 'products' | 'orders' | 'sepay' | 'affiliate' | 'ai-content' | 'marketing' | 'articles') => void;
   user: any;
   userPlan: 'free' | 'pro';
   products: Product[];
@@ -34,6 +35,12 @@ interface DashboardViewProps {
   onAddProductClick: () => void;
   onEditProductClick: (p: Product) => void;
   onDeleteProduct: (id: string) => void;
+
+  // Article handlers
+  articles: any[];
+  onAddArticleClick: () => void;
+  onEditArticleClick: (a: any) => void;
+  onDeleteArticle: (id: string) => void;
 
   // Order simulator
   simulatingOrderId: string;
@@ -135,6 +142,7 @@ export const DashboardView: React.FC<DashboardViewProps> = (props) => {
       {[
         { name: 'Quản lý Sản phẩm', id: 'products', count: products.length },
         { name: 'Đơn hàng mua bán', id: 'orders', count: orders.length },
+        { name: 'Bài viết (Blog)', id: 'articles', count: props.articles?.length || 0 },
         { name: 'Cấu hình VietQR & Ngân hàng', id: 'sepay' },
         { name: 'Kiếm tiền (Affiliate)', id: 'affiliate' },
         { name: 'Sáng tạo AI (Gemini)', id: 'ai-content' },
@@ -249,7 +257,7 @@ export const DashboardView: React.FC<DashboardViewProps> = (props) => {
       <button
         onClick={() => setIsMoreMenuOpen(true)}
         className={`flex flex-col items-center justify-center flex-1 min-h-[44px] ${
-          isMoreMenuOpen || ['sepay', 'ai-content', 'marketing'].includes(activeTab) ? 'text-brand-orange' : 'text-semantic-muted'
+          isMoreMenuOpen || ['sepay', 'ai-content', 'marketing', 'articles'].includes(activeTab) ? 'text-brand-orange' : 'text-semantic-muted'
         }`}
       >
         <Menu className="w-5 h-5" />
@@ -465,6 +473,15 @@ export const DashboardView: React.FC<DashboardViewProps> = (props) => {
             products={products}
           />
         )}
+
+        {activeTab === 'articles' && (
+          <ArticlesTab
+            articles={props.articles || []}
+            onAddArticleClick={props.onAddArticleClick}
+            onEditArticleClick={props.onEditArticleClick}
+            onDeleteArticle={props.onDeleteArticle}
+          />
+        )}
       </Card>
 
       {/* Mobile "More" Drawer Menu Sheet Overlay */}
@@ -486,6 +503,7 @@ export const DashboardView: React.FC<DashboardViewProps> = (props) => {
 
               <div className="space-y-2">
                 {[
+                  { name: 'Bài viết (Blog)', id: 'articles', icon: <BookOpen className="w-4 h-4 text-brand-orange" /> },
                   { name: 'Cấu hình VietQR', id: 'sepay', icon: <Settings className="w-4 h-4 text-brand-orange" /> },
                   { name: 'Sáng tạo AI (Gemini)', id: 'ai-content', icon: <Sparkles className="w-4 h-4 text-brand-orange" /> },
                   { name: 'Marketing Hub', id: 'marketing', icon: <BookOpen className="w-4 h-4 text-brand-orange" /> }

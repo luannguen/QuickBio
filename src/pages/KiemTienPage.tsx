@@ -17,6 +17,7 @@ import { Button } from "@/shared/ui/Button";
 import { Card } from "@/shared/ui/Card";
 import { Input } from "@/shared/ui/Input";
 import { Label } from "@/shared/ui/Label";
+import { GlobalHeader } from "@/shared/components/layout/GlobalHeader";
 
 interface KiemTienPageProps {
   onNavigateToLanding: () => void;
@@ -90,27 +91,11 @@ Ai đang bán template Canva, Ebook, khóa học hay muốn làm đại lý nh�
       <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] rounded-full bg-brand-coral/10 blur-[120px] pointer-events-none" />
 
       {/* Header */}
-      <header className="border-b border-white/5 bg-[#080B11]/80 backdrop-blur-md sticky top-0 z-40">
-        <div className="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
-          <Button 
-            onClick={onNavigateToLanding}
-            variant="ghost"
-            className="flex items-center gap-2 text-sm group"
-          >
-            <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-            Về trang chủ
-          </Button>
-          
-          <div className="flex items-center gap-2">
-            <span className="text-xl font-bold bg-gradient-to-r from-brand-orange via-brand-coral to-white bg-clip-text text-transparent">
-              QuickBio
-            </span>
-            <span className="text-[10px] bg-brand-orange/20 text-brand-orange border border-brand-orange/30 px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">
-              Partner
-            </span>
-          </div>
-        </div>
-      </header>
+      <div className="sticky top-0 z-40 bg-[#080B11]/80 backdrop-blur-md border-b border-white/5">
+        <GlobalHeader 
+          onNavigateToHome={onNavigateToLanding}
+        />
+      </div>
 
       {/* Main Content */}
       <main className="max-w-4xl mx-auto px-4 py-12 space-y-16 relative">

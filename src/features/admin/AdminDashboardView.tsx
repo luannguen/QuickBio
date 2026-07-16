@@ -16,14 +16,16 @@ import {
   LayoutDashboard,
   ShoppingCart,
   TrendingUp,
-  Activity
+  Activity,
+  FileText
 } from 'lucide-react';
+import { articleService } from "@/entities/article/api";
 
 interface AdminDashboardViewProps {
   onNavigateToHome: () => void;
 }
 
-type TabType = 'overview' | 'users' | 'orders' | 'withdrawals';
+type TabType = 'overview' | 'users' | 'orders' | 'withdrawals' | 'articles' | 'products';
 
 export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNavigateToHome }) => {
   const { user, signOut } = useAuth();
@@ -38,7 +40,12 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
     loadDashboardStats,
     loadUsers,
     loadOrders,
-    approveWithdrawal 
+    loadArticles,
+    loadArticles,
+    loadProducts,
+    approveWithdrawal,
+    moderateProduct,
+    products
   } = useAdmin();
 
   const [activeTab, setActiveTab] = useState<TabType>('overview');
@@ -52,8 +59,12 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
       loadOrders(100);
     } else if (activeTab === 'withdrawals') {
       loadAdminData();
+    } else if (activeTab === 'articles') {
+      loadArticles();
+    } else if (activeTab === 'products') {
+      loadProducts();
     }
-  }, [activeTab, loadDashboardStats, loadUsers, loadOrders, loadAdminData]);
+  }, [activeTab, loadDashboardStats, loadUsers, loadOrders, loadAdminData, loadArticles, loadProducts]);
 
   const handleApprove = async (userId: string, userName: string, amount: number) => {
     const confirmed = window.confirm(
@@ -167,6 +178,30 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
           </span>
         )}
       </button>
+
+      <button
+        onClick={() => setActiveTab('articles')}
+        className={`w-full px-4 py-3 rounded-xl text-left text-sm font-medium flex items-center gap-3 transition-all ${
+          activeTab === 'articles' 
+            ? 'bg-brand-orange/10 text-brand-orange border border-brand-orange/30' 
+            : 'text-semantic-muted hover:bg-muted/50 hover:text-foreground border border-transparent'
+        }`}
+      >
+        <FileText className="w-4 h-4" />
+        <span>Kiểm duyệt Bài viết</span>
+      </button>
+
+      <button
+        onClick={() => setActiveTab('products')}
+        className={`w-full px-4 py-3 rounded-xl text-left text-sm font-medium flex items-center gap-3 transition-all ${
+          activeTab === 'products' 
+            ? 'bg-brand-orange/10 text-brand-orange border border-brand-orange/30' 
+            : 'text-semantic-muted hover:bg-muted/50 hover:text-foreground border border-transparent'
+        }`}
+      >
+        <ShoppingBag className="w-4 h-4" />
+        <span>Kiểm duyệt Sản phẩm</span>
+      </button>
       
       <button
         onClick={onNavigateToHome}
@@ -191,6 +226,12 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
       </button>
       <button onClick={() => setActiveTab('withdrawals')} className={`flex flex-col items-center justify-center flex-1 min-h-[44px] ${activeTab === 'withdrawals' ? 'text-brand-orange' : 'text-semantic-muted'}`}>
         <DollarSign className="w-5 h-5" />
+      </button>
+      <button onClick={() => setActiveTab('articles')} className={`flex flex-col items-center justify-center flex-1 min-h-[44px] ${activeTab === 'articles' ? 'text-brand-orange' : 'text-semantic-muted'}`}>
+        <FileText className="w-5 h-5" />
+      </button>
+      <button onClick={() => setActiveTab('products')} className={`flex flex-col items-center justify-center flex-1 min-h-[44px] ${activeTab === 'products' ? 'text-brand-orange' : 'text-semantic-muted'}`}>
+        <ShoppingBag className="w-5 h-5" />
       </button>
     </>
   );
@@ -427,6 +468,227 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
     </div>
   );
 
+  const renderArticles = () => (
+    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <FileText className="w-5 h-5 text-brand-orange" />
+          <h2 className="text-xl font-extrabold">Kiểm duyệt Bài viết</h2>
+        </div>
+        <Button onClick={loadArticles} variant="outline" size="sm">
+          Làm mới
+        </Button>
+      </div>
+      
+      <Card className="overflow-hidden border-border bg-card/50">
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm text-left">
+            <thead className="bg-muted/50 text-semantic-muted border-b border-border">
+              <tr>
+                <th className="px-6 py-4 font-semibold">Tác giả</th>
+                <th className="px-6 py-4 font-semibold">Tiêu đề</th>
+                <th className="px-6 py-4 font-semibold">Ngày tạo</th>
+                <th className="px-6 py-4 font-semibold">Trạng thái</th>
+                <th className="px-6 py-4 font-semibold text-right">Thao tác</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-border">
+              {articles.map((article) => (
+                <tr key={article.id} className="hover:bg-muted/30 transition-colors">
+                  <td className="px-6 py-4">
+                    <div className="font-bold">{article.profiles?.full_name || 'Không rõ'}</div>
+                    <div className="text-xs text-semantic-muted">{article.profiles?.email || 'N/A'}</div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="max-w-[200px] truncate font-medium">{article.title}</div>
+                    <a href={`/article/${article.slug}`} target="_blank" rel="noreferrer" className="text-xs text-brand-orange hover:underline">
+                      Xem chi tiết
+                    </a>
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="text-sm">
+                      {new Date(article.created_at).toLocaleDateString('vi-VN')}
+                    </div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="flex flex-col gap-1">
+                      {article.status === 'published' ? (
+                        <span className="bg-semantic-success/20 text-semantic-success text-[10px] px-2 py-0.5 rounded-full w-max">Đã xuất bản</span>
+                      ) : (
+                        <span className="bg-muted text-semantic-muted text-[10px] px-2 py-0.5 rounded-full w-max">Bản nháp</span>
+                      )}
+                      
+                      {article.moderation_status === 'approved' && <span className="text-xs text-semantic-success">Đã duyệt</span>}
+                      {article.moderation_status === 'warned' && <span className="text-xs text-brand-orange">Đã cảnh báo</span>}
+                      {article.moderation_status === 'suspended' && <span className="text-xs text-semantic-error">Đã đình chỉ</span>}
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 text-right">
+                    <div className="flex justify-end gap-2">
+                      {article.moderation_status !== 'approved' && (
+                        <Button 
+                          size="sm" 
+                          className="h-8 text-xs bg-semantic-success hover:bg-semantic-success/90"
+                          onClick={async () => {
+                            if (window.confirm('Duyệt bài viết này?')) {
+                              await articleService.adminModerateArticle(article.id, 'approved');
+                              loadArticles();
+                            }
+                          }}
+                        >
+                          Duyệt
+                        </Button>
+                      )}
+                      {article.moderation_status !== 'warned' && (
+                        <Button 
+                          size="sm" 
+                          variant="outline" 
+                          className="h-8 text-xs border-brand-orange text-brand-orange hover:bg-brand-orange/10"
+                          onClick={async () => {
+                            const msg = window.prompt('Nhập nội dung cảnh báo:');
+                            if (msg !== null) {
+                              await articleService.adminModerateArticle(article.id, 'warned', msg);
+                              loadArticles();
+                            }
+                          }}
+                        >
+                          Cảnh báo
+                        </Button>
+                      )}
+                      {article.moderation_status !== 'suspended' && (
+                        <Button 
+                          size="sm" 
+                          variant="destructive" 
+                          className="h-8 text-xs"
+                          onClick={async () => {
+                            const msg = window.prompt('Lý do đình chỉ (ẩn bài viết):');
+                            if (msg !== null) {
+                              await articleService.adminModerateArticle(article.id, 'suspended', msg);
+                              loadArticles();
+                            }
+                          }}
+                        >
+                          Đình chỉ
+                        </Button>
+                      )}
+                    </div>
+                  </td>
+                </tr>
+              ))}
+              {articles.length === 0 && !loading && (
+                <tr>
+                  <td colSpan={5} className="px-6 py-8 text-center text-semantic-muted">
+                    Chưa có bài viết nào
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </Card>
+    </div>
+  );
+
+  const renderProducts = () => (
+    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <ShoppingBag className="w-5 h-5 text-brand-orange" />
+          <h2 className="text-xl font-extrabold">Kiểm duyệt Sản phẩm</h2>
+        </div>
+        <Button onClick={loadProducts} variant="outline" size="sm">
+          Làm mới
+        </Button>
+      </div>
+      
+      <Card className="overflow-hidden border-border bg-card/50">
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm text-left">
+            <thead className="bg-muted/50 text-semantic-muted border-b border-border">
+              <tr>
+                <th className="px-6 py-4 font-semibold">Creator</th>
+                <th className="px-6 py-4 font-semibold">Sản phẩm</th>
+                <th className="px-6 py-4 font-semibold">Giá</th>
+                <th className="px-6 py-4 font-semibold">Trạng thái</th>
+                <th className="px-6 py-4 font-semibold text-right">Thao tác</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-border">
+              {products?.map((prod) => (
+                <tr key={prod.id} className="hover:bg-muted/30 transition-colors">
+                  <td className="px-6 py-4">
+                    <div className="font-bold">{prod.profiles?.full_name || 'Không rõ'}</div>
+                    <div className="text-xs text-semantic-muted">{prod.profiles?.email || 'N/A'}</div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="flex items-center gap-3">
+                      <img 
+                        src={prod.cover_image_url || 'https://images.unsplash.com/photo-1555066931-4365d14bab8c'} 
+                        alt="" 
+                        className="w-10 h-10 object-cover rounded border border-border"
+                      />
+                      <div>
+                        <div className="max-w-[200px] truncate font-medium">{prod.name}</div>
+                        <div className="text-[10px] text-brand-orange mt-0.5">{prod.product_type === 'physical' ? 'SP Vật lý' : 'SP Số'}</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="font-bold text-brand-orange">{prod.price.toLocaleString('vi-VN')}đ</div>
+                  </td>
+                  <td className="px-6 py-4">
+                    {prod.status === 'active' ? (
+                      <span className="bg-semantic-success/20 text-semantic-success text-[10px] px-2 py-0.5 rounded-full">Đang bán</span>
+                    ) : (
+                      <span className="bg-semantic-error/20 text-semantic-error text-[10px] px-2 py-0.5 rounded-full">Bị ẩn/Đình chỉ</span>
+                    )}
+                  </td>
+                  <td className="px-6 py-4 text-right">
+                    <div className="flex justify-end gap-2">
+                      {prod.status !== 'inactive' && (
+                        <Button 
+                          size="sm" 
+                          variant="destructive" 
+                          className="h-8 text-xs"
+                          onClick={async () => {
+                            if (window.confirm('Đình chỉ (ẩn) sản phẩm này khỏi hệ thống?')) {
+                              await moderateProduct(prod.id, 'suspend');
+                            }
+                          }}
+                        >
+                          Đình chỉ
+                        </Button>
+                      )}
+                      <Button 
+                        size="sm" 
+                        variant="outline" 
+                        className="h-8 text-xs border-semantic-error text-semantic-error hover:bg-semantic-error/10"
+                        onClick={async () => {
+                          if (window.confirm('Xóa vĩnh viễn sản phẩm này? (Không thể hoàn tác)')) {
+                            await moderateProduct(prod.id, 'delete');
+                          }
+                        }}
+                      >
+                        Xóa
+                      </Button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+              {(!products || products.length === 0) && !loading && (
+                <tr>
+                  <td colSpan={5} className="px-6 py-8 text-center text-semantic-muted">
+                    Chưa có sản phẩm nào
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </Card>
+    </div>
+  );
+
   return (
     <Layout 
       headerContent={headerContent} 
@@ -437,6 +699,8 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
       {activeTab === 'users' && renderUsers()}
       {activeTab === 'orders' && renderOrders()}
       {activeTab === 'withdrawals' && renderWithdrawals()}
+      {activeTab === 'articles' && renderArticles()}
+      {activeTab === 'products' && renderProducts()}
     </Layout>
   );
 };

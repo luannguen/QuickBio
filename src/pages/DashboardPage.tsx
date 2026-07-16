@@ -8,8 +8,10 @@ import type { Order } from "@/entities/order/api";
 import { CheckoutModal } from "@/components/CheckoutModal";
 import { MediaPicker } from "@/shared/components/media/MediaPicker";
 import { marketingService } from "@/entities/marketing/api";
+import { articleService } from "@/entities/article/api";
 import { supabase, isSupabaseConfigured } from "@/shared/api/supabase";
 import { DashboardView } from "@/features/dashboard/DashboardView";
+import { ArticleModal } from "@/features/dashboard/components/ArticleModal";
 import { Loader2, ShoppingBag, X } from 'lucide-react';
 import { Button } from "@/shared/ui/Button";
 import { Input } from "@/shared/ui/Input";
@@ -25,9 +27,10 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigateToBioBuilder, on
   const { user, signOut } = useAuth();
   const { getCreatorOrders, getBankSettings, saveBankSettings, simulatePayment } = useOrders();
 
-  const [activeTab, setActiveTab] = useState<'products' | 'orders' | 'sepay' | 'affiliate' | 'ai-content' | 'marketing'>('products');
+  const [activeTab, setActiveTab] = useState<'products' | 'orders' | 'sepay' | 'affiliate' | 'ai-content' | 'marketing' | 'articles'>('products');
   const [products, setProducts] = useState<Product[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
+  const [articles, setArticles] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const hasLoadedOnce = useRef(false);
   const [userPlan, setUserPlan] = useState<'free' | 'pro'>('free');
@@ -64,6 +67,17 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigateToBioBuilder, on
   const [prodInventory, setProdInventory] = useState(0);
   const [prodIsUnlimited, setProdIsUnlimited] = useState(true);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+
+  // State cho Modal thêm/sửa bài viết
+  const [isArticleModalOpen, setIsArticleModalOpen] = useState(false);
+  const [artTitle, setArtTitle] = useState('');
+  const [artSlug, setArtSlug] = useState('');
+  const [artExcerpt, setArtExcerpt] = useState('');
+  const [artContent, setArtContent] = useState('');
+  const [artCoverImage, setArtCoverImage] = useState('');
+  const [artStatus, setArtStatus] = useState<'draft' | 'published'>('draft');
+  const [editingArticle, setEditingArticle] = useState<any | null>(null);
+  const [artLoading, setArtLoading] = useState(false);
 
   // User slug cho link công khai
   const [userSlug, setUserSlug] = useState<string>('');
@@ -103,6 +117,9 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigateToBioBuilder, on
     try {
       const prods = await productService.getProductsByUserId(user.id);
       setProducts(prods);
+
+      const arts = await articleService.getArticlesByUserId(user.id);
+      setArticles(arts);
 
       const bio = await bioService.getBioByUserId(user.id);
       if (bio) setUserSlug(bio.slug);
@@ -245,32 +262,61 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigateToBioBuilder, on
     setProdFile(p.file_url || '');
     setProdType(p.product_type || 'digital');
     setProdInventory(p.inventory_count || 0);
-    setProdIsUnlimited(p.is_unlimited ?? true);
+    setProdIsUnlimited(p.is_unlimited || true);
     setIsProductModalOpen(true);
   };
 
   const handleDeleteProduct = async (id: string) => {
-    if (confirm('Bạn chắc chắn muốn xóa sản phẩm này?')) {
-      await productService.deleteProduct(id);
-      loadDashboardData();
+    if (window.confirm('Bạn có chắc chắn muốn xóa sản phẩm này? (Ảnh và File sẽ bị xóa vĩnh viễn)')) {
+      try {
+        await productService.deleteProduct(id);
+        loadDashboardData();
+      } catch (err) {
+        console.error(err);
+      }
     }
   };
 
-  const handleSaveBankConfig = async (e: React.FormEvent) => {
+  const handleArticleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!bankAccount.trim() || !accountName.trim()) return;
+    if (!artTitle.trim() || !artSlug.trim()) return;
 
-    const success = await saveBankSettings(user.id, {
-      bank_code: bankCode,
-      bank_account: bankAccount.trim(),
-      account_name: accountName.toUpperCase().trim(),
-      api_key: apiKey.trim()
-    });
-
-    if (success) {
-      setConfigSuccess(true);
-      setTimeout(() => setConfigSuccess(false), 3000);
+    setArtLoading(true);
+    try {
+      if (editingArticle) {
+        await articleService.updateArticle(editingArticle.id, {
+          title: artTitle,
+          slug: artSlug,
+          excerpt: artExcerpt,
+          content: artContent,
+          cover_image_url: artCoverImage,
+          status: artStatus,
+        });
+      } else {
+        await articleService.createArticle({
+          user_id: user.id,
+          title: artTitle,
+          slug: artSlug,
+          excerpt: artExcerpt,
+          content: artContent,
+          cover_image_url: artCoverImage,
+          status: artStatus,
+        });
+      }
+      setIsArticleModalOpen(false);
+      setEditingArticle(null);
+      setArtTitle('');
+      setArtSlug('');
+      setArtExcerpt('');
+      setArtContent('');
+      setArtCoverImage('');
+      setArtStatus('draft');
       loadDashboardData();
+    } catch (err) {
+      console.error(err);
+      alert('Đã xảy ra lỗi khi lưu bài viết.');
+    } finally {
+      setArtLoading(false);
     }
   };
 
@@ -294,6 +340,24 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigateToBioBuilder, on
       setSimulatorStatus('Lỗi mô phỏng: ' + err.message);
     } finally {
       setIsSimulating(false);
+    }
+  };
+
+  const handleSaveBankConfig = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!bankAccount.trim() || !accountName.trim()) return;
+
+    const success = await saveBankSettings(user.id, {
+      bank_code: bankCode,
+      bank_account: bankAccount.trim(),
+      account_name: accountName.toUpperCase().trim(),
+      api_key: apiKey.trim()
+    });
+
+    if (success) {
+      setConfigSuccess(true);
+      setTimeout(() => setConfigSuccess(false), 3000);
+      loadDashboardData();
     }
   };
 
@@ -562,6 +626,7 @@ Giọng điệu: ${aiTone === 'expert' ? 'Chuyên sâu, logic' : aiTone === 'fun
     userPlan,
     products,
     orders,
+    articles,
     pendingOrders,
     userSlug,
     signOut,
@@ -589,6 +654,33 @@ Giọng điệu: ${aiTone === 'expert' ? 'Chuyên sâu, logic' : aiTone === 'fun
     },
     onEditProductClick: handleEditProductClick,
     onDeleteProduct: handleDeleteProduct,
+
+    // Article handlers
+    articles,
+    onAddArticleClick: () => {
+      setEditingArticle(null);
+      setArtTitle('');
+      setArtSlug('');
+      setArtExcerpt('');
+      setArtContent('');
+      setArtCoverImage('');
+      setArtStatus('draft');
+      setIsArticleModalOpen(true);
+    },
+    onEditArticleClick: (a: any) => {
+      setEditingArticle(a);
+      setArtTitle(a.title);
+      setArtSlug(a.slug);
+      setArtExcerpt(a.excerpt || '');
+      setArtContent(a.content);
+      setArtCoverImage(a.cover_image_url || '');
+      setArtStatus(a.status);
+      setIsArticleModalOpen(true);
+    },
+    onDeleteArticle: async (id: string) => {
+      await articleService.deleteArticle(id);
+      setArticles(articles.filter(a => a.id !== id));
+    },
 
     // Order simulator
     simulatingOrderId,
@@ -813,6 +905,20 @@ Giọng điệu: ${aiTone === 'expert' ? 'Chuyên sâu, logic' : aiTone === 'fun
           }} 
         />
       )}
+      
+      <ArticleModal
+        isOpen={isArticleModalOpen}
+        onClose={() => setIsArticleModalOpen(false)}
+        title={artTitle} setTitle={setArtTitle}
+        slug={artSlug} setSlug={setArtSlug}
+        excerpt={artExcerpt} setExcerpt={setArtExcerpt}
+        content={artContent} setContent={setArtContent}
+        coverImage={artCoverImage} setCoverImage={setArtCoverImage}
+        status={artStatus} setStatus={setArtStatus}
+        onSubmit={handleArticleSubmit}
+        loading={artLoading}
+        isEditing={!!editingArticle}
+      />
     </>
   );
 };

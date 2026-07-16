@@ -1,12 +1,14 @@
 import React, { useState, useRef } from 'react';
-import { Sparkles, ArrowRight, Layers, ChevronDown, Home, Tag } from 'lucide-react';
-import { AuthModal } from '../../components/AuthModal';
+import { Heart, UploadCloud, Users, CreditCard, Sparkles, Wand2, Paintbrush, Share2, BarChart3, ChevronRight, CheckCircle2, ShieldCheck, ArrowRight, Video, FileText, Check, Layers, ChevronDown, Home, Tag } from 'lucide-react';
+import { AuthModal } from '@/features/auth/AuthModal';
 import { AIVoiceWidget } from '../../components/AIVoiceWidget';
 import { useLandingMobile } from "./hooks/useLandingMobile";
 import { PhoneMockup } from './components/PhoneMockup';
 import { Button } from "@/shared/ui/Button";
 import { Card } from "@/shared/ui/Card";
 import { ThemeToggle } from "@/shared/ui/ThemeToggle";
+import { GlobalHeader } from "@/shared/components/layout/GlobalHeader";
+import { useAuth } from "@/shared/hooks/useAuth";
 
 // ============================================================
 // TiltCard Component: Parallax 3D mouse rotate effect
@@ -122,45 +124,19 @@ export const LandingPageView: React.FC<LandingPageViewProps> = ({
       <div className="absolute bottom-[20%] right-[-15%] lg:bottom-[-10%] lg:right-[-10%] w-[300px] h-[300px] lg:w-[500px] lg:h-[500px] bg-brand-green/10 rounded-full blur-[80px] lg:blur-[100px] pointer-events-none"></div>
 
       {/* Navigation Header */}
-      <header className="relative z-10 max-w-7xl mx-auto px-4 lg:px-6 py-4 lg:py-6 flex justify-between items-center border-b lg:border-none border-border bg-brand-card/10 lg:bg-transparent backdrop-blur-md lg:backdrop-blur-none">
-        <div className="flex items-center gap-1.5 lg:gap-2">
-          <div className="w-8 h-8 lg:w-10 lg:h-10 bg-gradient-to-tr from-brand-orange to-brand-coral rounded-lg lg:rounded-xl flex items-center justify-center shadow-lg shadow-brand-orange/20">
-            <Sparkles className="w-4.5 h-4.5 lg:w-5 lg:h-5 text-foreground" />
-          </div>
-          <span className="text-base lg:text-xl font-black tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white to-white/70">
-            QuickBio
-          </span>
-        </div>
+      <GlobalHeader 
+        onNavigateToHome={() => window.scrollTo(0, 0)}
+        onNavigateToDashboard={onNavigateToDashboard}
+        onNavigateToDemoBio={onNavigateToDemoBio}
+        onNavigateToAIVoice={onNavigateToAIVoice}
+        onStartAuth={handleStart}
+      />
 
-        <div className="flex items-center gap-4">
-          <Button 
-            onClick={onNavigateToAIVoice}
-            variant="ghost"
-            className="text-brand-orange hover:text-brand-coral flex items-center gap-1 font-bold lg:mr-2"
-          >
-            <Sparkles className="w-3.5 h-3.5" />
-            <span className="hidden lg:inline">Tổng đài </span>Lễ tân AI
-          </Button>
-
-          <Button 
-            onClick={onNavigateToDemoBio}
-            variant="ghost"
-            className="hidden lg:inline-flex"
-          >
-            Trang cá nhân mẫu
-          </Button>
-          
-          <Button 
-            onClick={handleStart}
-            variant="secondary"
-            className="hidden lg:inline-flex"
-          >
-            {loading ? 'Đang tải...' : isAuthenticated ? 'Vào Dashboard' : 'Trải nghiệm Demo'}
-          </Button>
-
-          <ThemeToggle />
-        </div>
-      </header>
+      <AuthModal 
+        isOpen={showAuthModal} 
+        onClose={() => setShowAuthModal(false)} 
+        onSuccess={handleAuthSuccess} 
+      />
 
       {/* Hero Section */}
       <main className="relative z-10 max-w-7xl mx-auto px-4 lg:px-6 pt-8 lg:pt-12 pb-12 lg:pb-24 space-y-12 lg:space-y-16">
