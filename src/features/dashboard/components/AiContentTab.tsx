@@ -1,5 +1,6 @@
 import React from 'react';
 import { Sparkles, AlertTriangle, Loader2, Copy } from 'lucide-react';
+import { useToastStore } from "@/shared/stores/useToastStore";
 
 interface AiContentTabProps {
   userPlan: 'free' | 'pro';
@@ -34,6 +35,7 @@ export const AiContentTab: React.FC<AiContentTabProps> = ({
   onGenerateAIContent,
   onProUpgradeClick
 }) => {
+  const toast = useToastStore();
   return (
     <div className="space-y-6 animate-fade-in text-left">
       <h3 className="text-base font-bold flex items-center gap-2">
@@ -153,7 +155,7 @@ export const AiContentTab: React.FC<AiContentTabProps> = ({
                 <button
                   onClick={() => {
                     navigator.clipboard.writeText(aiResult);
-                    alert('Đã copy nội dung vào bộ nhớ tạm!');
+                    toast.success('Đã copy nội dung vào bộ nhớ tạm!');
                   }}
                   className="px-3 py-1.5 bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-semibold rounded-lg transition-colors flex items-center gap-1.5 touch-target min-h-[32px]"
                 >

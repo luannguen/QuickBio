@@ -1,6 +1,7 @@
 import React from 'react';
 import { Plus, Edit2, Trash2, FileText, AlertCircle, EyeOff } from 'lucide-react';
 import { Button } from "@/shared/ui/Button";
+import { useConfirm } from "@/shared/stores/useModalStore";
 
 interface ArticlesTabProps {
   articles: any[];
@@ -15,6 +16,7 @@ export const ArticlesTab: React.FC<ArticlesTabProps> = ({
   onEditArticleClick,
   onDeleteArticle
 }) => {
+  const confirm = useConfirm();
   return (
     <div className="space-y-6 animate-fade-in">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -93,8 +95,12 @@ export const ArticlesTab: React.FC<ArticlesTabProps> = ({
                   Sửa
                 </Button>
                 <Button 
-                  onClick={() => {
-                    if(window.confirm('Bạn có chắc chắn muốn xoá bài viết này?')) {
+                  onClick={async () => {
+                    const confirmed = await confirm({
+                      title: 'Xoá bài viết',
+                      message: 'Bạn có chắc chắn muốn xoá bài viết này?'
+                    });
+                    if (confirmed) {
                       onDeleteArticle(a.id);
                     }
                   }}

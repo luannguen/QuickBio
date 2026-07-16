@@ -12,6 +12,8 @@ import { articleService } from "@/entities/article/api";
 import { supabase, isSupabaseConfigured } from "@/shared/api/supabase";
 import { DashboardView } from "@/features/dashboard/DashboardView";
 import { ArticleModal } from "@/features/dashboard/components/ArticleModal";
+import { useToastStore } from "@/shared/stores/useToastStore";
+import { useConfirm } from "@/shared/stores/useModalStore";
 import { Loader2, ShoppingBag, X } from 'lucide-react';
 import { Button } from "@/shared/ui/Button";
 import { Input } from "@/shared/ui/Input";
@@ -33,6 +35,8 @@ export const Dashboard: React.FC<DashboardProps> = ({
 }) => {
   const { user, signOut } = useAuth();
   const { getCreatorOrders, getBankSettings, saveBankSettings, simulatePayment } = useOrders();
+  const toast = useToastStore();
+  const confirm = useConfirm();
 
   const [activeTab, setActiveTab] = useState<'products' | 'orders' | 'sepay' | 'affiliate' | 'ai-content' | 'marketing' | 'articles'>('products');
   const [products, setProducts] = useState<Product[]>([]);
@@ -274,12 +278,18 @@ export const Dashboard: React.FC<DashboardProps> = ({
   };
 
   const handleDeleteProduct = async (id: string) => {
-    if (window.confirm('Bạn có chắc chắn muốn xóa sản phẩm này? (Ảnh và File sẽ bị xóa vĩnh viễn)')) {
+    const confirmed = await confirm({
+      title: 'Xác nhận xóa',
+      message: 'Bạn có chắc chắn muốn xóa sản phẩm này? (Ảnh và File sẽ bị xóa vĩnh viễn)'
+    });
+    if (confirmed) {
       try {
         await productService.deleteProduct(id);
+        toast.success('Đã xóa sản phẩm');
         loadDashboardData();
       } catch (err) {
         console.error(err);
+        toast.error('Lỗi khi xóa sản phẩm');
       }
     }
   };
@@ -318,9 +328,10 @@ export const Dashboard: React.FC<DashboardProps> = ({
       setArtCoverImage('');
       setArtStatus('draft');
       loadDashboardData();
+      toast.success('Đã lưu bài viết thành công!');
     } catch (err) {
       console.error(err);
-      alert('Đã xảy ra lỗi khi lưu bài viết.');
+      toast.error('Đã xảy ra lỗi khi lưu bài viết.');
     } finally {
       setArtLoading(false);
     }
@@ -373,7 +384,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
 
     const cleanCode = affiliateCode.trim().toLowerCase().replace(/[^a-z0-9]/g, '');
     if (cleanCode.length < 3) {
-      alert('Mã giới thiệu phải có ít nhất 3 ký tự chữ hoặc số!');
+      toast.warning('Mã giới thiệu phải có ít nhất 3 ký tự chữ hoặc số!');
       return;
     }
 
@@ -389,27 +400,28 @@ export const Dashboard: React.FC<DashboardProps> = ({
 
         if (error) {
           if (error.code === '23505') {
-            alert('Mã giới thiệu này đã có người sử dụng. Vui lòng chọn mã khác!');
+            toast.error('Mã giới thiệu này đã có người sử dụng. Vui lòng chọn mã khác!');
           } else {
-            alert('Lỗi khi lưu thông tin: ' + error.message);
+            toast.error('Lỗi khi lưu thông tin: ' + error.message);
           }
           return;
         }
 
         setAffiliateSuccess(true);
+        toast.success('Lưu thông tin Affiliate thành công!');
         setTimeout(() => setAffiliateSuccess(false), 3000);
         loadDashboardData();
       }
     } catch (err: any) {
       console.error(err);
-      alert('Lỗi hệ thống: ' + err.message);
+      toast.error('Lỗi hệ thống: ' + err.message);
     }
   };
 
   const handleRequestWithdrawal = async () => {
     if (!user) return;
     if (!paymentInfo.trim()) {
-      alert('Vui lòng điền thông tin tài khoản ngân hàng nhận tiền trước khi rút!');
+      toast.warning('Vui lòng điền thông tin tài khoản ngân hàng nhận tiền trước khi rút!');
       return;
     }
     
@@ -418,11 +430,16 @@ export const Dashboard: React.FC<DashboardProps> = ({
       .reduce((acc, c) => acc + Number(c.amount), 0);
 
     if (pendingAmount < 50000) {
-      alert('Số dư hoa hồng chờ duyệt tối thiểu để rút là 50.000đ!');
+      toast.warning('Số dư hoa hồng chờ duyệt tối thiểu để rút là 50.000đ!');
       return;
     }
 
-    const confirmed = window.confirm(`Bạn có chắc chắn muốn gửi yêu cầu rút ${pendingAmount.toLocaleString('vi-VN')}đ về tài khoản ngân hàng:\n${paymentInfo}?`);
+    const confirmed = await confirm({
+      title: 'Xác nhận rút tiền',
+      message: `Bạn có chắc chắn muốn gửi yêu cầu rút ${pendingAmount.toLocaleString('vi-VN')}đ về tài khoản ngân hàng:\n${paymentInfo}?`,
+      confirmText: 'Rút tiền',
+      variant: 'info'
+    });
     if (!confirmed) return;
 
     setWithdrawLoading(true);
@@ -435,17 +452,18 @@ export const Dashboard: React.FC<DashboardProps> = ({
           .eq('status', 'pending');
 
         if (error) {
-          alert('Có lỗi xảy ra: ' + error.message);
+          toast.error('Có lỗi xảy ra: ' + error.message);
           return;
         }
 
         setWithdrawSuccess(true);
+        toast.success('Gửi yêu cầu rút tiền thành công!');
         setTimeout(() => setWithdrawSuccess(false), 5000);
         loadDashboardData();
       }
     } catch (err: any) {
       console.error(err);
-      alert('Lỗi hệ thống: ' + err.message);
+      toast.error('Lỗi hệ thống: ' + err.message);
     } finally {
       setWithdrawLoading(false);
     }
@@ -465,12 +483,12 @@ export const Dashboard: React.FC<DashboardProps> = ({
         gemini_api_key: mktGeminiApiKey.trim()
       });
       if (success) {
-        alert('Đã lưu cấu hình tự động tiếp thị thành công!');
+        toast.success('Đã lưu cấu hình tự động tiếp thị thành công!');
         loadDashboardData();
       }
     } catch (err: any) {
       console.error(err);
-      alert('Lỗi lưu cấu hình: ' + err.message);
+      toast.error('Lỗi lưu cấu hình: ' + err.message);
     } finally {
       setMktSaving(false);
     }
@@ -479,7 +497,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
   const handleTestAutoPost = async () => {
     if (!user) return;
     if (!mktFbPageId || !mktFbPageToken) {
-      alert('Vui lòng điền đầy đủ Facebook Page ID và Page Access Token trước khi test!');
+      toast.warning('Vui lòng điền đầy đủ Facebook Page ID và Page Access Token trước khi test!');
       return;
     }
     let productName = '';
@@ -495,7 +513,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
     } else {
       const targetProduct = products.find(p => p.id === mktTargetProductId);
       if (!targetProduct) {
-        alert('Vui lòng chọn 1 sản phẩm quảng bá để test!');
+        toast.warning('Vui lòng chọn 1 sản phẩm quảng bá để test!');
         return;
       }
       productName = targetProduct.name;
@@ -645,7 +663,7 @@ Giọng điệu: ${aiTone === 'expert' ? 'Chuyên sâu, logic' : aiTone === 'fun
     // Product handlers
     onAddProductClick: () => {
       if (userPlan === 'free' && products.length >= 1) {
-        alert('Tài khoản Free chỉ được tạo tối đa 1 sản phẩm. Vui lòng nâng cấp lên gói PRO để đăng bán không giới hạn!');
+        toast.warning('Tài khoản Free chỉ được tạo tối đa 1 sản phẩm. Vui lòng nâng cấp lên gói PRO để đăng bán không giới hạn!', 'Giới hạn gói Free', 6000);
         setIsProCheckoutOpen(true);
         return;
       }

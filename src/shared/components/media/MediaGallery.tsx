@@ -4,6 +4,8 @@ import React, { useEffect, useState } from 'react';
 import { Trash2, Image as ImageIcon, Loader2 } from 'lucide-react';
 import { mediaService } from '../../api/mediaService';
 import type { MediaAsset } from "@/shared/api/mediaService";
+import { useToastStore } from "@/shared/stores/useToastStore";
+import { useConfirm } from "@/shared/stores/useModalStore";
 
 interface MediaGalleryProps {
   userId: string;
@@ -17,6 +19,8 @@ export function MediaGallery({ userId, onSelect, selectedUrl, refreshTrigger = 0
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const toast = useToastStore();
+  const confirm = useConfirm();
 
   const fetchMedia = async () => {
     setIsLoading(true);
@@ -40,15 +44,19 @@ export function MediaGallery({ userId, onSelect, selectedUrl, refreshTrigger = 0
 
   const handleDelete = async (e: React.MouseEvent, asset: MediaAsset) => {
     e.stopPropagation(); // Tránh trigger event chọn ảnh
-    const confirmed = window.confirm('Bạn có chắc chắn muốn xóa ảnh này khỏi thư viện?');
+    const confirmed = await confirm({
+      title: 'Xác nhận xóa',
+      message: 'Bạn có chắc chắn muốn xóa ảnh này khỏi thư viện?'
+    });
     if (!confirmed) return;
 
     setDeletingId(asset.id);
     try {
       await mediaService.deleteMedia(asset.id, asset.bucket_id, asset.file_path);
       setAssets(prev => prev.filter(a => a.id !== asset.id));
+      toast.success('Đã xóa ảnh');
     } catch (err: any) {
-      alert(err.message || 'Lỗi khi xóa file.');
+      toast.error(err.message || 'Lỗi khi xóa file.');
     } finally {
       setDeletingId(null);
     }

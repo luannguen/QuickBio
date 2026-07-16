@@ -21,6 +21,8 @@ import {
   ShoppingBag
 } from 'lucide-react';
 import { articleService } from "@/entities/article/api";
+import { useToastStore } from "@/shared/stores/useToastStore";
+import { useConfirm } from "@/shared/stores/useModalStore";
 
 interface AdminDashboardViewProps {
   onNavigateToHome: () => void;
@@ -31,6 +33,8 @@ type TabType = 'overview' | 'users' | 'orders' | 'withdrawals' | 'articles' | 'p
 
 export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNavigateToHome, onNavigateToDashboard }) => {
   const { user, signOut } = useAuth();
+  const toast = useToastStore();
+  const confirm = useConfirm();
   const { 
     commissions, 
     stats,
@@ -69,17 +73,19 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
   }, [activeTab, loadDashboardStats, loadUsers, loadOrders, loadAdminData, loadArticles, loadProducts]);
 
   const handleApprove = async (userId: string, userName: string, amount: number) => {
-    const confirmed = window.confirm(
-      `Xác nhận bạn đã chuyển khoản số tiền ${amount.toLocaleString('vi-VN')}đ cho CTV ${userName}?\n` +
-      `Hệ thống sẽ cập nhật trạng thái các giao dịch hoa hồng thành ĐÃ THANH TOÁN.`
-    );
+    const confirmed = await confirm({
+      title: 'Phê duyệt chuyển khoản',
+      message: `Xác nhận bạn đã chuyển khoản số tiền ${amount.toLocaleString('vi-VN')}đ cho CTV ${userName}?\nHệ thống sẽ cập nhật trạng thái các giao dịch hoa hồng thành ĐÃ THANH TOÁN.`,
+      confirmText: 'Đã thanh toán',
+      variant: 'info'
+    });
     if (!confirmed) return;
 
     const success = await approveWithdrawal(userId);
     if (success) {
-      alert('Đã duyệt và thanh toán hoa hồng thành công!');
+      toast.success('Đã duyệt và thanh toán hoa hồng thành công!');
     } else {
-      alert('Phê duyệt thất bại. Vui lòng kiểm tra lại!');
+      toast.error('Phê duyệt thất bại. Vui lòng kiểm tra lại!');
     }
   };
 
@@ -540,9 +546,16 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
                           size="sm" 
                           className="h-8 text-xs bg-semantic-success hover:bg-semantic-success/90"
                           onClick={async () => {
-                            if (window.confirm('Duyệt bài viết này?')) {
+                            const confirmed = await confirm({
+                              title: 'Duyệt bài viết',
+                              message: 'Duyệt bài viết này?',
+                              confirmText: 'Duyệt',
+                              variant: 'info'
+                            });
+                            if (confirmed) {
                               await articleService.adminModerateArticle(article.id, 'approved');
                               loadArticles();
+                              toast.success('Đã duyệt bài viết');
                             }
                           }}
                         >
@@ -661,8 +674,13 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
                           variant="destructive" 
                           className="h-8 text-xs"
                           onClick={async () => {
-                            if (window.confirm('Đình chỉ (ẩn) sản phẩm này khỏi hệ thống?')) {
+                            const confirmed = await confirm({
+                              title: 'Đình chỉ sản phẩm',
+                              message: 'Đình chỉ (ẩn) sản phẩm này khỏi hệ thống?'
+                            });
+                            if (confirmed) {
                               await moderateProduct(prod.id, 'suspend');
+                              toast.success('Đã đình chỉ sản phẩm');
                             }
                           }}
                         >
@@ -674,8 +692,13 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
                         variant="outline" 
                         className="h-8 text-xs border-semantic-error text-semantic-error hover:bg-semantic-error/10"
                         onClick={async () => {
-                          if (window.confirm('Xóa vĩnh viễn sản phẩm này? (Không thể hoàn tác)')) {
+                          const confirmed = await confirm({
+                            title: 'Xóa sản phẩm',
+                            message: 'Xóa vĩnh viễn sản phẩm này? (Không thể hoàn tác)'
+                          });
+                          if (confirmed) {
                             await moderateProduct(prod.id, 'delete');
+                            toast.success('Đã xóa sản phẩm');
                           }
                         }}
                       >

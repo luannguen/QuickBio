@@ -44,7 +44,7 @@ export const ArticleModal: React.FC<ArticleModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-[60] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
       <div className="bg-brand-card w-full max-w-2xl rounded-2xl border border-border shadow-2xl flex flex-col max-h-[90vh]">
         <div className="p-6 border-b border-border flex justify-between items-center flex-shrink-0">
           <h2 className="text-xl font-bold">{isEditing ? 'Sửa bài viết' : 'Thêm bài viết mới'}</h2>

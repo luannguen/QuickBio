@@ -1,5 +1,6 @@
 import type { Product } from "@/entities/product/api";
 import { BookOpen, Sparkles, Users, ShoppingBag } from 'lucide-react';
+import { useToastStore } from "@/shared/stores/useToastStore";
 
 interface MarketingTabProps {
   mktFbPageId: string;
@@ -50,6 +51,7 @@ export const MarketingTab: React.FC<MarketingTabProps> = ({
   onMktSubTabChange,
   products
 }) => {
+  const toast = useToastStore();
   return (
     <div className="space-y-6 animate-fade-in text-left">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -277,7 +279,7 @@ export const MarketingTab: React.FC<MarketingTabProps> = ({
                   onClick={() => {
                     const content = `[KỊCH BẢN VIDEO TIKTOK 60S - 100+ PROMPT CHATGPT]\n- Cảnh 1: Mặt đối diện camera biểu cảm bức xúc.\n- Lời thoại (Hook): "Đừng bao giờ tự ngồi viết bài bán hàng nữa! Bạn đang lãng phí 3 tiếng cuộc đời mỗi ngày vô ích..."\n- Cảnh 2: Quay màn hình máy tính đang gõ ChatGPT chạy ra bài viết bán hàng cực đỉnh.\n- Lời thoại: "Đây là cách mình viết xong 5 bài quảng cáo Facebook chỉ trong đúng 30 giây bằng ChatGPT. Bí quyết không phải là AI thông minh, mà là do bộ PROMPT (câu lệnh) thôi miên này."\n- Cảnh 3: Chỉ tay xuống màn hình.\n- Lời thoại (CTA): "Mình đã tổng hợp hơn 100 Prompt viết bài chốt sale siêu đỉnh vào Ebook dưới link Bio của mình. Giá chỉ bằng một ly trà sữa 49k. Bấm vào mua và tải về dùng ngay để tiết kiệm 95% thời gian nhé!"`;
                     navigator.clipboard.writeText(content);
-                    alert('Đã copy Kịch bản TikTok!');
+                    toast.success('Đã copy Kịch bản TikTok!');
                   }}
                   className="w-full py-2.5 bg-white/5 hover:bg-white/10 text-white border border-white/10 text-xs font-semibold rounded-xl transition-all touch-target min-h-[38px]"
                 >
@@ -287,7 +289,7 @@ export const MarketingTab: React.FC<MarketingTabProps> = ({
                   onClick={() => {
                     const content = `[BÀI ĐĂNG FACEBOOK ADS/GROUP - 100+ PROMPT CHATGPT]\n🔥 CẢNH BÁO: CHATGPT SẼ LÀM BẠN MẤT KHÁCH NẾU KHÔNG BIẾT DÙNG CÂU LỆNH NÀY!\n\nRất nhiều bạn than phiền viết bài bán hàng bằng ChatGPT đọc nghe rất "robot", ngô nghê và không có cảm xúc chốt sale. Đó là vì bạn chỉ ra lệnh chung chung: "Hãy viết bài bán hàng cho tôi".\n\nĐể ChatGPT viết hay như một Copywriter 5 năm kinh nghiệm, bạn phải huấn luyện nó theo công thức:\n1. Xác định rõ chân dung khách hàng mục tiêu.\n2. Thiết lập giọng điệu (Tone of Voice) thân thiện, hài hước hoặc chuyên gia.\n3. Áp dụng công thức thôi miên AIDA/PAS.\n\n👉 Mình đã đóng gói toàn bộ 100+ Prompt (Câu lệnh) huấn luyện ChatGPT đỉnh cao này vào cuốn Cẩm Nang Thôi Miên Khách Hàng. \n📥 Tải về trực tiếp tại link Bio của mình chỉ với 49.000đ (Giá gốc 199k - Khuyến mãi hôm nay): [DÁN LINK BIO CỦA BẠN VÀO ĐÂY]`;
                     navigator.clipboard.writeText(content);
-                    alert('Đã copy Bài đăng Facebook!');
+                    toast.success('Đã copy Bài đăng Facebook!');
                   }}
                   className="w-full py-2.5 bg-brand-orange/10 hover:bg-brand-orange/20 text-brand-orange border border-brand-orange/20 text-xs font-semibold rounded-xl transition-all touch-target min-h-[38px]"
                 >
@@ -310,7 +312,7 @@ export const MarketingTab: React.FC<MarketingTabProps> = ({
                   onClick={() => {
                     const content = `[KỊCH BẢN VIDEO TIKTOK 60S - BÍ KÍP XÂY KÊNH TIKTOK]\n- Cảnh 1: Mặt biểu cảm nghiêm trọng, lắc đầu.\n- Lời thoại (Hook): "Đừng đăng video lên TikTok nữa nếu kênh của bạn vẫn lẹt đẹt dưới 1000 view! Bạn đã dính phải 3 lỗi cơ bản này..."\n- Cảnh 2: Quay cảnh bảng viết hoặc màn hình máy tính chỉ ra 3 lỗi: Không tối ưu 3 giây đầu, đổi chủ đề liên tục, hashtag sai cách.\n- Lời thoại: "Lỗi lớn nhất là bạn không giữ chân được người xem trong 3 giây đầu tiên. Thuật toán TikTok 2026 chấm điểm giữ chân cực kỳ nặng."\n- Cảnh 3: Cầm điện thoại chỉ vào trang Bio của mình.\n- Lời thoại (CTA): "Mình đã soạn sẵn Lộ trình 30 ngày xây kênh từ con số 0 kèm 15 mẫu Hook giật tít ăn tiền trong Ebook ở link Bio. Bấm tải ngay chỉ với 79k để cứu kênh của bạn nhé!"`;
                     navigator.clipboard.writeText(content);
-                    alert('Đã copy Kịch bản TikTok!');
+                    toast.success('Đã copy Kịch bản TikTok!');
                   }}
                   className="w-full py-2.5 bg-white/5 hover:bg-white/10 text-white border border-white/10 text-xs font-semibold rounded-xl transition-all touch-target min-h-[38px]"
                 >
@@ -320,7 +322,7 @@ export const MarketingTab: React.FC<MarketingTabProps> = ({
                   onClick={() => {
                     const content = `[BÀI ĐĂNG FACEBOOK ADS/GROUP - BÍ KÍP XÂY KÊNH TIKTOK]\n🔥 THUẬT TOÁN TIKTOK 2026 ĐÃ THAY ĐỔI - KÊNH CỦA BẠN ĐÃ CẬP NHẬT CHƯA?\n\nNếu bạn vẫn đang đăng video theo kiểu "hên xui", không có kịch bản giữ chân người xem thì xin chia buồn: video của bạn sẽ mãi mãi lẹt đẹt lèo tèo vài trăm view.\n\nĐể bẻ khóa thuật toán TikTok và kéo hàng triệu view organic traffic về bán hàng, bạn cần làm đúng:\n1. Công thức viết kịch bản 3 giây đầu giữ chân (Hook).\n2. Quy trình làm video chuẩn SEO TikTok Search.\n3. Kế hoạch đăng bài 30 ngày liên tục tạo tín hiệu tốt cho kênh.\n\n👉 Tất cả bí mật này được mình đúc kết trong cuốn Ebook "Bí Kíp Xây Kênh TikTok Triệu View". \n📥 Link tải tài liệu trực tiếp nằm ở Bio cá nhân của mình (Giá ưu đãi chỉ 79.000đ): [DÁN LINK BIO CỦA BẠN VÀO ĐÂY]`;
                     navigator.clipboard.writeText(content);
-                    alert('Đã copy Bài đăng Facebook!');
+                    toast.success('Đã copy Bài đăng Facebook!');
                   }}
                   className="w-full py-2.5 bg-brand-orange/10 hover:bg-brand-orange/20 text-brand-orange border border-brand-orange/20 text-xs font-semibold rounded-xl transition-all touch-target min-h-[38px]"
                 >
@@ -343,7 +345,7 @@ export const MarketingTab: React.FC<MarketingTabProps> = ({
                   onClick={() => {
                     const content = `[KỊCH BẢN VIDEO TIKTOK 60S - 500+ MẪU CANVA]\n- Cảnh 1: Chỉ tay vào màn hình thiết kế Canva lung linh cực đẹp.\n- Lời thoại (Hook): "Dành ra 2 tiếng để thiết kế một cái Slide thuyết trình hay Banner? Quá xưa rồi! Đây là cách mình thiết kế xong trong đúng 1 phút..."\n- Cảnh 2: Quay cảnh kéo thả một mẫu template có sẵn vô cùng nhanh chóng và đổi màu, chữ.\n- Lời thoại: "Chỉ cần chọn 1 trong 500 mẫu Canva Pro đã được thiết kế sẵn bởi các Designer chuyên nghiệp, kéo thả ảnh của bạn vào là xong. Đẹp mê ly."\n- Cảnh 3: Mặt vui vẻ kêu gọi hành động.\n- Lời thoại (CTA): "Trọn bộ 500+ mẫu Canva đa dạng lĩnh vực Slide, CV, Banner mình để link tải ở Bio. Chỉ 99k cho cả kho tài nguyên dùng trọn đời. Bấm tải ngay nhé!"`;
                     navigator.clipboard.writeText(content);
-                    alert('Đã copy Kịch bản TikTok!');
+                    toast.success('Đã copy Kịch bản TikTok!');
                   }}
                   className="w-full py-2.5 bg-white/5 hover:bg-white/10 text-white border border-white/10 text-xs font-semibold rounded-xl transition-all touch-target min-h-[38px]"
                 >
@@ -353,7 +355,7 @@ export const MarketingTab: React.FC<MarketingTabProps> = ({
                   onClick={() => {
                     const content = `[BÀI ĐĂNG FACEBOOK ADS/GROUP - 500+ MẪU CANVA]\n🎨 KHÔNG CẦN BIẾT PHOTOSHOP VẪN THIẾT KẾ ĐẸP NHƯ DESIGNER CHUYÊN NGHIỆP!\n\nBạn đang chuẩn bị thuyết trình, làm CV xin việc hay thiết kế banner quảng cáo bán hàng nhưng không biết dùng các phần mềm đồ họa phức tạp? \n\nGiải pháp hoàn hảo nhất chính là tận dụng kho **500+ Mẫu Canva Cao Cấp** được thiết kế sẵn:\n- 150+ Mẫu slide thuyết trình ấn tượng, chuyên nghiệp.\n- 100+ Mẫu CV xin việc chinh phục nhà tuyển dụng.\n- 250+ Mẫu banner quảng cáo, avatar, cover thu hút lượt tương tác.\n- Chỉ việc kéo, thả ảnh và thay đổi nội dung trong 1 nốt nhạc!\n\n👉 Trở thành Designer chuyên nghiệp ngay hôm nay chỉ với 99.000đ.\n📥 Tải trọn bộ link Canva trực tiếp tại link Bio của mình: [DÁN LINK BIO CỦA BẠN VÀO ĐÂY]`;
                     navigator.clipboard.writeText(content);
-                    alert('Đã copy Bài đăng Facebook!');
+                    toast.success('Đã copy Bài đăng Facebook!');
                   }}
                   className="w-full py-2.5 bg-brand-orange/10 hover:bg-brand-orange/20 text-brand-orange border border-brand-orange/20 text-xs font-semibold rounded-xl transition-all touch-target min-h-[38px]"
                 >
