@@ -2,6 +2,7 @@ import React from 'react';
 import { Loader2, Compass } from 'lucide-react';
 import { usePublicBio } from './hooks/usePublicBio';
 import { PublicBioLayout } from './ui/PublicBioLayout';
+import { Button } from '../../components/ui/Button';
 
 interface PublicBioProps {
   slug: string;
@@ -45,12 +46,12 @@ export const PublicBio: React.FC<PublicBioProps> = ({ slug, onNavigateToLanding,
               Trang Bio Link này chưa được khởi tạo hoặc đã bị ẩn. Hãy tự tạo một trang cho riêng bạn!
             </p>
           </div>
-          <button 
+          <Button 
             onClick={onNavigateToLanding}
-            className="w-full py-3 bg-gradient-to-r from-brand-orange to-brand-coral text-white font-bold rounded-xl text-sm"
+            className="w-full"
           >
             Tạo Bio Link miễn phí
-          </button>
+          </Button>
         </div>
       </div>
     );

@@ -13,6 +13,10 @@ import {
   Zap,
   DollarSign
 } from 'lucide-react';
+import { Button } from '../../components/ui/Button';
+import { Card } from '../../components/ui/Card';
+import { Input } from '../../components/ui/Input';
+import { Label } from '../../components/ui/Label';
 
 interface KiemTienPageProps {
   onNavigateToLanding: () => void;
@@ -88,13 +92,14 @@ Ai đang bán template Canva, Ebook, khóa học hay muốn làm đại lý nh�
       {/* Header */}
       <header className="border-b border-white/5 bg-[#080B11]/80 backdrop-blur-md sticky top-0 z-40">
         <div className="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
-          <button 
+          <Button 
             onClick={onNavigateToLanding}
-            className="flex items-center gap-2 text-white/60 hover:text-white text-sm transition-colors group px-3 py-1.5 rounded-lg hover:bg-white/5"
+            variant="ghost"
+            className="flex items-center gap-2 text-sm group"
           >
             <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
             Về trang chủ
-          </button>
+          </Button>
           
           <div className="flex items-center gap-2">
             <span className="text-xl font-bold bg-gradient-to-r from-brand-orange via-brand-coral to-white bg-clip-text text-transparent">
@@ -126,8 +131,8 @@ Ai đang bán template Canva, Ebook, khóa học hay muốn làm đại lý nh�
         </section>
 
         {/* Calculator Section */}
-        <section className="glass-card p-6 md:p-8 rounded-3xl border border-white/10 relative overflow-hidden space-y-8">
-          <div className="absolute top-0 right-0 p-4 bg-brand-orange/10 rounded-bl-3xl border-l border-b border-white/5 flex items-center gap-1.5 text-xs text-brand-orange font-bold uppercase tracking-wider">
+        <Card className="p-6 md:p-8 relative overflow-hidden space-y-8">
+          <div className="absolute top-0 right-0 p-4 bg-brand-orange/10 rounded-bl-3xl border-l border-b border-brand-dark/20 flex items-center gap-1.5 text-xs text-brand-orange font-bold uppercase tracking-wider">
             <Calculator className="w-4 h-4" />
             Công cụ tính MMO
           </div>
@@ -211,12 +216,12 @@ Ai đang bán template Canva, Ebook, khóa học hay muốn làm đại lý nh�
               </div>
             </div>
           </div>
-        </section>
+        </Card>
 
         {/* Fast Share Section */}
         <section className="grid md:grid-cols-2 gap-8">
           {/* Custom Link Generator */}
-          <div className="glass-card p-6 md:p-8 rounded-3xl border border-white/10 space-y-6">
+          <Card className="p-6 md:p-8 space-y-6">
             <h3 className="text-xl font-bold flex items-center gap-2">
               <Share2 className="w-5 h-5 text-brand-orange" />
               1. Tạo Link Tiếp Thị Của Bạn
@@ -227,15 +232,15 @@ Ai đang bán template Canva, Ebook, khóa học hay muốn làm đại lý nh�
             
             <div className="space-y-4">
               <div>
-                <label className="block text-xs text-white/40 uppercase font-semibold mb-2">Nhập mã đối tác của bạn</label>
-                <input 
+                <Label className="mb-2">Nhập mã đối tác của bạn</Label>
+                <Input 
                   type="text" 
                   value={affCode}
                   onChange={(e) => setAffCode(e.target.value)}
                   placeholder="Ví dụ: luannguyen"
-                  className="w-full px-4 py-3 rounded-xl text-white glass-input text-sm"
+                  className="mb-1.5"
                 />
-                <span className="text-[10px] text-white/30 mt-1.5 block">Lấy mã này trong phần "Kiếm tiền (Affiliate)" tại Dashboard của bạn.</span>
+                <span className="text-[10px] text-semantic-muted block">Lấy mã này trong phần "Kiếm tiền (Affiliate)" tại Dashboard của bạn.</span>
               </div>
 
               <div className="bg-[#0b101b] border border-white/5 p-4 rounded-xl space-y-2">
@@ -247,27 +252,28 @@ Ai đang bán template Canva, Ebook, khóa học hay muốn làm đại lý nh�
 
               {/* Share Action Buttons */}
               <div className="grid grid-cols-2 gap-3">
-                <button 
+                <Button 
                   onClick={handleShareFacebook}
-                  className="py-3 px-4 bg-[#1877F2]/10 hover:bg-[#1877F2]/20 border border-[#1877F2]/20 text-[#1877F2] font-bold rounded-xl flex items-center justify-center gap-2 text-sm transition-colors"
+                  className="bg-[#1877F2]/10 hover:bg-[#1877F2]/20 border border-[#1877F2]/20 text-[#1877F2]"
                 >
-                  <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                  <svg className="w-4 h-4 fill-current mr-2" viewBox="0 0 24 24">
                     <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
                   </svg>
                   Chia sẻ FB
-                </button>
-                <button 
+                </Button>
+                <Button 
                   onClick={handleShareZalo}
-                  className="py-3 px-4 bg-[#0068FF]/10 hover:bg-[#0068FF]/20 border border-[#0068FF]/20 text-[#0068FF] font-bold rounded-xl flex items-center justify-center gap-2 text-sm transition-colors"
+                  className="bg-[#0068FF]/10 hover:bg-[#0068FF]/20 border border-[#0068FF]/20 text-[#0068FF]"
                 >
-                  <Send className="w-4 h-4" />
+                  <Send className="w-4 h-4 mr-2" />
                   Chia sẻ Zalo
-                </button>
+                </Button>
               </div>
 
-              <button 
+              <Button 
                 onClick={handleCopyLink}
-                className="w-full py-3.5 bg-white/5 hover:bg-white/10 border border-white/10 text-white font-bold rounded-xl flex items-center justify-center gap-2 text-sm transition-colors"
+                variant="secondary"
+                className="w-full py-6"
               >
                 {copiedLink ? (
                   <>
@@ -280,12 +286,12 @@ Ai đang bán template Canva, Ebook, khóa học hay muốn làm đại lý nh�
                     Copy đường link tiếp thị
                   </>
                 )}
-              </button>
+              </Button>
             </div>
-          </div>
+          </Card>
 
           {/* Copy Post Component */}
-          <div className="glass-card p-6 md:p-8 rounded-3xl border border-white/10 space-y-6 flex flex-col justify-between">
+          <Card className="p-6 md:p-8 space-y-6 flex flex-col justify-between">
             <div className="space-y-4">
               <h3 className="text-xl font-bold flex items-center gap-2">
                 <Sparkles className="w-5 h-5 text-brand-orange" />
@@ -300,23 +306,23 @@ Ai đang bán template Canva, Ebook, khóa học hay muốn làm đại lý nh�
               </div>
             </div>
 
-            <button 
+            <Button 
               onClick={handleCopyPost}
-              className="w-full py-4 bg-gradient-to-r from-brand-orange to-brand-coral hover:from-brand-coral hover:to-brand-orange text-white font-bold rounded-xl flex items-center justify-center gap-2 transition-all duration-300 transform hover:scale-[1.01] shadow-lg shadow-brand-orange/15"
+              className="w-full py-6 transition-all duration-300 transform hover:scale-[1.01] shadow-lg shadow-brand-orange/15"
             >
               {copiedPost ? (
                 <>
-                  <CheckCircle className="w-5 h-5 text-white" />
+                  <CheckCircle className="w-5 h-5 mr-2" />
                   Đã copy toàn bộ bài viết!
                 </>
               ) : (
                 <>
-                  <Copy className="w-5 h-5" />
+                  <Copy className="w-5 h-5 mr-2" />
                   Copy bài viết chốt sale ngay
                 </>
               )}
-            </button>
-          </div>
+            </Button>
+          </Card>
         </section>
 
         {/* Benefits Cards Grid */}

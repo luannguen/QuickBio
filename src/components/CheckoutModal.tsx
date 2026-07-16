@@ -4,6 +4,10 @@ import type { Product } from '../services/productService';
 import { useOrders } from '../hooks/useOrders';
 import { useCart } from '../hooks/useCart';
 import { Loader2, CheckCircle2, Download, AlertTriangle, X, Sparkles, Lock, Clock } from 'lucide-react';
+import { Button } from './ui/Button';
+import { Input } from './ui/Input';
+import { Label } from './ui/Label';
+import { Card } from './ui/Card';
 
 interface CheckoutModalProps {
   product: Product;
@@ -207,11 +211,11 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ product, creatorId
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-      <div 
+      <Card 
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
-        className="relative w-full max-w-md glass-card rounded-2xl overflow-hidden border border-white/10 animate-float-slow touch-pan-x"
+        className="relative w-full max-w-md rounded-2xl overflow-hidden border-white/10 animate-float-slow touch-pan-x p-0"
       >
         {/* Drag Handle for Swipe-Down-To-Close on Mobile */}
         <div className="w-12 h-1 bg-white/20 rounded-full mx-auto mt-3 cursor-row-resize sm:hidden"></div>
@@ -254,23 +258,23 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ product, creatorId
 
             <div className="space-y-3">
               <div>
-                <label className="block text-xs font-semibold text-white/60 uppercase tracking-wider mb-2">Họ và tên của bạn</label>
-                <input 
+                <Label className="block text-[10px] font-semibold text-white/60 uppercase tracking-wider mb-2">Họ và tên của bạn</Label>
+                <Input 
                   type="text" 
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="Nhập họ tên đầy đủ"
-                  className="w-full px-4 py-3 rounded-xl text-white glass-input min-h-[44px]"
+                  className="h-11"
                 />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-white/60 uppercase tracking-wider mb-2">Email nhận file sản phẩm</label>
-                <input 
+                <Label className="block text-[10px] font-semibold text-white/60 uppercase tracking-wider mb-2">Email nhận file sản phẩm</Label>
+                <Input 
                   type="email" 
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="name@example.com"
-                  className="w-full px-4 py-3 rounded-xl text-white glass-input min-h-[44px]"
+                  className="h-11"
                 />
                 <span className="text-[11px] text-white/40 mt-1 block">Chúng tôi sẽ gửi link tải file trực tiếp về email này.</span>
               </div>
@@ -316,20 +320,21 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ product, creatorId
                 <div className="space-y-1.5 animate-fade-in text-left">
                   <label className="block text-[10px] font-semibold text-white/60 uppercase tracking-wider">Mã giảm giá (Promo Code)</label>
                   <div className="flex gap-2">
-                    <input 
+                    <Input 
                       type="text" 
                       value={promoCodeInput}
                       onChange={(e) => setPromoCodeInput(e.target.value)}
                       placeholder="Ví dụ: MMO50, QUICK20..."
-                      className="flex-1 px-3 py-2 rounded-xl text-white text-xs glass-input"
+                      className="flex-1 text-xs h-10"
                     />
-                    <button
+                    <Button
                       type="button"
                       onClick={handleApplyPromo}
-                      className="px-4 py-2 bg-white/5 hover:bg-white/10 text-white border border-white/10 text-xs font-bold rounded-xl transition-all min-h-[38px] flex items-center justify-center"
+                      variant="secondary"
+                      className="min-h-[38px] h-10 px-4 text-xs font-bold"
                     >
                       Áp dụng
-                    </button>
+                    </Button>
                   </div>
                   
                   {promoStatus === 'success' && (
@@ -366,12 +371,12 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ product, creatorId
               </div>
             </div>
 
-            <button 
+            <Button 
               type="submit"
-              className="w-full py-4 bg-gradient-to-r from-brand-orange to-brand-coral hover:from-brand-coral hover:to-brand-orange text-white font-bold rounded-xl transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-brand-orange/20 min-h-[48px] touch-target"
+              className="w-full py-4 text-md h-12 mt-2 shadow-lg shadow-brand-orange/20 transition-all duration-300 transform hover:scale-[1.02]"
             >
               Tiến hành thanh toán
-            </button>
+            </Button>
           </form>
         )}
 
@@ -547,15 +552,16 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ product, creatorId
               )}
             </div>
 
-            <button 
+            <Button 
               onClick={onClose}
-              className="w-full py-2 text-white/50 hover:text-white text-xs transition-colors pt-2"
+              variant="ghost"
+              className="w-full text-xs text-semantic-muted mt-2"
             >
               Đóng cửa sổ
-            </button>
+            </Button>
           </div>
         )}
-      </div>
+      </Card>
     </div>
   );
 };

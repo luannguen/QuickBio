@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
-import { X, Mail, Lock, Loader2 } from 'lucide-react';
+import { X, Mail, Lock } from 'lucide-react';
 import { supabase } from '../services/supabase';
+import { Button } from './ui/Button';
+import { Input } from './ui/Input';
+import { Label } from './ui/Label';
+import { Card } from './ui/Card';
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -74,7 +78,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-      <div className="relative w-full max-w-md bg-[#0F141E] border border-white/10 rounded-2xl shadow-2xl p-6">
+      <Card className="relative w-full max-w-md p-6 animate-fade-in border-brand-dark/20">
         <button 
           onClick={onClose}
           className="absolute top-4 right-4 p-1.5 text-white/50 hover:text-white bg-white/5 hover:bg-white/10 rounded-lg transition-colors"
@@ -85,20 +89,20 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess
         <h2 className="text-2xl font-bold text-white mb-2">
           {isSignUp ? 'Tạo gian hàng mới' : 'Đăng nhập Dashboard'}
         </h2>
-        <p className="text-white/50 text-sm mb-6">
+        <p className="text-semantic-muted text-sm mb-6">
           {isSignUp 
             ? 'Bắt đầu hành trình kiếm tiền tự động của bạn' 
             : 'Chào mừng bạn quay lại hệ thống'}
         </p>
 
         {error && (
-          <div className="mb-4 p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm">
+          <div className="mb-4 p-3 rounded-xl bg-semantic-error/10 border border-semantic-error/20 text-semantic-error text-sm">
             {error}
           </div>
         )}
         
         {message && (
-          <div className="mb-4 p-3 rounded-xl bg-green-500/10 border border-green-500/20 text-green-400 text-sm">
+          <div className="mb-4 p-3 rounded-xl bg-semantic-success/10 border border-semantic-success/20 text-semantic-success text-sm">
             {message}
           </div>
         )}
@@ -106,14 +110,14 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess
         <form onSubmit={handleSubmit} className="space-y-4">
           {isSignUp && (
             <div>
-              <label className="block text-xs font-medium text-white/70 mb-1.5">Họ và Tên</label>
+              <Label className="block mb-1.5">Họ và Tên</Label>
               <div className="relative">
-                <input 
+                <Input 
                   type="text"
                   required
                   value={fullName}
                   onChange={e => setFullName(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:border-brand-orange/50 transition-colors"
+                  className="pl-10"
                   placeholder="Nguyễn Văn A"
                 />
                 <span className="absolute left-3.5 top-3 text-white/40">
@@ -124,14 +128,14 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess
           )}
 
           <div>
-            <label className="block text-xs font-medium text-white/70 mb-1.5">Email</label>
+            <Label className="block mb-1.5">Email</Label>
             <div className="relative">
-              <input 
+              <Input 
                 type="email"
                 required
                 value={email}
                 onChange={e => setEmail(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:border-brand-orange/50 transition-colors"
+                className="pl-10"
                 placeholder="email@example.com"
               />
               <Mail className="absolute left-3.5 top-3 w-4 h-4 text-white/40" />
@@ -139,44 +143,45 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-white/70 mb-1.5">Mật khẩu</label>
+            <Label className="block mb-1.5">Mật khẩu</Label>
             <div className="relative">
-              <input 
+              <Input 
                 type="password"
                 required
                 minLength={6}
                 value={password}
                 onChange={e => setPassword(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:border-brand-orange/50 transition-colors"
+                className="pl-10"
                 placeholder="••••••••"
               />
               <Lock className="absolute left-3.5 top-3 w-4 h-4 text-white/40" />
             </div>
           </div>
 
-          <button 
+          <Button 
             type="submit"
-            disabled={loading}
-            className="w-full mt-2 py-3 bg-gradient-to-r from-brand-orange to-brand-coral hover:from-brand-coral hover:to-brand-orange text-white font-bold rounded-xl shadow-lg transition-all active:scale-[0.98] flex items-center justify-center gap-2"
+            isLoading={loading}
+            className="w-full mt-2 h-12 text-md"
           >
-            {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : (isSignUp ? 'Đăng ký ngay' : 'Đăng nhập')}
-          </button>
+            {isSignUp ? 'Đăng ký ngay' : 'Đăng nhập'}
+          </Button>
         </form>
 
         <div className="mt-6 text-center">
-          <button 
+          <Button 
             type="button"
+            variant="link"
             onClick={() => {
               setIsSignUp(!isSignUp);
               setError(null);
               setMessage(null);
             }}
-            className="text-sm text-white/60 hover:text-white transition-colors"
+            className="text-sm text-white/60 hover:text-white"
           >
             {isSignUp ? 'Đã có tài khoản? Đăng nhập' : 'Chưa có tài khoản? Đăng ký mới'}
-          </button>
+          </Button>
         </div>
-      </div>
+      </Card>
     </div>
   );
 };

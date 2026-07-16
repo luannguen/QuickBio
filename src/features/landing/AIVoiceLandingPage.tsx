@@ -14,6 +14,9 @@ import {
   Volume2
 } from 'lucide-react';
 import { useVapiStore } from '../../hooks/store';
+import { Button } from '../../components/ui/Button';
+import { Input } from '../../components/ui/Input';
+import { Label } from '../../components/ui/Label';
 
 // ============================================================
 // 1. TiltCard Component: Hiệu ứng Parallax 3D xoay theo con trỏ chuột
@@ -320,13 +323,14 @@ Bên em đã tích hợp giải pháp này vào QuickBio:
 
       {/* Header */}
       <header className="relative z-10 max-w-7xl mx-auto px-6 py-6 flex justify-between items-center">
-        <button 
+        <Button 
           onClick={onNavigateToHome}
-          className="flex items-center gap-2 text-sm text-white/60 hover:text-white transition-colors group"
+          variant="ghost"
+          className="flex items-center gap-2 text-sm group"
         >
           <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
           <span>Quay lại Trang chủ</span>
-        </button>
+        </Button>
 
         <div className="flex items-center gap-2">
           <div className="w-9 h-9 bg-gradient-to-tr from-brand-orange to-brand-coral rounded-lg flex items-center justify-center">
@@ -408,24 +412,22 @@ Bên em đã tích hợp giải pháp này vào QuickBio:
 
             <form onSubmit={handleTriggerOutboundCall} className="space-y-4">
               <div>
-                <label className="block text-[10px] uppercase font-bold text-white/50 mb-1.5">Tên Của Bạn</label>
-                <input 
+                <Label className="mb-1.5 text-white/50">Tên Của Bạn</Label>
+                <Input 
                   type="text" 
                   placeholder="Ví dụ: Nguyễn Văn A"
                   value={customerName}
                   onChange={(e) => setCustomerName(e.target.value)}
-                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-orange focus:ring-2 focus:ring-brand-orange/20 transition-all duration-200"
                   required
                 />
               </div>
               <div>
-                <label className="block text-[10px] uppercase font-bold text-white/50 mb-1.5">Số Điện Thoại Nhận Cuộc Gọi</label>
-                <input 
+                <Label className="mb-1.5 text-white/50">Số Điện Thoại Nhận Cuộc Gọi</Label>
+                <Input 
                   type="tel" 
                   placeholder="Ví dụ: 0912345678"
                   value={customerPhone}
                   onChange={(e) => setCustomerPhone(e.target.value)}
-                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-orange focus:ring-2 focus:ring-brand-orange/20 transition-all duration-200"
                   required
                 />
               </div>
@@ -443,23 +445,23 @@ Bên em đã tích hợp giải pháp này vào QuickBio:
                 </div>
               )}
 
-              <button
+              <Button
                 type="submit"
                 disabled={outboundLoading}
-                className="w-full py-3.5 bg-gradient-to-tr from-brand-orange to-brand-coral hover:shadow-lg hover:shadow-brand-orange/15 text-white font-bold rounded-xl text-sm transition-all active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none flex items-center justify-center gap-2 touch-target cursor-pointer"
+                className="w-full py-6"
               >
                 {outboundLoading ? (
                   <>
-                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
                     <span>Đang kết nối cuộc gọi...</span>
                   </>
                 ) : (
                   <>
-                    <Phone className="w-4 h-4" />
+                    <Phone className="w-4 h-4 mr-2" />
                     <span>AI Gọi Cho Tôi Trải Nghiệm Ngay!</span>
                   </>
                 )}
-              </button>
+              </Button>
             </form>
           </section>
         </TiltCard>
@@ -477,29 +479,29 @@ Bên em đã tích hợp giải pháp này vào QuickBio:
               </div>
               
               <div className="w-full md:w-auto flex gap-2">
-                <input 
+                <Input 
                   type="text" 
                   placeholder="Nhập mã CTV của bạn..."
                   value={affCode}
                   onChange={(e) => setAffCode(e.target.value)}
-                  className="bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:border-brand-orange focus:ring-2 focus:ring-brand-orange/20 transition-all duration-200 w-full md:w-48"
+                  className="w-full md:w-48"
                 />
-                <button
+                <Button
                   onClick={handleCopyLink}
-                  className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 shrink-0 ${copiedLink ? 'bg-green-500 text-white' : 'bg-brand-orange hover:bg-brand-coral text-white active:scale-95 cursor-pointer'}`}
+                  className={`shrink-0 ${copiedLink ? 'bg-semantic-success hover:bg-semantic-success text-white' : ''}`}
                 >
                   {copiedLink ? (
                     <>
-                      <Check className="w-3.5 h-3.5" />
+                      <Check className="w-4 h-4 mr-1.5" />
                       <span>Đã Copy!</span>
                     </>
                   ) : (
                     <>
-                      <Copy className="w-3.5 h-3.5" />
+                      <Copy className="w-4 h-4 mr-1.5" />
                       <span>Copy Link</span>
                     </>
                   )}
-                </button>
+                </Button>
               </div>
             </div>
 
@@ -524,22 +526,23 @@ Bên em đã tích hợp giải pháp này vào QuickBio:
               <div key={index} className="bg-[#0a0f1d]/80 border border-white/10 rounded-3xl p-6 space-y-4 hover:border-brand-orange/20 transition-colors duration-300">
                 <div className="flex justify-between items-center border-b border-white/5 pb-4">
                   <h4 className="text-sm font-bold text-brand-orange">{post.title}</h4>
-                  <button
+                  <Button
                     onClick={() => handleCopyPost(post.content, index)}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1 ${copiedPost === index ? 'bg-green-500 text-white' : 'bg-white/5 hover:bg-white/10 text-white/80 active:scale-95'}`}
+                    variant="secondary"
+                    className={copiedPost === index ? 'bg-semantic-success text-white hover:bg-semantic-success' : ''}
                   >
                     {copiedPost === index ? (
                       <>
-                        <Check className="w-3 h-3" />
+                        <Check className="w-4 h-4 mr-1.5" />
                         <span>Đã Copy</span>
                       </>
                     ) : (
                       <>
-                        <Copy className="w-3 h-3" />
+                        <Copy className="w-4 h-4 mr-1.5" />
                         <span>Copy Bài</span>
                       </>
                     )}
-                  </button>
+                  </Button>
                 </div>
                 <pre className="text-xs text-white/70 leading-relaxed font-sans whitespace-pre-wrap bg-black/20 p-4 rounded-2xl border border-white/5 overflow-x-auto max-h-64">
                   {post.content}

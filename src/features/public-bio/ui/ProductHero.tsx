@@ -1,6 +1,7 @@
 import React from 'react';
 import { ArrowRight } from 'lucide-react';
 import type { Product } from '../../../services/productService';
+import { Button } from '../../../components/ui/Button';
 
 interface ProductHeroProps {
   product: Product;
@@ -66,13 +67,16 @@ export const ProductHero: React.FC<ProductHeroProps> = ({ product, onSelectProdu
               {(Number(product.price) * 2).toLocaleString('vi-VN')}đ
             </span>
           </div>
-          <button 
-            type="button"
-            className="px-5 bg-gradient-to-r from-brand-orange to-brand-coral hover:from-brand-coral hover:to-brand-orange text-white text-xs font-bold rounded-xl shadow-md transition-all active:scale-95 flex items-center justify-center gap-1.5 min-h-[44px]"
+          <Button 
+            onClick={(e) => {
+              e.stopPropagation();
+              handleClick();
+            }}
+            className="px-5 min-h-[44px]"
           >
             Sở hữu ngay
-            <ArrowRight className="w-3.5 h-3.5" />
-          </button>
+            <ArrowRight className="w-3.5 h-3.5 ml-1.5" />
+          </Button>
         </div>
       </div>
     </div>

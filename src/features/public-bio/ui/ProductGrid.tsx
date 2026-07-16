@@ -1,6 +1,7 @@
 import React from 'react';
 import { ArrowRight } from 'lucide-react';
 import type { Product } from '../../../services/productService';
+import { Button } from '../../../components/ui/Button';
 
 interface ProductGridProps {
   products: Product[];
@@ -75,13 +76,17 @@ export const ProductGrid: React.FC<ProductGridProps> = ({ products, onSelectProd
                     {(Number(product.price) * 2).toLocaleString('vi-VN')}đ
                   </span>
                 </div>
-                <button
-                  type="button"
-                  className="px-4 bg-white/5 hover:bg-brand-orange hover:text-white text-white text-xs font-bold rounded-xl border border-white/10 hover:border-brand-orange/20 transition-all active:scale-95 flex items-center justify-center gap-1 min-h-[44px]"
+                <Button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleClick();
+                  }}
+                  variant="outline"
+                  className="px-4 hover:bg-brand-orange hover:text-white hover:border-brand-orange/20 min-h-[44px]"
                 >
                   Mua ngay
-                  <ArrowRight className="w-3 h-3" />
-                </button>
+                  <ArrowRight className="w-3 h-3 ml-1" />
+                </Button>
               </div>
             </div>
           </div>

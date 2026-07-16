@@ -9,10 +9,12 @@ import { CheckoutModal } from '../../components/CheckoutModal';
 import { ImageUploader } from '../../components/ImageUploader';
 import { marketingService } from '../../services/marketingService';
 import { supabase, isSupabaseConfigured } from '../../services/supabase';
-import { useIsMobile } from '../../hooks/useIsMobile';
-import { DashboardDesktop } from './DashboardDesktop';
-import { DashboardMobile } from './DashboardMobile';
-import { Loader2, ShoppingBag } from 'lucide-react';
+import { DashboardView } from './DashboardView';
+import { Loader2, ShoppingBag, X } from 'lucide-react';
+import { Button } from '../../components/ui/Button';
+import { Input } from '../../components/ui/Input';
+import { Label } from '../../components/ui/Label';
+import { Card } from '../../components/ui/Card';
 
 interface DashboardProps {
   onNavigateToBioBuilder: () => void;
@@ -22,7 +24,6 @@ interface DashboardProps {
 export const Dashboard: React.FC<DashboardProps> = ({ onNavigateToBioBuilder, onNavigateToBioPublic }) => {
   const { user, signOut } = useAuth();
   const { getCreatorOrders, getBankSettings, saveBankSettings, simulatePayment } = useOrders();
-  const isMobile = useIsMobile(1024);
 
   const [activeTab, setActiveTab] = useState<'products' | 'orders' | 'sepay' | 'affiliate' | 'ai-content' | 'marketing'>('products');
   const [products, setProducts] = useState<Product[]>([]);
@@ -638,69 +639,63 @@ Giọng điệu: ${aiTone === 'expert' ? 'Chuyên sâu, logic' : aiTone === 'fun
 
   return (
     <>
-      {isMobile ? (
-        <DashboardMobile {...sharedProps} />
-      ) : (
-        <DashboardDesktop {...sharedProps} />
-      )}
+      <DashboardView {...sharedProps} />
 
       {/* MODAL THÊM/SỬA SẢN PHẨM */}
       {isProductModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-          <div className="w-full max-w-md glass-card rounded-2xl border border-white/10 overflow-hidden text-left">
-            <div className="flex justify-between items-center p-5 border-b border-white/5">
+          <Card className="w-full max-w-md animate-fade-in relative p-0 overflow-hidden">
+            <div className="flex justify-between items-center p-5 border-b border-white/5 relative z-10">
               <h3 className="text-base font-bold text-white flex items-center gap-2">
                 <ShoppingBag className="w-4 h-4 text-brand-orange" />
                 {editingProduct ? 'Chỉnh sửa sản phẩm số' : 'Thêm sản phẩm số mới'}
               </h3>
               <button 
                 onClick={() => setIsProductModalOpen(false)}
-                className="text-white/50 hover:text-white"
+                className="absolute top-4 right-4 p-1.5 text-white/50 hover:text-white bg-white/5 hover:bg-white/10 rounded-lg transition-colors"
               >
-                ✕
+                <X className="w-5 h-5" />
               </button>
             </div>
 
             <form onSubmit={handleProductSubmit} className="p-6 space-y-4">
               <div>
-                <label className="block text-xs text-white/50 font-semibold mb-2">Tên sản phẩm số</label>
-                <input 
+                <Label className="block mb-1.5">Tên sản phẩm số</Label>
+                <Input 
                   type="text"
                   value={prodName}
                   onChange={(e) => setProdName(e.target.value)}
                   placeholder="Ví dụ: Ebook hướng dẫn kiếm tiền MMO..."
-                  className="w-full px-4 py-3 rounded-xl text-xs text-white glass-input"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-xs text-white/50 font-semibold mb-2">Mô tả chi tiết sản phẩm</label>
+                <Label className="block mb-1.5">Mô tả chi tiết sản phẩm</Label>
                 <textarea 
                   value={prodDesc}
                   onChange={(e) => setProdDesc(e.target.value)}
                   placeholder="Mô tả các lợi ích, tài nguyên khách hàng nhận được khi mua file này..."
                   rows={3}
-                  className="w-full px-4 py-3 rounded-xl text-xs text-white glass-input resize-none"
+                  className="w-full px-4 py-3 rounded-xl text-sm bg-black/20 border border-white/10 text-white placeholder:text-white/30 focus:outline-none focus:border-brand-orange/50 focus:ring-1 focus:ring-brand-orange/50 transition-all resize-none"
                 />
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs text-white/50 font-semibold mb-2">Giá bán (VND)</label>
-                  <input 
+                  <Label className="block mb-1.5">Giá bán (VND)</Label>
+                  <Input 
                     type="number"
                     value={prodPrice}
                     onChange={(e) => setProdPrice(parseInt(e.target.value) || 0)}
                     min={0}
                     step={1000}
-                    className="w-full px-4 py-3 rounded-xl text-xs text-white glass-input"
                     required
                   />
                 </div>
                 
                 <div>
-                  <label className="block text-xs text-white/50 font-semibold mb-2">Ảnh bìa sản phẩm (Cover Image)</label>
+                  <Label className="block mb-1.5">Ảnh bìa sản phẩm</Label>
                   <ImageUploader 
                     value={prodCover} 
                     onChange={(val) => setProdCover(val)}
@@ -711,26 +706,25 @@ Giọng điệu: ${aiTone === 'expert' ? 'Chuyên sâu, logic' : aiTone === 'fun
               </div>
 
               <div>
-                <label className="block text-xs text-white/50 font-semibold mb-2">Đường dẫn file sản phẩm (Link tải zip, pdf, drive...)</label>
-                <input 
+                <Label className="block mb-1.5">Đường dẫn file (Link tải zip, pdf...)</Label>
+                <Input 
                   type="text"
                   value={prodFile}
                   onChange={(e) => setProdFile(e.target.value)}
                   placeholder="Ví dụ: https://github.com/.../archive/main.zip"
-                  className="w-full px-4 py-3 rounded-xl text-xs text-white glass-input"
                   required
                 />
-                <span className="text-[10px] text-white/30 mt-1 block">Sau khi chuyển khoản thành công, hệ thống tự hiển thị link này để khách tải file.</span>
+                <span className="text-[10px] text-semantic-muted mt-1 block">Sau khi chuyển khoản thành công, hệ thống tự hiển thị link này để khách tải file.</span>
               </div>
 
-              <button 
+              <Button 
                 type="submit"
-                className="w-full py-4 bg-gradient-to-r from-brand-orange to-brand-coral hover:from-brand-coral hover:to-brand-orange text-white font-bold rounded-xl shadow-lg transition-all duration-300 text-xs min-h-[44px]"
+                className="w-full mt-2 h-12 text-md"
               >
                 {editingProduct ? 'Lưu thay đổi' : 'Thêm sản phẩm'}
-              </button>
+              </Button>
             </form>
-          </div>
+          </Card>
         </div>
       )}
 

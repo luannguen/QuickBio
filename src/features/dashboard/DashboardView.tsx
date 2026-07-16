@@ -1,15 +1,21 @@
+import React, { useState } from 'react';
 import type { Product } from '../../services/productService';
 import type { Order } from '../../services/orderService';
-import { DesktopLayout } from '../../components/layout/DesktopLayout';
+import { Layout } from '../../components/layout/Layout';
 import { ProductsTab } from './components/ProductsTab';
 import { OrdersTab } from './components/OrdersTab';
 import { SepayTab } from './components/SepayTab';
 import { AffiliateTab } from './components/AffiliateTab';
 import { AiContentTab } from './components/AiContentTab';
 import { MarketingTab } from './components/MarketingTab';
-import { Sparkles, Eye, DollarSign, ShoppingBag, BookOpen } from 'lucide-react';
+import { Button } from '../../components/ui/Button';
+import { Card } from '../../components/ui/Card';
+import { 
+  Sparkles, Eye, DollarSign, ShoppingBag, BookOpen, 
+  Users, Menu, X, Settings, ChevronRight
+} from 'lucide-react';
 
-interface DashboardDesktopProps {
+interface DashboardViewProps {
   activeTab: 'products' | 'orders' | 'sepay' | 'affiliate' | 'ai-content' | 'marketing';
   setActiveTab: (tab: 'products' | 'orders' | 'sepay' | 'affiliate' | 'ai-content' | 'marketing') => void;
   user: any;
@@ -100,7 +106,7 @@ interface DashboardDesktopProps {
   onMktSubTabChange: (val: 'autopost' | 'swipe') => void;
 }
 
-export const DashboardDesktop: React.FC<DashboardDesktopProps> = (props) => {
+export const DashboardView: React.FC<DashboardViewProps> = (props) => {
   const {
     activeTab,
     setActiveTab,
@@ -114,6 +120,8 @@ export const DashboardDesktop: React.FC<DashboardDesktopProps> = (props) => {
     onNavigateToBioPublic,
     onProUpgradeClick
   } = props;
+
+  const [isMoreMenuOpen, setIsMoreMenuOpen] = useState(false);
 
   const totalRevenue = orders
     .filter(o => o.status === 'paid')
@@ -129,21 +137,21 @@ export const DashboardDesktop: React.FC<DashboardDesktopProps> = (props) => {
         { name: 'Cấu hình VietQR & Ngân hàng', id: 'sepay' },
         { name: 'Kiếm tiền (Affiliate)', id: 'affiliate' },
         { name: 'Sáng tạo AI (Gemini)', id: 'ai-content' },
-        { name: 'Thư viện Tiếp thị (Marketing Hub)', id: 'marketing' }
+        { name: 'Thư viện Tiếp thị (Marketing)', id: 'marketing' }
       ].map(tab => (
         <button
           key={tab.id}
           onClick={() => setActiveTab(tab.id as any)}
-          className={`w-full px-4 py-3.5 rounded-xl text-left text-xs font-bold flex items-center justify-between border transition-all ${
+          className={`w-full px-4 py-3.5 rounded-xl text-left text-sm font-medium flex items-center justify-between border transition-all ${
             activeTab === tab.id 
-              ? 'bg-gradient-to-r from-brand-orange/15 to-brand-coral/5 border-brand-orange/30 text-brand-orange' 
-              : 'bg-transparent border-transparent text-white/50 hover:bg-white/5 hover:text-white'
+              ? 'bg-brand-orange/10 border-brand-orange/30 text-brand-orange' 
+              : 'bg-transparent border-transparent text-semantic-muted hover:bg-white/5 hover:text-white'
           }`}
         >
           <span>{tab.name}</span>
           {tab.count !== undefined && (
-            <span className={`px-2 py-0.5 rounded-full text-[9px] ${
-              activeTab === tab.id ? 'bg-brand-orange/20 text-brand-orange' : 'bg-white/5 text-white/40'
+            <span className={`px-2 py-0.5 rounded-full text-xs ${
+              activeTab === tab.id ? 'bg-brand-orange/20 text-brand-orange' : 'bg-white/5 text-semantic-muted'
             }`}>
               {tab.count}
             </span>
@@ -154,45 +162,128 @@ export const DashboardDesktop: React.FC<DashboardDesktopProps> = (props) => {
   );
 
   const headerContent = (
-    <div className="flex justify-between items-center">
+    <div className="flex justify-between items-center w-full">
       <div className="flex items-center gap-3">
-        <div className="w-10 h-10 bg-gradient-to-tr from-brand-orange to-brand-coral rounded-xl flex items-center justify-center">
-          <Sparkles className="w-5 h-5 text-white animate-pulse" />
+        <div className="w-10 h-10 bg-brand-orange rounded-xl flex items-center justify-center">
+          <Sparkles className="w-5 h-5 text-white" />
         </div>
         <div>
-          <h1 className="text-lg font-bold tracking-tight">QuickBio Console</h1>
-          <p className="text-xs text-white/50">Quản lý cửa hàng sản phẩm số & Bio-Link của bạn</p>
+          <h1 className="text-lg font-bold tracking-tight hidden lg:block">QuickBio Console</h1>
+          <h1 className="text-sm font-bold tracking-tight lg:hidden">{user.full_name}</h1>
+          <p className="text-xs text-semantic-muted hidden lg:block">Quản lý cửa hàng sản phẩm số & Bio-Link của bạn</p>
+          <span className="text-[10px] text-brand-orange font-semibold uppercase lg:hidden">
+            {userPlan === 'pro' ? 'QuickBio Pro' : 'Free Account'}
+          </span>
         </div>
       </div>
 
       <div className="flex items-center gap-3">
-        <button 
+        <Button 
           onClick={onNavigateToBioBuilder}
-          className="px-4 py-2 bg-gradient-to-r from-brand-orange to-brand-coral hover:from-brand-coral hover:to-brand-orange text-white text-xs font-bold rounded-xl transition-all shadow-md active:scale-95 touch-target"
+          className="hidden lg:flex"
         >
           Thiết kế Bio Link
-        </button>
-        <button 
+        </Button>
+        <Button 
           onClick={() => onNavigateToBioPublic(userSlug || 'luannguyen')}
-          className="px-4 py-2 bg-white/5 hover:bg-white/10 text-white border border-white/10 text-xs font-semibold rounded-xl transition-all active:scale-95 flex items-center gap-1.5 touch-target"
+          variant="secondary"
+          className="hidden lg:flex"
         >
-          <Eye className="w-3.5 h-3.5" />
-          Xem trang Bio công khai
-        </button>
-        <button 
+          <Eye className="w-4 h-4 mr-2" />
+          Xem trang Bio
+        </Button>
+        <Button 
           onClick={signOut}
-          className="px-3 py-2 text-white/40 hover:text-white text-xs font-semibold transition-colors"
+          variant="ghost"
+          className="text-semantic-muted"
         >
           Đăng xuất
-        </button>
+        </Button>
       </div>
     </div>
   );
 
+  const bottomNavContent = (
+    <>
+      <button
+        onClick={() => {
+          setActiveTab('products');
+          setIsMoreMenuOpen(false);
+        }}
+        className={`flex flex-col items-center justify-center flex-1 min-h-[44px] ${
+          activeTab === 'products' && !isMoreMenuOpen ? 'text-brand-orange' : 'text-semantic-muted'
+        }`}
+      >
+        <ShoppingBag className="w-5 h-5" />
+        <span className="text-[10px] font-medium mt-1">Sản phẩm</span>
+      </button>
+
+      <button
+        onClick={() => {
+          setActiveTab('orders');
+          setIsMoreMenuOpen(false);
+        }}
+        className={`flex flex-col items-center justify-center flex-1 min-h-[44px] ${
+          activeTab === 'orders' && !isMoreMenuOpen ? 'text-brand-orange' : 'text-semantic-muted'
+        }`}
+      >
+        <DollarSign className="w-5 h-5" />
+        <span className="text-[10px] font-medium mt-1">Đơn hàng</span>
+      </button>
+
+      <button
+        onClick={() => {
+          setActiveTab('affiliate');
+          setIsMoreMenuOpen(false);
+        }}
+        className={`flex flex-col items-center justify-center flex-1 min-h-[44px] ${
+          activeTab === 'affiliate' && !isMoreMenuOpen ? 'text-brand-orange' : 'text-semantic-muted'
+        }`}
+      >
+        <Users className="w-5 h-5" />
+        <span className="text-[10px] font-medium mt-1">Affiliate</span>
+      </button>
+
+      <button
+        onClick={() => setIsMoreMenuOpen(true)}
+        className={`flex flex-col items-center justify-center flex-1 min-h-[44px] ${
+          isMoreMenuOpen || ['sepay', 'ai-content', 'marketing'].includes(activeTab) ? 'text-brand-orange' : 'text-semantic-muted'
+        }`}
+      >
+        <Menu className="w-5 h-5" />
+        <span className="text-[10px] font-medium mt-1">Thêm</span>
+      </button>
+    </>
+  );
+
+  const handleSelectMoreTab = (tab: any) => {
+    setActiveTab(tab);
+    setIsMoreMenuOpen(false);
+  };
+
   return (
-    <DesktopLayout sidebarContent={sidebarContent} headerContent={headerContent}>
-      {/* User profile card */}
-      <div className="glass-panel p-6 rounded-2xl border border-white/5 flex items-center justify-between gap-4">
+    <Layout 
+      headerContent={headerContent} 
+      sidebarContent={sidebarContent}
+      bottomNavContent={bottomNavContent}
+    >
+      {/* Mobile Promotion Panel */}
+      {userPlan === 'free' && (
+        <div className="lg:hidden bg-brand-orange/10 p-4 rounded-xl border border-brand-orange/20 text-xs space-y-3">
+          <p className="leading-relaxed text-brand-orange">
+            🚀 <strong>Nâng cấp QuickBio PRO:</strong> Mở khóa tính năng đăng bán sản phẩm không giới hạn, viết content tự động bằng AI, bật CTV Affiliate.
+          </p>
+          <Button 
+            onClick={onProUpgradeClick}
+            className="w-full"
+          >
+            Nâng cấp PRO chỉ 99k/tháng
+          </Button>
+        </div>
+      )}
+
+      {/* Desktop User Profile Card */}
+      <Card className="hidden lg:flex p-6 items-center justify-between gap-4">
         <div className="flex items-center gap-4">
           <img 
             src={user.avatar_url} 
@@ -202,76 +293,76 @@ export const DashboardDesktop: React.FC<DashboardDesktopProps> = (props) => {
           <div>
             <h2 className="text-xl font-bold text-white flex items-center gap-2">
               Chào, {user.full_name}!
-              <span className={`text-[10px] px-2 py-0.5 rounded-full border ${
+              <span className={`text-xs px-2 py-0.5 rounded-full border ${
                 userPlan === 'pro'
-                  ? 'bg-green-500/10 border-green-500/30 text-green-400 font-bold'
+                  ? 'bg-semantic-success/10 border-semantic-success/30 text-semantic-success font-bold'
                   : 'bg-brand-orange/15 border-brand-orange/30 text-brand-orange'
               }`}>
                 {userPlan === 'pro' ? 'QuickBio Pro' : 'QuickBio Free'}
               </span>
             </h2>
-            <p className="text-xs text-white/40 mt-1">{user.email}</p>
+            <p className="text-sm text-semantic-muted mt-1">{user.email}</p>
           </div>
         </div>
         
         {userPlan === 'free' ? (
-          <div className="bg-brand-orange/10 px-5 py-4 rounded-xl border border-brand-orange/20 text-xs text-white/90 max-w-lg leading-relaxed flex items-center justify-between gap-4">
+          <div className="bg-brand-orange/10 px-5 py-4 rounded-xl border border-brand-orange/20 text-sm text-brand-orange max-w-lg flex items-center justify-between gap-4">
             <div>
               🚀 <strong>Gói Free giới hạn (1 Sản phẩm, Không AI):</strong> Nâng cấp gói Pro để mở rộng sản phẩm không giới hạn, kích hoạt AI viết content tự động.
             </div>
-            <button 
+            <Button 
               onClick={onProUpgradeClick}
-              className="px-4 py-2 bg-brand-orange hover:bg-brand-coral text-white font-bold rounded-lg transition-colors flex-shrink-0 touch-target"
+              className="flex-shrink-0"
             >
-              Nâng cấp Pro 99k
-            </button>
+              Nâng cấp Pro
+            </Button>
           </div>
         ) : (
-          <div className="bg-green-500/5 px-5 py-4 rounded-xl border border-green-500/10 text-xs text-white/70 max-w-md leading-relaxed">
+          <div className="bg-semantic-success/10 px-5 py-4 rounded-xl border border-semantic-success/20 text-sm text-semantic-success max-w-md">
             🎉 <strong>Tài khoản Pro:</strong> Bạn đang sở hữu toàn bộ các quyền năng nâng cao nhất (AI Content, Affiliate, Không giới hạn sản phẩm).
           </div>
         )}
-      </div>
+      </Card>
 
       {/* Stats cards grid */}
-      <div className="grid grid-cols-3 gap-6">
-        <div className="glass-card p-6 rounded-2xl border border-white/5 space-y-3 relative overflow-hidden">
+      <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
+        <Card className="p-4 lg:p-6 space-y-3 relative overflow-hidden">
           <div className="absolute top-[-10%] right-[-5%] w-24 h-24 bg-brand-orange/5 rounded-full blur-xl pointer-events-none"></div>
           <div className="flex justify-between items-center">
-            <span className="text-xs text-white/50 font-bold uppercase tracking-wider">Tổng Doanh Thu</span>
-            <DollarSign className="w-5 h-5 text-brand-orange" />
+            <span className="text-[10px] lg:text-xs text-semantic-muted font-bold uppercase tracking-wider">Tổng Doanh Thu</span>
+            <DollarSign className="w-5 h-5 text-brand-orange hidden lg:block" />
           </div>
-          <div className="text-3xl font-extrabold text-white">
-            {totalRevenue.toLocaleString('vi-VN')} <span className="text-lg font-medium text-brand-orange">VND</span>
+          <div className="text-2xl lg:text-3xl font-extrabold text-white">
+            {totalRevenue.toLocaleString('vi-VN')} <span className="text-sm lg:text-lg font-medium text-brand-orange">VND</span>
           </div>
-          <p className="text-[10px] text-white/30">Dòng tiền chảy thẳng về tài khoản ngân hàng của bạn.</p>
-        </div>
+          <p className="text-[10px] text-semantic-muted hidden lg:block">Dòng tiền chảy thẳng về tài khoản ngân hàng của bạn.</p>
+        </Card>
 
-        <div className="glass-card p-6 rounded-2xl border border-white/5 space-y-3">
+        <Card className="p-4 lg:p-6 space-y-3">
           <div className="flex justify-between items-center">
-            <span className="text-xs text-white/50 font-bold uppercase tracking-wider">Đơn hàng thành công</span>
-            <ShoppingBag className="w-5 h-5 text-[#8BC34A]" />
+            <span className="text-[10px] lg:text-xs text-semantic-muted font-bold uppercase tracking-wider">Đơn thành công</span>
+            <ShoppingBag className="w-5 h-5 text-semantic-success hidden lg:block" />
           </div>
-          <div className="text-3xl font-extrabold text-white">
-            {totalOrders} <span className="text-lg font-medium text-white/50">đơn</span>
+          <div className="text-2xl lg:text-3xl font-extrabold text-white">
+            {totalOrders} <span className="text-sm lg:text-lg font-medium text-semantic-muted">đơn</span>
           </div>
-          <p className="text-[10px] text-white/30">Mở khóa link tải file và tự động gửi mail thành công.</p>
-        </div>
+          <p className="text-[10px] text-semantic-muted hidden lg:block">Mở khóa link tải file và tự động gửi mail thành công.</p>
+        </Card>
 
-        <div className="glass-card p-6 rounded-2xl border border-white/5 space-y-3">
+        <Card className="p-4 lg:p-6 space-y-3 hidden lg:block">
           <div className="flex justify-between items-center">
-            <span className="text-xs text-white/50 font-bold uppercase tracking-wider">Sản phẩm đang bán</span>
-            <BookOpen className="w-5 h-5 text-sky-400" />
+            <span className="text-xs text-semantic-muted font-bold uppercase tracking-wider">Sản phẩm đang bán</span>
+            <BookOpen className="w-5 h-5 text-semantic-info" />
           </div>
           <div className="text-3xl font-extrabold text-white">
-            {products.length} <span className="text-lg font-medium text-white/50">mục</span>
+            {products.length} <span className="text-lg font-medium text-semantic-muted">mục</span>
           </div>
-          <p className="text-[10px] text-white/30">Quản lý và cập nhật dễ dàng mọi lúc.</p>
-        </div>
+          <p className="text-[10px] text-semantic-muted">Quản lý và cập nhật dễ dàng mọi lúc.</p>
+        </Card>
       </div>
 
-      {/* Render tab content */}
-      <div className="glass-panel p-6 rounded-2xl border border-white/5">
+      {/* Render active content */}
+      <Card className="p-4 lg:p-6">
         {activeTab === 'products' && (
           <ProductsTab
             products={products}
@@ -372,7 +463,75 @@ export const DashboardDesktop: React.FC<DashboardDesktopProps> = (props) => {
             products={products}
           />
         )}
-      </div>
-    </DesktopLayout>
+      </Card>
+
+      {/* Mobile "More" Drawer Menu Sheet Overlay */}
+      {isMoreMenuOpen && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex justify-end animate-fade-in lg:hidden">
+          <div className="w-[80vw] max-w-sm h-full bg-brand-card border-l border-white/5 p-6 flex flex-col justify-between shadow-2xl relative">
+            <button 
+              onClick={() => setIsMoreMenuOpen(false)}
+              className="absolute top-4 right-4 text-semantic-muted hover:text-white p-2"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            <div className="space-y-6 pt-10">
+              <div className="space-y-1">
+                <h3 className="font-extrabold text-sm text-white">Tính năng mở rộng</h3>
+                <p className="text-[10px] text-semantic-muted">Chọn cấu hình hoặc thiết lập công cụ bổ sung.</p>
+              </div>
+
+              <div className="space-y-2">
+                {[
+                  { name: 'Cấu hình VietQR', id: 'sepay', icon: <Settings className="w-4 h-4 text-brand-orange" /> },
+                  { name: 'Sáng tạo AI (Gemini)', id: 'ai-content', icon: <Sparkles className="w-4 h-4 text-brand-orange" /> },
+                  { name: 'Marketing Hub', id: 'marketing', icon: <BookOpen className="w-4 h-4 text-brand-orange" /> }
+                ].map(item => (
+                  <button
+                    key={item.id}
+                    onClick={() => handleSelectMoreTab(item.id as any)}
+                    className={`w-full p-3.5 rounded-xl border text-left text-sm font-medium flex items-center gap-3 transition-colors ${
+                      activeTab === item.id 
+                        ? 'bg-brand-orange/10 border-brand-orange/30 text-brand-orange' 
+                        : 'bg-transparent border-white/5 text-semantic-muted hover:bg-white/5 hover:text-white'
+                    }`}
+                  >
+                    {item.icon}
+                    <span>{item.name}</span>
+                    <ChevronRight className="w-4 h-4 ml-auto opacity-30" />
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="space-y-3 pt-6 border-t border-white/5">
+              <Button 
+                onClick={() => {
+                  onNavigateToBioBuilder();
+                  setIsMoreMenuOpen(false);
+                }}
+                className="w-full h-12"
+              >
+                Thiết kế Bio Link
+              </Button>
+              
+              <Button 
+                onClick={() => {
+                  onNavigateToBioPublic(userSlug || 'luannguyen');
+                  setIsMoreMenuOpen(false);
+                }}
+                variant="secondary"
+                className="w-full h-12"
+              >
+                <Eye className="w-4 h-4 mr-2" />
+                Xem Bio công khai
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+    </Layout>
   );
 };

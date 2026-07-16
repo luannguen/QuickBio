@@ -8,6 +8,7 @@ import { SocialLinks } from './SocialLinks';
 import { ProductHero } from './ProductHero';
 import { ProductGrid } from './ProductGrid';
 import { CheckoutModal } from '../../../components/CheckoutModal';
+import { Button } from '../../../components/ui/Button';
 
 interface PublicBioLayoutProps {
   bio: BioLink;
@@ -98,18 +99,19 @@ export const PublicBioLayout: React.FC<PublicBioLayoutProps> = ({
 
         {/* Footer (Nút quảng cáo QuickBio) */}
         <div className="text-center pt-10">
-          <button
+          <Button
             onClick={() => {
               if (bio?.user_id) {
                 localStorage.setItem('quickbio_referrer', bio.user_id);
               }
               onNavigateToLanding?.();
             }}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-panel border border-white/10 text-xs text-white/70 hover:text-white transition-all transform hover:scale-105 active:scale-95 shadow-md min-h-[44px]"
+            variant="ghost"
+            className="rounded-full glass-panel border border-white/10 text-xs text-white/70 hover:text-white hover:bg-white/5 min-h-[44px]"
           >
-            <Sparkles className="w-3.5 h-3.5 text-brand-orange" />
+            <Sparkles className="w-3.5 h-3.5 text-brand-orange mr-2" />
             <span>Tạo Bio Link & DigiStore miễn phí</span>
-          </button>
+          </Button>
         </div>
 
         {/* Checkout Modal */}

@@ -1,9 +1,8 @@
 import React from 'react';
 import { useAuth } from '../../hooks/useAuth';
-import { useIsMobile } from '../../hooks/useIsMobile';
-import { AdminDashboardDesktop } from './AdminDashboardDesktop';
-import { AdminDashboardMobile } from './AdminDashboardMobile';
+import { AdminDashboardView } from './AdminDashboardView';
 import { ShieldAlert, Loader2, ArrowLeft } from 'lucide-react';
+import { Button } from '../../components/ui/Button';
 
 interface AdminDashboardProps {
   onNavigateToHome: () => void;
@@ -11,7 +10,6 @@ interface AdminDashboardProps {
 
 export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigateToHome }) => {
   const { user, loading } = useAuth();
-  const isMobile = useIsMobile(1024); // Use 1024px to cover tablets and mobile
 
   // List of emails allowed to log in as admin
   const ADMIN_EMAILS = [
@@ -48,22 +46,17 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigateToHome
             </p>
           </div>
           
-          <button 
+          <Button 
             onClick={onNavigateToHome}
-            className="w-full py-3 bg-gradient-to-r from-brand-orange to-brand-coral hover:from-brand-coral hover:to-brand-orange text-white font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 transition-all shadow-md active:scale-95 touch-target"
+            className="w-full"
           >
-            <ArrowLeft className="w-4 h-4" />
-            <span>Quay lại trang chủ</span>
-          </button>
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Về trang chủ
+          </Button>
         </div>
       </div>
     );
   }
 
-  // Authorised - Render responsive views
-  if (isMobile) {
-    return <AdminDashboardMobile onNavigateToHome={onNavigateToHome} />;
-  }
-
-  return <AdminDashboardDesktop onNavigateToHome={onNavigateToHome} />;
+  return <AdminDashboardView onNavigateToHome={onNavigateToHome} />;
 };
