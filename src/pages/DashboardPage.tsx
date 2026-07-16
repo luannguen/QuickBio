@@ -547,6 +547,10 @@ Giọng điệu: ${aiTone === 'expert' ? 'Chuyên sâu, logic' : aiTone === 'fun
     cover_image_url: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=500&q=80',
     file_url: 'https://quick-bio-lilac.vercel.app/dashboard',
     status: 'active',
+    product_type: 'digital',
+    inventory_count: 0,
+    is_unlimited: true,
+    weight_grams: 0,
     created_at: '',
     updated_at: ''
   };

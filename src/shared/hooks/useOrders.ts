@@ -13,6 +13,9 @@ export const useOrders = () => {
     customer_name: string;
     amount: number;
     referred_by?: string;
+    shipping_name?: string;
+    shipping_phone?: string;
+    shipping_address?: string;
   }): Promise<Order | null> => {
     setLoading(true);
     setError(null);

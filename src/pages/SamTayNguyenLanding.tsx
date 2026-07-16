@@ -16,6 +16,10 @@ const SAM_PRODUCT: Product = {
   description: 'Sự kết hợp hoàn hảo giữa Sâm Ấn Độ, Sâm Bố Chính, Đinh Lăng & Linh Chi. Hỗ trợ giảm stress, bồi bổ đề kháng và giúp giấc ngủ sâu tự nhiên.',
   cover_image_url: '/assets/sam/sam_tea_packaging.png',
   file_url: 'https://quick-bio-lilac.vercel.app/downloads/huong-dan-thien-tra.pdf', // HD sử dụng & thiền trà
+  product_type: 'physical',
+  inventory_count: 100,
+  is_unlimited: false,
+  weight_grams: 500,
   status: 'active',
   created_at: new Date().toISOString(),
   updated_at: new Date().toISOString()
@@ -50,6 +54,10 @@ export function SamTayNguyenLanding({ onNavigateToHome }: SamTayNguyenLandingPro
                   price: SAM_PRODUCT.price,
                   cover_image_url: SAM_PRODUCT.cover_image_url,
                   file_url: SAM_PRODUCT.file_url,
+                  product_type: SAM_PRODUCT.product_type,
+                  inventory_count: SAM_PRODUCT.inventory_count,
+                  is_unlimited: SAM_PRODUCT.is_unlimited,
+                  weight_grams: SAM_PRODUCT.weight_grams,
                   status: 'active'
                 });
               }
@@ -65,6 +73,10 @@ export function SamTayNguyenLanding({ onNavigateToHome }: SamTayNguyenLandingPro
                   price: SAM_PRODUCT.price,
                   cover_image_url: SAM_PRODUCT.cover_image_url,
                   file_url: SAM_PRODUCT.file_url,
+                  product_type: SAM_PRODUCT.product_type,
+                  inventory_count: SAM_PRODUCT.inventory_count,
+                  is_unlimited: SAM_PRODUCT.is_unlimited,
+                  weight_grams: SAM_PRODUCT.weight_grams,
                   status: 'active'
                 });
               }

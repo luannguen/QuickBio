@@ -592,7 +592,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ product, creatorId
             <div className="space-y-3">
               {product.product_type === 'digital' && product.file_url ? (
                 <a 
-                  href={product.file_url} 
+                  href={product.file_url || undefined} 
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-full py-4 bg-green-500 hover:bg-green-600 text-white font-bold rounded-xl flex items-center justify-center gap-2 transition-all duration-300 transform hover:scale-[1.02] shadow-lg shadow-green-500/20 text-sm animate-pulse"
@@ -607,7 +607,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ product, creatorId
               ) : null}
               {orderBumpChecked && bumpProduct && (
                 <a 
-                  href={bumpProduct.file_url} 
+                  href={bumpProduct.file_url || undefined} 
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-full py-4 bg-[#8BC34A] hover:bg-[#7CB342] text-white font-bold rounded-xl flex items-center justify-center gap-2 transition-all duration-300 transform hover:scale-[1.02] shadow-lg shadow-[#8BC34A]/20 text-sm animate-pulse"
