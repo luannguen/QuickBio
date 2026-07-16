@@ -1,5 +1,5 @@
-import React from 'react';
-import { ShoppingBag, Sparkles, X, CheckCircle, Clock } from 'lucide-react';
+import React, { useState } from 'react';
+import { ShoppingBag, Sparkles, X, CheckCircle, Clock, FileText, Calendar } from 'lucide-react';
 import type { BioLink } from "@/entities/bio/api";
 import type { Product } from "@/entities/product/api";
 import { CountdownBanner } from './CountdownBanner';
@@ -13,6 +13,7 @@ import { Button } from "@/shared/ui/Button";
 interface PublicBioLayoutProps {
   bio: BioLink;
   products: Product[];
+  articles?: any[];
   activeProduct: Product | null;
   setActiveProduct: (product: Product | null) => void;
   formattedTime: string;
@@ -20,11 +21,13 @@ interface PublicBioLayoutProps {
   toastData: { name: string; product: string; time: string };
   onNavigateToLanding?: () => void;
   onNavigateToSam?: () => void;
+  onNavigateToArticle?: (slug: string) => void;
 }
 
 export const PublicBioLayout: React.FC<PublicBioLayoutProps> = ({
   bio,
   products,
+  articles,
   activeProduct,
   setActiveProduct,
   formattedTime,
@@ -32,7 +35,10 @@ export const PublicBioLayout: React.FC<PublicBioLayoutProps> = ({
   toastData,
   onNavigateToLanding,
   onNavigateToSam,
+  onNavigateToArticle,
 }) => {
+  const [activeTab, setActiveTab] = useState<'store' | 'blog'>('store');
+
   const themeStyle = {
     background: bio.theme?.background || 'linear-gradient(135deg, #0b0f19 0%, #161f30 100%)',
     color: bio.theme?.textColor || '#ffffff',
@@ -57,45 +63,123 @@ export const PublicBioLayout: React.FC<PublicBioLayoutProps> = ({
         {/* Social Links */}
         <SocialLinks socialLinks={bio.social_links} />
 
-        {/* DigiStore Section */}
-        <div className="space-y-5">
-          <div className="flex items-center justify-between px-1">
-            <h3 className="text-xs font-bold tracking-widest uppercase opacity-55 flex items-center gap-2">
-              <ShoppingBag className="w-4 h-4 text-brand-orange animate-bounce-slow" />
-              Cửa hàng Sản phẩm số
-            </h3>
-            <span className="text-[10px] bg-green-500/10 text-green-400 font-semibold px-2 py-0.5 rounded-full border border-green-500/20 flex items-center gap-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
-              Giao file tự động qua Email
-            </span>
-          </div>
-
-          {products.length === 0 ? (
-            <div className="glass-card rounded-3xl p-10 text-center border border-border space-y-2">
-              <p className="text-sm opacity-50">Hiện chưa có sản phẩm nào được đăng bán.</p>
-            </div>
-          ) : (
-            <div className="space-y-6">
-              {/* Featured Product Hero Banner */}
-              {products[0] && (
-                <ProductHero
-                  product={products[0]}
-                  onSelectProduct={setActiveProduct}
-                  onNavigateToSam={onNavigateToSam}
-                />
-              )}
-
-              {/* Remaining products list */}
-              {products.length > 1 && (
-                <ProductGrid
-                  products={products.slice(1)}
-                  onSelectProduct={setActiveProduct}
-                  onNavigateToSam={onNavigateToSam}
-                />
-              )}
-            </div>
-          )}
+        {/* Unified Storefront Tabs */}
+        <div className="flex bg-black/20 backdrop-blur-md rounded-2xl p-1 border border-border/50">
+          <button
+            onClick={() => setActiveTab('store')}
+            className={`flex-1 py-3 text-sm font-bold rounded-xl transition-all duration-300 flex items-center justify-center gap-2 ${
+              activeTab === 'store'
+                ? 'bg-brand-orange/20 text-brand-orange shadow-[0_0_15px_rgba(255,107,0,0.2)]'
+                : 'text-muted-foreground hover:text-foreground hover:bg-white/5'
+            }`}
+          >
+            <ShoppingBag className="w-4 h-4" />
+            Cửa hàng
+          </button>
+          <button
+            onClick={() => setActiveTab('blog')}
+            className={`flex-1 py-3 text-sm font-bold rounded-xl transition-all duration-300 flex items-center justify-center gap-2 ${
+              activeTab === 'blog'
+                ? 'bg-brand-orange/20 text-brand-orange shadow-[0_0_15px_rgba(255,107,0,0.2)]'
+                : 'text-muted-foreground hover:text-foreground hover:bg-white/5'
+            }`}
+          >
+            <FileText className="w-4 h-4" />
+            Bài viết
+          </button>
         </div>
+
+        {/* DigiStore Section */}
+        {activeTab === 'store' && (
+          <div className="space-y-5 animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <div className="flex items-center justify-between px-1">
+              <h3 className="text-xs font-bold tracking-widest uppercase opacity-55 flex items-center gap-2">
+                <ShoppingBag className="w-4 h-4 text-brand-orange animate-bounce-slow" />
+                Cửa hàng Sản phẩm số
+              </h3>
+              <span className="text-[10px] bg-green-500/10 text-green-400 font-semibold px-2 py-0.5 rounded-full border border-green-500/20 flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
+                Giao file tự động qua Email
+              </span>
+            </div>
+
+            {products.length === 0 ? (
+              <div className="glass-card rounded-3xl p-10 text-center border border-border space-y-2">
+                <p className="text-sm opacity-50">Hiện chưa có sản phẩm nào được đăng bán.</p>
+              </div>
+            ) : (
+              <div className="space-y-6">
+                {/* Featured Product Hero Banner */}
+                {products[0] && (
+                  <ProductHero
+                    product={products[0]}
+                    onSelectProduct={setActiveProduct}
+                    onNavigateToSam={onNavigateToSam}
+                  />
+                )}
+
+                {/* Remaining products list */}
+                {products.length > 1 && (
+                  <ProductGrid
+                    products={products.slice(1)}
+                    onSelectProduct={setActiveProduct}
+                    onNavigateToSam={onNavigateToSam}
+                  />
+                )}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Blog Section */}
+        {activeTab === 'blog' && (
+          <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
+            {(!articles || articles.length === 0) ? (
+              <div className="glass-card rounded-3xl p-10 text-center border border-border space-y-2">
+                <FileText className="w-8 h-8 text-muted-foreground/50 mx-auto mb-2" />
+                <p className="text-sm opacity-50">Hiện chưa có bài viết nào.</p>
+              </div>
+            ) : (
+              <div className="flex flex-col gap-4">
+                {articles.map((article) => (
+                  <div
+                    key={article.id}
+                    onClick={() => onNavigateToArticle?.(article.slug)}
+                    className="glass-card rounded-2xl border border-border p-3 flex gap-4 cursor-pointer hover:border-brand-orange/50 transition-all hover:bg-white/5 active:scale-[0.98]"
+                  >
+                    {article.cover_image_url ? (
+                      <div className="w-24 h-24 sm:w-32 sm:h-32 flex-shrink-0 rounded-xl overflow-hidden border border-border/50 bg-black/20">
+                        <img 
+                          src={article.cover_image_url} 
+                          alt={article.title} 
+                          className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+                        />
+                      </div>
+                    ) : (
+                      <div className="w-24 h-24 sm:w-32 sm:h-32 flex-shrink-0 rounded-xl bg-black/20 flex items-center justify-center border border-border/50">
+                        <FileText className="w-8 h-8 text-muted-foreground/30" />
+                      </div>
+                    )}
+                    
+                    <div className="flex flex-col py-1 flex-1 min-w-0">
+                      <h3 className="font-bold text-sm sm:text-base text-foreground line-clamp-2 mb-1 group-hover:text-brand-orange transition-colors">
+                        {article.title}
+                      </h3>
+                      <p className="text-xs text-muted-foreground line-clamp-2 mb-3">
+                        {article.excerpt || "Đang cập nhật nội dung bài viết..."}
+                      </p>
+                      
+                      <div className="mt-auto flex items-center gap-1.5 text-[10px] sm:text-xs text-brand-orange font-medium">
+                        <Calendar className="w-3 h-3" />
+                        {new Date(article.created_at).toLocaleDateString('vi-VN')}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Footer (Nút quảng cáo QuickBio) */}
         <div className="text-center pt-10">

@@ -293,8 +293,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigateToBioBuilder, on
           status: artStatus,
         });
       } else {
-        await articleService.createArticle({
-          user_id: user.id,
+        await articleService.createArticle(user.id, {
           title: artTitle,
           slug: artSlug,
           excerpt: artExcerpt,
@@ -655,8 +654,6 @@ Giọng điệu: ${aiTone === 'expert' ? 'Chuyên sâu, logic' : aiTone === 'fun
     onEditProductClick: handleEditProductClick,
     onDeleteProduct: handleDeleteProduct,
 
-    // Article handlers
-    articles,
     onAddArticleClick: () => {
       setEditingArticle(null);
       setArtTitle('');

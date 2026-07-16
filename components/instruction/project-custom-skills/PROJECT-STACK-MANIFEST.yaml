@@ -1,0 +1,7 @@
+# PROJECT-STACK-MANIFEST.yaml
+project: kiem-tien-online
+versions:
+  vite: "8.1.1"
+  react: "19.2.7"
+  supabase: "2.110.1"
+  tailwind: "3.4.19"

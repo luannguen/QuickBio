@@ -17,7 +17,8 @@ import {
   ShoppingCart,
   TrendingUp,
   Activity,
-  FileText
+  FileText,
+  ShoppingBag
 } from 'lucide-react';
 import { articleService } from "@/entities/article/api";
 
@@ -41,11 +42,11 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
     loadUsers,
     loadOrders,
     loadArticles,
-    loadArticles,
     loadProducts,
     approveWithdrawal,
     moderateProduct,
-    products
+    products,
+    articles
   } = useAdmin();
 
   const [activeTab, setActiveTab] = useState<TabType>('overview');

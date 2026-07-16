@@ -3,12 +3,14 @@ import { bioService } from "@/entities/bio/api";
 import type { BioLink } from "@/entities/bio/api";
 import { productService } from "@/entities/product/api";
 import type { Product } from "@/entities/product/api";
+import { articleService } from "@/entities/article/api";
 import { useCountdown } from './useCountdown';
 import { useSocialProof } from './useSocialProof';
 
 export const usePublicBio = (slug: string) => {
   const [bio, setBio] = useState<BioLink | null>(null);
   const [products, setProducts] = useState<Product[]>([]);
+  const [articles, setArticles] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeProduct, setActiveProduct] = useState<Product | null>(null);
 
@@ -21,7 +23,7 @@ export const usePublicBio = (slug: string) => {
     }
   }, []);
 
-  // 2. Tải dữ liệu bio và sản phẩm từ slug
+  // 2. Tải dữ liệu bio, sản phẩm và bài viết từ slug
   useEffect(() => {
     const loadBioData = async () => {
       setLoading(true);
@@ -29,8 +31,15 @@ export const usePublicBio = (slug: string) => {
         const bioData = await bioService.getBioBySlug(slug);
         if (bioData) {
           setBio(bioData);
-          const productsData = await productService.getActiveProductsByUserId(bioData.user_id);
-          setProducts(productsData);
+          
+          // Fetch products and articles concurrently
+          const [productsData, articlesData] = await Promise.all([
+            productService.getActiveProductsByUserId(bioData.user_id),
+            articleService.getPublicArticles(bioData.user_id)
+          ]);
+          
+          setProducts(productsData || []);
+          setArticles(articlesData || []);
         }
       } catch (err) {
         console.error('Failed to load public bio:', err);
@@ -49,6 +58,7 @@ export const usePublicBio = (slug: string) => {
   return {
     bio,
     products,
+    articles,
     loading,
     activeProduct,
     setActiveProduct,

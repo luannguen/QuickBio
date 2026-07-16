@@ -1,0 +1,1 @@
+# community-content\nBase domain rules and invariant logic.

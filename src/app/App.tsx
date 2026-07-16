@@ -9,6 +9,7 @@ import { AIVoiceLandingPage } from "@/pages/AIVoiceLandingPage";
 import { AdminDashboard } from "@/pages/AdminPage";
 import { BlogPage } from "@/pages/BlogPage";
 import { ArticleDetailPage } from "@/pages/ArticleDetailPage";
+import { SamTayNguyenLanding } from "@/pages/SamTayNguyenLanding";
 
 type ViewType = 'landing' | 'dashboard' | 'bio-builder' | 'bio-public' | 'kiem-tien' | 'tong-dai-ai' | 'admin' | 'sam-tay-nguyen' | 'blog' | 'article';
 
@@ -117,7 +118,7 @@ function App() {
     return () => window.removeEventListener('popstate', handlePopState);
   }, [user]);
 
-  const navigateTo = (newView: ViewType, slug?: string, extra?: string) => {
+  const navigateTo = (newView: ViewType, slug?: string) => {
     setView(newView);
     if (newView === 'bio-public' && slug) {
       setActiveSlug(slug);
@@ -198,6 +199,7 @@ function App() {
           slug={activeSlug}
           onNavigateToLanding={() => navigateTo('landing')}
           onNavigateToSam={() => navigateTo('sam-tay-nguyen')}
+          onNavigateToArticle={(s) => navigateTo('article', s)}
         />
       );
 

@@ -1,14 +1,12 @@
 import React, { useState, useRef } from 'react';
-import { Heart, UploadCloud, Users, CreditCard, Sparkles, Wand2, Paintbrush, Share2, BarChart3, ChevronRight, CheckCircle2, ShieldCheck, ArrowRight, Video, FileText, Check, Layers, ChevronDown, Home, Tag } from 'lucide-react';
-import { AuthModal } from '@/features/auth/AuthModal';
+import { Sparkles, ArrowRight, Layers, ChevronDown, Tag, Home } from 'lucide-react';
+import { AuthModal } from '@/components/AuthModal';
 import { AIVoiceWidget } from '../../components/AIVoiceWidget';
 import { useLandingMobile } from "./hooks/useLandingMobile";
 import { PhoneMockup } from './components/PhoneMockup';
 import { Button } from "@/shared/ui/Button";
 import { Card } from "@/shared/ui/Card";
-import { ThemeToggle } from "@/shared/ui/ThemeToggle";
 import { GlobalHeader } from "@/shared/components/layout/GlobalHeader";
-import { useAuth } from "@/shared/hooks/useAuth";
 
 // ============================================================
 // TiltCard Component: Parallax 3D mouse rotate effect
@@ -75,7 +73,6 @@ const TiltCard: React.FC<TiltCardProps> = ({ children, className = '' }) => {
 
 interface LandingPageViewProps {
   isAuthenticated: boolean;
-  loading: boolean;
   onNavigateToDashboard: () => void;
   onNavigateToDemoBio: () => void;
   onNavigateToAIVoice: () => void;
@@ -83,7 +80,6 @@ interface LandingPageViewProps {
 
 export const LandingPageView: React.FC<LandingPageViewProps> = ({
   isAuthenticated,
-  loading,
   onNavigateToDashboard,
   onNavigateToDemoBio,
   onNavigateToAIVoice

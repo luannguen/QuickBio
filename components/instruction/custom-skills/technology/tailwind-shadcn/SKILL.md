@@ -1,0 +1,1 @@
+# tailwind-shadcn\nBase rules and standard practices for tailwind-shadcn.

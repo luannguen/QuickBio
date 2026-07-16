@@ -125,15 +125,14 @@ export function useAdmin() {
     setLoading(true);
     setError(null);
     try {
-      let status: 'draft' | 'published' | 'suspended' = 'published';
-      if (action === 'suspend') status = 'suspended';
-      if (action === 'warn') status = 'published'; // Vẫn giữ published nhưng gửi cảnh báo (có thể lưu lý do)
-      if (action === 'approve') status = 'published';
-
       if (action === 'delete') {
         await articleService.deleteArticle(articleId);
       } else {
-        await articleService.adminModerateArticle(articleId, { status }, reason);
+        let mappedAction: 'approved' | 'warned' | 'suspended' = 'approved';
+        if (action === 'suspend') mappedAction = 'suspended';
+        if (action === 'warn') mappedAction = 'warned';
+        
+        await articleService.adminModerateArticle(articleId, mappedAction, reason);
       }
       
       const data = await articleService.adminGetAllArticles();

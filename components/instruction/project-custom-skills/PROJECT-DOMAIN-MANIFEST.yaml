@@ -1,0 +1,11 @@
+# PROJECT-DOMAIN-MANIFEST.yaml
+project: kiem-tien-online
+domains:
+  - id: multi-tenant-saas
+    evidence: "user_id references in products, articles tables; admin roles"
+  - id: commerce-order-inventory
+    evidence: "products table, orders table, product_type (physical/digital)"
+  - id: community-content
+    evidence: "articles table, moderation UI"
+  - id: digital-assets
+    evidence: "MediaPicker, MediaHub, storage bucket"

@@ -1,0 +1,1 @@
+# postgres-supabase-db\nBase rules and standard practices for postgres-supabase-db.

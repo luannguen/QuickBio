@@ -8,12 +8,14 @@ interface PublicBioProps {
   slug: string;
   onNavigateToLanding?: () => void;
   onNavigateToSam?: () => void;
+  onNavigateToArticle?: (slug: string) => void;
 }
 
-export const PublicBio: React.FC<PublicBioProps> = ({ slug, onNavigateToLanding, onNavigateToSam }) => {
+export const PublicBio: React.FC<PublicBioProps> = ({ slug, onNavigateToLanding, onNavigateToSam, onNavigateToArticle }) => {
   const {
     bio,
     products,
+    articles,
     loading,
     activeProduct,
     setActiveProduct,
@@ -61,6 +63,7 @@ export const PublicBio: React.FC<PublicBioProps> = ({ slug, onNavigateToLanding,
     <PublicBioLayout
       bio={bio}
       products={products}
+      articles={articles}
       activeProduct={activeProduct}
       setActiveProduct={setActiveProduct}
       formattedTime={formattedTime}
@@ -68,6 +71,7 @@ export const PublicBio: React.FC<PublicBioProps> = ({ slug, onNavigateToLanding,
       toastData={toastData}
       onNavigateToLanding={onNavigateToLanding}
       onNavigateToSam={onNavigateToSam}
+      onNavigateToArticle={onNavigateToArticle}
     />
   );
 };

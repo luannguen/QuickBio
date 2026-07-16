@@ -7,7 +7,6 @@ import {
   Calculator, 
   Landmark, 
   CheckCircle, 
-  ArrowLeft, 
   Send,
   Mail,
   Zap,

@@ -1,0 +1,1 @@
+# supabase-platform\nBase rules and standard practices for supabase-platform.

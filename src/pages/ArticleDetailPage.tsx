@@ -18,7 +18,7 @@ export const ArticleDetailPage: React.FC<ArticleDetailPageProps> = ({ articleSlu
     const fetchArticle = async () => {
       setLoading(true);
       try {
-        const data = await articleService.getArticleBySlug(articleSlug);
+        const data = await articleService.getPublicArticleBySlug(articleSlug);
         setArticle(data);
       } catch (err) {
         console.error(err);

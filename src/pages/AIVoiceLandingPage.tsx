@@ -5,7 +5,6 @@ import {
   Zap, 
   Clock, 
   DollarSign, 
-  ArrowLeft, 
   Share2, 
   Copy, 
   Check, 

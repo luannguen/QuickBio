@@ -1,0 +1,1 @@
+# vite-react\nBase rules and standard practices for vite-react.

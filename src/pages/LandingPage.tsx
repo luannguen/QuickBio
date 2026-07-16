@@ -13,12 +13,11 @@ export const LandingPage: React.FC<LandingPageProps> = ({
   onNavigateToDemoBio,
   onNavigateToAIVoice
 }) => {
-  const { isAuthenticated, loading } = useAuth();
+  const { isAuthenticated } = useAuth();
 
   return (
     <LandingPageView 
       isAuthenticated={isAuthenticated}
-      loading={loading}
       onNavigateToDashboard={onNavigateToDashboard}
       onNavigateToDemoBio={onNavigateToDemoBio}
       onNavigateToAIVoice={onNavigateToAIVoice}

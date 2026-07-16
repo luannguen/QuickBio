@@ -2,8 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { GlobalHeader } from '@/shared/components/layout/GlobalHeader';
 import { articleService } from '@/entities/article/api';
 import { bioService } from '@/entities/bio/api';
-import { Loader2, FileText, Calendar, User } from 'lucide-react';
-import { Button } from '@/shared/ui/Button';
+import { Loader2, FileText, Calendar } from 'lucide-react';
 
 interface BlogPageProps {
   slug: string; // 'platform' or tenant slug

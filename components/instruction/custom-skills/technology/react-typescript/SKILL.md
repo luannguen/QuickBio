@@ -1,0 +1,1 @@
+# react-typescript\nBase rules and standard practices for react-typescript.

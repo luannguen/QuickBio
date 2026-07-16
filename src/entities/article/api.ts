@@ -5,6 +5,7 @@ export interface Article {
   user_id: string;
   title: string;
   slug: string;
+  excerpt: string;
   content: string;
   cover_image_url: string | null;
   status: 'draft' | 'published';
@@ -70,6 +71,7 @@ export const articleService = {
         user_id: userId,
         title: payload.title,
         slug: slug,
+        excerpt: payload.excerpt || '',
         content: payload.content || '',
         cover_image_url: payload.cover_image_url || null,
         status: payload.status || 'draft'
@@ -92,6 +94,7 @@ export const articleService = {
       .update({
         title: payload.title,
         slug: payload.slug,
+        excerpt: payload.excerpt,
         content: payload.content,
         cover_image_url: payload.cover_image_url,
         status: payload.status
@@ -123,15 +126,21 @@ export const articleService = {
   },
 
   // === PUBLIC METHODS ===
-  async getPublicArticles(): Promise<(Article & { profiles?: { full_name: string } })[]> {
+  async getPublicArticles(userId?: string | null): Promise<(Article & { profiles?: { full_name: string } })[]> {
     if (!isSupabaseConfigured || !supabase) return [];
     
-    const { data, error } = await supabase
+    let query = supabase
       .from('articles')
       .select('*, profiles(full_name)')
       .eq('status', 'published')
       .neq('moderation_status', 'suspended')
       .order('created_at', { ascending: false });
+      
+    if (userId) {
+      query = query.eq('user_id', userId);
+    }
+
+    const { data, error } = await query;
 
     if (error) {
       console.error('Error fetching public articles:', error);

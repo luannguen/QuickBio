@@ -1,0 +1,1 @@
+# Project Overlay: react-typescript\nProject specific versions, configurations and overrides.
