@@ -253,7 +253,6 @@ export const PublicBioLayout: React.FC<PublicBioLayoutProps> = ({
           </div>
         </div>
         </div>
-      </div>
       
       {/* Floating Management Button for Owner */}
       {isOwner && (
