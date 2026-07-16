@@ -1,1 +1,0 @@
-# Project Overlay: tailwind-shadcn\nProject specific versions, configurations and overrides.

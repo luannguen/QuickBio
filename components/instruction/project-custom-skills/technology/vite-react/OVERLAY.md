@@ -1,1 +1,0 @@
-# Project Overlay: vite-react\nProject specific versions, configurations and overrides.

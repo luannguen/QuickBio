@@ -6,9 +6,10 @@ import { Button } from "@/shared/ui/Button";
 
 interface AdminDashboardProps {
   onNavigateToHome: () => void;
+  onNavigateToDashboard: () => void;
 }
 
-export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigateToHome }) => {
+export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigateToHome, onNavigateToDashboard }) => {
   const { user, loading } = useAuth();
 
   // List of emails allowed to log in as admin (Fallback)
@@ -58,5 +59,5 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onNavigateToHome
     );
   }
 
-  return <AdminDashboardView onNavigateToHome={onNavigateToHome} />;
+  return <AdminDashboardView onNavigateToHome={onNavigateToHome} onNavigateToDashboard={onNavigateToDashboard} />;
 };

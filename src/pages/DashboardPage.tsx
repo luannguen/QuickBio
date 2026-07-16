@@ -21,9 +21,16 @@ import { Card } from "@/shared/ui/Card";
 interface DashboardProps {
   onNavigateToBioBuilder: () => void;
   onNavigateToBioPublic: (slug: string) => void;
+  onNavigateToHome: () => void;
+  onNavigateToAdmin?: () => void;
 }
 
-export const Dashboard: React.FC<DashboardProps> = ({ onNavigateToBioBuilder, onNavigateToBioPublic }) => {
+export const Dashboard: React.FC<DashboardProps> = ({ 
+  onNavigateToBioBuilder, 
+  onNavigateToBioPublic,
+  onNavigateToHome,
+  onNavigateToAdmin
+}) => {
   const { user, signOut } = useAuth();
   const { getCreatorOrders, getBankSettings, saveBankSettings, simulatePayment } = useOrders();
 
@@ -631,6 +638,8 @@ Giọng điệu: ${aiTone === 'expert' ? 'Chuyên sâu, logic' : aiTone === 'fun
     signOut,
     onNavigateToBioBuilder,
     onNavigateToBioPublic,
+    onNavigateToHome,
+    onNavigateToAdmin,
     onProUpgradeClick: () => setIsProCheckoutOpen(true),
     
     // Product handlers

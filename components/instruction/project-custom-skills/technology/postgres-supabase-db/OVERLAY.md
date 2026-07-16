@@ -1,1 +1,0 @@
-# Project Overlay: postgres-supabase-db\nProject specific versions, configurations and overrides.

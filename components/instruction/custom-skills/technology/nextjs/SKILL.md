@@ -1,1 +1,0 @@
-# nextjs\nBase rules and standard practices for nextjs.

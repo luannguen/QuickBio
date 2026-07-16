@@ -1,1 +1,0 @@
-# digital-assets\nBase domain rules and invariant logic.

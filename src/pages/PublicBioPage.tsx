@@ -6,12 +6,14 @@ import { Button } from "@/shared/ui/Button";
 
 interface PublicBioProps {
   slug: string;
+  currentUserId?: string;
+  onNavigateToDashboard?: () => void;
   onNavigateToLanding?: () => void;
   onNavigateToSam?: () => void;
   onNavigateToArticle?: (slug: string) => void;
 }
 
-export const PublicBio: React.FC<PublicBioProps> = ({ slug, onNavigateToLanding, onNavigateToSam, onNavigateToArticle }) => {
+export const PublicBio: React.FC<PublicBioProps> = ({ slug, currentUserId, onNavigateToDashboard, onNavigateToLanding, onNavigateToSam, onNavigateToArticle }) => {
   const {
     bio,
     products,
@@ -69,6 +71,8 @@ export const PublicBio: React.FC<PublicBioProps> = ({ slug, onNavigateToLanding,
       formattedTime={formattedTime}
       showToast={showToast}
       toastData={toastData}
+      currentUserId={currentUserId}
+      onNavigateToDashboard={onNavigateToDashboard}
       onNavigateToLanding={onNavigateToLanding}
       onNavigateToSam={onNavigateToSam}
       onNavigateToArticle={onNavigateToArticle}

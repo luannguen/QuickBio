@@ -1,1 +1,0 @@
-# multi-tenant-saas\nBase domain rules and invariant logic.

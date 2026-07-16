@@ -74,6 +74,7 @@ const TiltCard: React.FC<TiltCardProps> = ({ children, className = '' }) => {
 interface LandingPageViewProps {
   isAuthenticated: boolean;
   onNavigateToDashboard: () => void;
+  onNavigateToAdmin?: () => void;
   onNavigateToDemoBio: () => void;
   onNavigateToAIVoice: () => void;
 }
@@ -81,6 +82,7 @@ interface LandingPageViewProps {
 export const LandingPageView: React.FC<LandingPageViewProps> = ({
   isAuthenticated,
   onNavigateToDashboard,
+  onNavigateToAdmin,
   onNavigateToDemoBio,
   onNavigateToAIVoice
 }) => {
@@ -123,6 +125,7 @@ export const LandingPageView: React.FC<LandingPageViewProps> = ({
       <GlobalHeader 
         onNavigateToHome={() => window.scrollTo(0, 0)}
         onNavigateToDashboard={onNavigateToDashboard}
+        onNavigateToAdmin={onNavigateToAdmin}
         onNavigateToDemoBio={onNavigateToDemoBio}
         onNavigateToAIVoice={onNavigateToAIVoice}
         onStartAuth={handleStart}

@@ -164,6 +164,7 @@ function App() {
       return (
         <LandingPage 
           onNavigateToDashboard={() => navigateTo('dashboard')}
+          onNavigateToAdmin={() => navigateTo('admin')}
           onNavigateToDemoBio={() => navigateTo('bio-public', 'luannguyen')}
           onNavigateToAIVoice={() => navigateTo('tong-dai-ai')}
         />
@@ -178,6 +179,8 @@ function App() {
         <Dashboard 
           onNavigateToBioBuilder={() => navigateTo('bio-builder')}
           onNavigateToBioPublic={(slug) => navigateTo('bio-public', slug)}
+          onNavigateToHome={() => navigateTo('landing')}
+          onNavigateToAdmin={() => navigateTo('admin')}
         />
       );
 
@@ -197,6 +200,8 @@ function App() {
       return (
         <PublicBio 
           slug={activeSlug}
+          currentUserId={user?.id}
+          onNavigateToDashboard={() => navigateTo('dashboard')}
           onNavigateToLanding={() => navigateTo('landing')}
           onNavigateToSam={() => navigateTo('sam-tay-nguyen')}
           onNavigateToArticle={(s) => navigateTo('article', s)}
@@ -218,11 +223,10 @@ function App() {
       );
 
     case 'admin':
-      return (
-        <AdminDashboard 
-          onNavigateToHome={() => navigateTo('landing')}
-        />
-      );
+      return <AdminDashboard 
+        onNavigateToHome={() => navigateTo('landing')} 
+        onNavigateToDashboard={() => navigateTo('dashboard')}
+      />;
 
     case 'sam-tay-nguyen':
       return (

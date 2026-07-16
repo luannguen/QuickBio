@@ -14,7 +14,7 @@ import { Card } from "@/shared/ui/Card";
 import { ThemeToggle } from "@/shared/ui/ThemeToggle";
 import { 
   Sparkles, Eye, DollarSign, ShoppingBag, BookOpen, 
-  Users, Menu, X, Settings, ChevronRight
+  Users, Menu, X, Settings, ChevronRight, Home, ShieldCheck
 } from 'lucide-react';
 
 interface DashboardViewProps {
@@ -29,6 +29,8 @@ interface DashboardViewProps {
   signOut: () => void;
   onNavigateToBioBuilder: () => void;
   onNavigateToBioPublic: (slug: string) => void;
+  onNavigateToHome?: () => void;
+  onNavigateToAdmin?: () => void;
   onProUpgradeClick: () => void;
   
   // Product handlers
@@ -126,10 +128,14 @@ export const DashboardView: React.FC<DashboardViewProps> = (props) => {
     signOut,
     onNavigateToBioBuilder,
     onNavigateToBioPublic,
-    onProUpgradeClick
+    onProUpgradeClick,
+    onNavigateToHome,
+    onNavigateToAdmin
   } = props;
 
   const [isMoreMenuOpen, setIsMoreMenuOpen] = useState(false);
+  const [isHeaderMenuOpen, setIsHeaderMenuOpen] = useState(false);
+  const isAdmin = user?.role === 'admin';
 
   const totalRevenue = orders
     .filter(o => o.status === 'paid')
@@ -171,9 +177,9 @@ export const DashboardView: React.FC<DashboardViewProps> = (props) => {
   );
 
   const headerContent = (
-    <div className="flex justify-between items-center w-full">
+    <div className="flex justify-between items-center w-full relative">
       <div className="flex items-center gap-3">
-        <div className="w-10 h-10 bg-brand-orange rounded-xl flex items-center justify-center">
+        <div className="w-10 h-10 bg-brand-orange rounded-xl flex items-center justify-center cursor-pointer" onClick={onNavigateToHome}>
           <Sparkles className="w-5 h-5 text-foreground" />
         </div>
         <div>
@@ -186,30 +192,63 @@ export const DashboardView: React.FC<DashboardViewProps> = (props) => {
         </div>
       </div>
 
-      <div className="flex items-center gap-3">
-        <Button 
-          onClick={onNavigateToBioBuilder}
-          className="hidden lg:flex"
-        >
-          Thiết kế Bio Link
-        </Button>
-        <Button 
-          onClick={() => onNavigateToBioPublic(userSlug || 'luannguyen')}
-          variant="secondary"
-          className="hidden lg:flex"
-        >
+      <div className="hidden lg:flex items-center gap-3">
+        {onNavigateToHome && (
+          <Button onClick={onNavigateToHome} variant="ghost" className="text-semantic-muted hover:text-foreground">
+            <Home className="w-4 h-4 mr-2" />
+            Trang Chủ
+          </Button>
+        )}
+        <Button onClick={onNavigateToBioBuilder}>Thiết kế Bio Link</Button>
+        <Button onClick={() => onNavigateToBioPublic(userSlug || 'luannguyen')} variant="secondary">
           <Eye className="w-4 h-4 mr-2" />
           Xem trang Bio
         </Button>
-        <Button 
-          onClick={signOut}
-          variant="ghost"
-          className="text-semantic-muted"
-        >
+        {isAdmin && onNavigateToAdmin && (
+          <Button onClick={onNavigateToAdmin} variant="outline" className="border-brand-orange/50 text-brand-orange hover:bg-brand-orange/10">
+            <ShieldCheck className="w-4 h-4 mr-2" /> Admin Console
+          </Button>
+        )}
+        <Button onClick={signOut} variant="ghost" className="text-semantic-muted">
           Đăng xuất
         </Button>
         <ThemeToggle />
       </div>
+
+      <div className="flex lg:hidden items-center gap-2">
+        <ThemeToggle />
+        <button 
+          onClick={() => setIsHeaderMenuOpen(!isHeaderMenuOpen)}
+          className="p-2 -mr-2 text-foreground focus:outline-none"
+        >
+          {isHeaderMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+        </button>
+      </div>
+
+      {isHeaderMenuOpen && (
+        <div className="absolute top-[60px] right-0 w-64 bg-background/95 backdrop-blur-xl border border-border rounded-2xl p-4 flex flex-col gap-3 shadow-2xl z-50 lg:hidden animate-in fade-in slide-in-from-top-4">
+          {onNavigateToHome && (
+            <Button onClick={() => { onNavigateToHome(); setIsHeaderMenuOpen(false); }} variant="ghost" className="w-full justify-start text-sm">
+              <Home className="w-4 h-4 mr-3" /> Trang Chủ
+            </Button>
+          )}
+          <Button onClick={() => { onNavigateToBioBuilder(); setIsHeaderMenuOpen(false); }} variant="ghost" className="w-full justify-start text-sm">
+            <Settings className="w-4 h-4 mr-3" /> Thiết kế Bio Link
+          </Button>
+          <Button onClick={() => { onNavigateToBioPublic(userSlug || 'luannguyen'); setIsHeaderMenuOpen(false); }} variant="ghost" className="w-full justify-start text-sm">
+            <Eye className="w-4 h-4 mr-3" /> Xem trang Bio
+          </Button>
+          {isAdmin && onNavigateToAdmin && (
+            <Button onClick={() => { onNavigateToAdmin(); setIsHeaderMenuOpen(false); }} variant="outline" className="w-full justify-start text-sm border-brand-orange/50 text-brand-orange">
+              <ShieldCheck className="w-4 h-4 mr-3" /> Admin Console
+            </Button>
+          )}
+          <div className="h-px w-full bg-border my-1" />
+          <Button onClick={() => { signOut(); setIsHeaderMenuOpen(false); }} variant="secondary" className="w-full justify-start text-sm text-red-500 hover:text-red-600 hover:bg-red-500/10">
+            Đăng xuất
+          </Button>
+        </div>
+      )}
     </div>
   );
 

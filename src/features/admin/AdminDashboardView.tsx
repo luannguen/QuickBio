@@ -24,11 +24,12 @@ import { articleService } from "@/entities/article/api";
 
 interface AdminDashboardViewProps {
   onNavigateToHome: () => void;
+  onNavigateToDashboard: () => void;
 }
 
 type TabType = 'overview' | 'users' | 'orders' | 'withdrawals' | 'articles' | 'products';
 
-export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNavigateToHome }) => {
+export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNavigateToHome, onNavigateToDashboard }) => {
   const { user, signOut } = useAuth();
   const { 
     commissions, 
@@ -205,8 +206,16 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
       </button>
       
       <button
+        onClick={onNavigateToDashboard}
+        className="w-full px-4 py-3 rounded-xl text-left text-sm font-medium flex items-center gap-3 text-semantic-muted hover:bg-muted/50 hover:text-foreground transition-all border border-transparent"
+      >
+        <LayoutDashboard className="w-4 h-4" />
+        <span>Về Tenant Dashboard</span>
+      </button>
+
+      <button
         onClick={onNavigateToHome}
-        className="w-full px-4 py-3 rounded-xl text-left text-sm font-medium flex items-center gap-3 text-semantic-muted hover:bg-muted/50 hover:text-foreground transition-all mt-4 border border-transparent"
+        className="w-full px-4 py-3 rounded-xl text-left text-sm font-medium flex items-center gap-3 text-semantic-muted hover:bg-muted/50 hover:text-foreground transition-all mt-2 border border-transparent"
       >
         <ArrowLeft className="w-4 h-4" />
         <span>Về trang chủ</span>

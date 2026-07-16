@@ -1,1 +1,0 @@
-# Project Overlay: digital-assets\nProject specific versions, configurations and overrides.

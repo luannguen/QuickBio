@@ -1,1 +1,0 @@
-# Project Overlay: supabase-platform\nProject specific versions, configurations and overrides.

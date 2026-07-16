@@ -1,1 +1,0 @@
-# ai-llm-integration\nBase rules and standard practices for ai-llm-integration.

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ShoppingBag, Sparkles, X, CheckCircle, Clock, FileText, Calendar } from 'lucide-react';
+import { ShoppingBag, Sparkles, X, CheckCircle, Clock, FileText, Calendar, Home, LayoutDashboard } from 'lucide-react';
 import type { BioLink } from "@/entities/bio/api";
 import type { Product } from "@/entities/product/api";
 import { CountdownBanner } from './CountdownBanner';
@@ -19,6 +19,8 @@ interface PublicBioLayoutProps {
   formattedTime: string;
   showToast: boolean;
   toastData: { name: string; product: string; time: string };
+  currentUserId?: string;
+  onNavigateToDashboard?: () => void;
   onNavigateToLanding?: () => void;
   onNavigateToSam?: () => void;
   onNavigateToArticle?: (slug: string) => void;
@@ -33,11 +35,14 @@ export const PublicBioLayout: React.FC<PublicBioLayoutProps> = ({
   formattedTime,
   showToast,
   toastData,
+  currentUserId,
+  onNavigateToDashboard,
   onNavigateToLanding,
   onNavigateToSam,
   onNavigateToArticle,
 }) => {
   const [activeTab, setActiveTab] = useState<'store' | 'blog'>('store');
+  const isOwner = currentUserId === bio.user_id;
 
   const themeStyle = {
     background: bio.theme?.background || 'linear-gradient(135deg, #0b0f19 0%, #161f30 100%)',
@@ -55,6 +60,15 @@ export const PublicBioLayout: React.FC<PublicBioLayoutProps> = ({
 
       {/* Sticky Countdown Banner (FOMO) */}
       <CountdownBanner formattedTime={formattedTime} />
+
+      {/* Fixed Home Button */}
+      <button
+        onClick={onNavigateToLanding}
+        className="fixed top-4 left-4 z-50 p-2.5 rounded-full bg-black/40 backdrop-blur-md border border-white/10 text-white hover:bg-black/60 transition-colors shadow-lg flex items-center justify-center min-w-[44px] min-h-[44px]"
+        aria-label="Về trang chủ QuickBio"
+      >
+        <Home className="w-5 h-5" />
+      </button>
 
       <div className="w-full max-w-lg px-4 pt-24 space-y-8 relative z-10">
         {/* Profile Card */}
@@ -238,7 +252,19 @@ export const PublicBioLayout: React.FC<PublicBioLayoutProps> = ({
             </div>
           </div>
         </div>
+        </div>
       </div>
+      
+      {/* Floating Management Button for Owner */}
+      {isOwner && (
+        <button
+          onClick={onNavigateToDashboard}
+          className="fixed bottom-6 right-6 z-50 flex items-center gap-2 px-4 py-3 bg-brand-orange text-white font-bold rounded-full shadow-[0_4px_20px_rgba(255,107,0,0.4)] hover:bg-brand-orange/90 transition-all hover:scale-105 min-h-[44px]"
+        >
+          <LayoutDashboard className="w-5 h-5" />
+          <span className="hidden sm:inline">Quản lý trang Bio</span>
+        </button>
+      )}
     </div>
   );
 };

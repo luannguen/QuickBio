@@ -1,1 +1,0 @@
-# vercel-platform\nBase rules and standard practices for vercel-platform.
