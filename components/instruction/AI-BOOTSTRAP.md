@@ -13,6 +13,17 @@ Tệp này là entry point (điểm khởi đầu) bắt buộc cho mọi hoạt
 
 Khi nhận một task, Agent phải phân tích yêu cầu để kích hoạt các Skill tương ứng.
 
+### 0. Luồng Nền Tảng (The Foundation Pipeline) - BẮT BUỘC VỚI MỌI TASK
+
+**[TRIGGER] MỌI TASK (Không có ngoại lệ)**
+
+**[ACTION] BẮT BUỘC THỰC HIỆN CÁC BƯỚC SAU TRƯỚC KHI LÀM BẤT CỨ ĐIỀU GÌ (BLOCKER):**
+1. **Đọc Project Memory Skill**: Truy cập `components/instruction/skills/project-memory/SKILL.md` và tuân thủ tuyệt đối quy trình trong đó.
+2. **Nạp Bối Cảnh (Context Retrieval)**: Mở `components/instruction/project-memory/INDEX.md` và đọc các file phù hợp (CONTEXT, ADR, DEBT) để nạp bộ nhớ dự án vào phiên làm việc hiện tại, tránh hiện tượng "mất trí nhớ" (Context loss).
+3. **Tiếp Tục Routing**: Sau khi hoàn tất 2 bước trên, mới tiếp tục phân loại task vào Luồng UI/UX hoặc Backend bên dưới.
+
+---
+
 ### 1. Luồng UI/UX & Giao diện (The UI/UX Pipeline)
 
 **[TRIGGER] Nếu task chứa hoặc tác động đến bất kỳ yếu tố nào sau đây:**
