@@ -6,7 +6,7 @@ import type { Product } from "@/entities/product/api";
 import { bioService } from "@/entities/bio/api";
 import type { Order } from "@/entities/order/api";
 import { CheckoutModal } from "@/components/CheckoutModal";
-import { ImageUploader } from "@/components/ImageUploader";
+import { MediaPicker } from "@/shared/components/media/MediaPicker";
 import { marketingService } from "@/entities/marketing/api";
 import { supabase, isSupabaseConfigured } from "@/shared/api/supabase";
 import { DashboardView } from "@/features/dashboard/DashboardView";
@@ -743,11 +743,11 @@ Giọng điệu: ${aiTone === 'expert' ? 'Chuyên sâu, logic' : aiTone === 'fun
 
                 <div>
                   <Label className="block mb-1.5">Ảnh bìa sản phẩm</Label>
-                  <ImageUploader 
+                  <MediaPicker 
+                    userId={user?.id || ''}
                     value={prodCover} 
                     onChange={(val) => setProdCover(val)}
                     label="Tải ảnh bìa lên"
-                    aspectRatio="video"
                   />
                 </div>
               </div>
