@@ -116,6 +116,10 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
     const success = await changeUserPlan(userId, newPlan);
     if (success) {
       toast.success(`Đã cập nhật gói của ${userName} thành ${newPlan.toUpperCase()}`);
+      // Nếu Admin tự đổi gói cho chính mình thì reload trang để cập nhật lại quyền trên UI
+      if (userId === user?.id) {
+        setTimeout(() => window.location.reload(), 1000);
+      }
     } else {
       toast.error('Có lỗi xảy ra khi đổi gói. Vui lòng thử lại.');
     }
