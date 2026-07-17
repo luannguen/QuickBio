@@ -169,22 +169,22 @@ export function useAdmin() {
     }
   }, []);
 
-  const changeUserPlan = useCallback(async (userId: string, newPlan: string): Promise<boolean> => {
+  const changeUserPlan = useCallback(async (userId: string, newPlan: string): Promise<{success: boolean, message?: string}> => {
     setLoading(true);
     setError(null);
     try {
-      const success = await adminService.updateUserPlan(userId, newPlan);
-      if (success) {
+      const res = await adminService.updateUserPlan(userId, newPlan);
+      if (res.success) {
         // Refresh users list
         const data = await adminService.getAllUsers();
         setUsers(data);
-        return true;
+        return { success: true, message: res.message };
       }
-      return false;
+      return { success: false, message: res.message || 'Không thể cập nhật gói người dùng' };
     } catch (err: any) {
       setError(err.message || 'Lỗi khi cập nhật gói người dùng');
       console.error(err);
-      return false;
+      return { success: false, message: err.message || 'Lỗi khi cập nhật gói người dùng' };
     } finally {
       setLoading(false);
     }

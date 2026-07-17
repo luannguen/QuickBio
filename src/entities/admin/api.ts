@@ -152,8 +152,8 @@ export const adminService = {
   /**
    * Thay đổi gói của User (Dành cho Admin)
    */
-  updateUserPlan: async (userId: string, newPlan: string): Promise<boolean> => {
-    if (!isSupabaseConfigured || !supabase) return false;
+  updateUserPlan: async (userId: string, newPlan: string): Promise<{success: boolean, message?: string}> => {
+    if (!isSupabaseConfigured || !supabase) return { success: false, message: 'MockDB: Cập nhật gói người dùng' };
     
     try {
       const { data, error } = await supabase.rpc('admin_update_user_plan', {
@@ -161,12 +161,17 @@ export const adminService = {
         p_new_plan: newPlan
       });
       
-      if (error) throw error;
+      if (error) {
+        return { success: false, message: error.message };
+      }
       
-      return data?.success || false;
+      return { 
+        success: data?.success || false, 
+        message: data?.message || (data?.success ? 'Cập nhật thành công' : 'Lỗi cập nhật CSDL') 
+      };
     } catch (err: any) {
       console.error('Error in updateUserPlan service:', err);
-      throw err;
+      return { success: false, message: err?.message || 'Lỗi hệ thống' };
     }
   }
 };
