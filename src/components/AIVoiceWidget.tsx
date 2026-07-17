@@ -122,7 +122,7 @@ export const AIVoiceWidget: React.FC = () => {
   };
 
   return (
-    <div className="fixed bottom-24 md:bottom-6 right-4 md:right-6 z-50 flex flex-col items-end gap-3 font-sans">
+    <div className="fixed bottom-28 md:bottom-6 right-4 md:right-6 z-40 flex flex-col items-end gap-3 font-sans">
       {/* Thông báo lỗi nếu có */}
       {errorMsg && (
         <div className="bg-red-500/90 backdrop-blur-md text-white text-xs px-4 py-3 rounded-xl shadow-lg border border-red-400/20 max-w-xs animate-fade-in flex items-start gap-2">

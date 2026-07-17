@@ -8,7 +8,8 @@
 ## 2. Design Tokens (Tailwind)
 - **Colors**: Sử dụng CSS Variables (HLS) trong `index.css`. Gọi thông qua Tailwind classes: `bg-background`, `text-foreground`, `bg-brand-orange`, v.v.
 - **Typography**: Inter (hoặc font sans-serif hiện tại). `text-sm`, `text-base`, `font-bold`, `tracking-tight`.
-- **Spacing/Radius**: Tuân thủ hệ thống spacing gốc của Tailwind (p-4, m-2). Radius dùng `rounded-lg`, `rounded-xl`, `rounded-2xl`.
+- **Spacing/Radius**: Tuân thủ hệ thống spacing gốc của Tailwind (p-4, m-2). Radius dùng `rounded-lg`, `rounded-xl`, `rounded-2xl`. Mobile Modal dùng `rounded-t-2xl`.
+- **Touch Targets**: Các khu vực có thể tương tác (Buttons, Links, Checkboxes) trên Mobile phải đảm bảo diện tích chạm tối thiểu là **44px x 44px** (VD: dùng `min-h-[44px]` hoặc padding tương ứng). Dùng `active:scale-95` để tạo phản hồi xúc giác.
 
 ## 3. Quy tắc Component
 - Không inline CSS. Mọi style phải dùng class Tailwind.

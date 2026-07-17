@@ -77,16 +77,19 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess
   };
 
   return (
-    <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-      <Card className="relative w-full max-w-md p-6 animate-fade-in border-brand-dark/20">
+    <div className="fixed inset-0 z-[60] flex items-end sm:items-center justify-center sm:p-4 bg-black/60 backdrop-blur-sm">
+      <Card className="relative w-full sm:max-w-md p-6 sm:p-8 rounded-t-3xl rounded-b-none sm:rounded-2xl border-t sm:border border-brand-dark/20 bg-card animate-in slide-in-from-bottom-full sm:slide-in-from-bottom-0 sm:zoom-in-95 duration-300">
         <button 
           onClick={onClose}
-          className="absolute top-4 right-4 p-1.5 text-white/50 hover:text-white bg-white/5 hover:bg-white/10 rounded-lg transition-colors"
+          className="absolute top-4 right-4 p-2 text-muted-foreground hover:text-foreground bg-muted/50 hover:bg-muted rounded-full transition-colors"
         >
           <X className="w-5 h-5" />
         </button>
 
-        <h2 className="text-2xl font-bold text-white mb-2">
+        {/* Mobile Drag Handle */}
+        <div className="w-12 h-1.5 bg-muted rounded-full mx-auto mb-6 sm:hidden" />
+
+        <h2 className="text-2xl font-bold text-foreground mb-2">
           {isSignUp ? 'Tạo gian hàng mới' : 'Đăng nhập Dashboard'}
         </h2>
         <p className="text-semantic-muted text-sm mb-6">

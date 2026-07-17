@@ -44,11 +44,15 @@ export const ArticleModal: React.FC<ArticleModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[60] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-      <div className="bg-brand-card w-full max-w-2xl rounded-2xl border border-border shadow-2xl flex flex-col max-h-[90vh]">
-        <div className="p-6 border-b border-border flex justify-between items-center flex-shrink-0">
+    <div className="fixed inset-0 z-[60] bg-black/80 backdrop-blur-sm flex items-end sm:items-center justify-center sm:p-4">
+      <div className="bg-brand-card w-full sm:max-w-2xl rounded-t-3xl rounded-b-none sm:rounded-2xl border-t sm:border border-border shadow-2xl flex flex-col max-h-[90vh] animate-in slide-in-from-bottom-full sm:slide-in-from-bottom-0 sm:zoom-in-95 duration-300">
+        
+        {/* Mobile Drag Handle */}
+        <div className="w-12 h-1.5 bg-muted rounded-full mx-auto mt-4 sm:hidden flex-shrink-0" />
+
+        <div className="p-5 sm:p-6 border-b border-border flex justify-between items-center flex-shrink-0">
           <h2 className="text-xl font-bold">{isEditing ? 'Sửa bài viết' : 'Thêm bài viết mới'}</h2>
-          <button onClick={onClose} className="p-2 hover:bg-muted rounded-xl transition-colors">
+          <button onClick={onClose} className="p-2 hover:bg-muted rounded-full transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center">
             <X className="w-5 h-5 text-semantic-muted" />
           </button>
         </div>

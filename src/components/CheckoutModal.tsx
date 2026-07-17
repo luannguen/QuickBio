@@ -231,23 +231,23 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({ product, creatorId
   };
 
   return (
-    <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+    <div className="fixed inset-0 z-[60] flex items-end sm:items-center justify-center sm:p-4 bg-black/60 backdrop-blur-sm">
       <Card 
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
-        className="relative w-full max-w-md rounded-2xl overflow-hidden border-white/10 animate-float-slow touch-pan-x p-0"
+        className="relative w-full sm:max-w-md rounded-t-3xl rounded-b-none sm:rounded-2xl overflow-hidden border-t sm:border border-white/10 animate-in slide-in-from-bottom-full sm:slide-in-from-bottom-0 sm:zoom-in-95 duration-300 touch-pan-y p-0 bg-card"
       >
         {/* Drag Handle for Swipe-Down-To-Close on Mobile */}
-        <div className="w-12 h-1 bg-white/20 rounded-full mx-auto mt-3 cursor-row-resize sm:hidden"></div>
+        <div className="w-12 h-1.5 bg-muted/30 rounded-full mx-auto mt-4 cursor-row-resize sm:hidden"></div>
         
         {/* Header */}
-        <div className="flex justify-between items-center p-5 border-b border-white/5">
-          <h3 className="text-lg font-bold text-white flex items-center gap-2">
+        <div className="flex justify-between items-center p-5 border-b border-border">
+          <h3 className="text-lg font-bold text-foreground flex items-center gap-2">
             <Sparkles className="w-5 h-5 text-brand-orange animate-pulse" />
             {step === 'form' ? 'Thông tin mua hàng' : step === 'qr' ? 'Thanh toán đơn hàng' : 'Thanh toán thành công'}
           </h3>
-          <button onClick={onClose} className="p-2 rounded-full hover:bg-white/10 text-white/60 hover:text-white transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center">
+          <button onClick={onClose} className="p-2 rounded-full hover:bg-muted/50 text-muted-foreground hover:text-foreground transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center">
             <X className="w-5 h-5" />
           </button>
         </div>
