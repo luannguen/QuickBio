@@ -125,6 +125,8 @@ export const Dashboard: React.FC<DashboardProps> = ({
     if (!hasLoadedOnce.current) {
       setLoading(true);
     }
+
+    try {
       // Run API calls independently to prevent one failure from blocking others
       try {
         const prods = await productService.getProductsByUserId(user.id);
