@@ -125,25 +125,45 @@ export const Dashboard: React.FC<DashboardProps> = ({
     if (!hasLoadedOnce.current) {
       setLoading(true);
     }
-    try {
-      const prods = await productService.getProductsByUserId(user.id);
-      setProducts(prods);
+      // Run API calls independently to prevent one failure from blocking others
+      try {
+        const prods = await productService.getProductsByUserId(user.id);
+        setProducts(prods);
+      } catch (err) {
+        console.error('Error loading products:', err);
+      }
 
-      const arts = await articleService.getArticlesByUserId(user.id);
-      setArticles(arts);
+      try {
+        const arts = await articleService.getArticlesByUserId(user.id);
+        setArticles(arts);
+      } catch (err) {
+        console.error('Error loading articles:', err);
+      }
 
-      const bio = await bioService.getBioByUserId(user.id);
-      if (bio) setUserSlug(bio.slug);
+      try {
+        const bio = await bioService.getBioByUserId(user.id);
+        if (bio) setUserSlug(bio.slug);
+      } catch (err) {
+        console.error('Error loading bio:', err);
+      }
 
-      const ords = await getCreatorOrders(user.id);
-      setOrders(ords);
+      try {
+        const ords = await getCreatorOrders(user.id);
+        setOrders(ords);
+      } catch (err) {
+        console.error('Error loading orders:', err);
+      }
 
-      const config = await getBankSettings(user.id);
-      if (config) {
-        setBankCode(config.bank_code);
-        setBankAccount(config.bank_account);
-        setAccountName(config.account_name);
-        setApiKey(config.api_key || '');
+      try {
+        const config = await getBankSettings(user.id);
+        if (config) {
+          setBankCode(config.bank_code);
+          setBankAccount(config.bank_account);
+          setAccountName(config.account_name);
+          setApiKey(config.api_key || '');
+        }
+      } catch (err) {
+        console.error('Error loading bank settings:', err);
       }
 
       // Load dữ liệu Affiliate
