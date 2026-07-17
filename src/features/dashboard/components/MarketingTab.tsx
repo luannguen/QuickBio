@@ -60,18 +60,18 @@ export const MarketingTab: React.FC<MarketingTabProps> = ({
             <BookOpen className="w-5 h-5 text-brand-orange" />
             Hệ thống Tiếp thị Tự động (Marketing Automation)
           </h3>
-          <p className="text-xs text-white/40 mt-1">Cấu hình tự động đăng bài bán hàng lên Facebook cá nhân/Page hoặc lấy kịch bản tiếp thị.</p>
+          <p className="text-xs text-muted-foreground mt-1">Cấu hình tự động đăng bài bán hàng lên Facebook cá nhân/Page hoặc lấy kịch bản tiếp thị.</p>
         </div>
       </div>
 
       {/* Sub Tabs Selection */}
-      <div className="flex border-b border-white/5 gap-2">
+      <div className="flex border-b border-border gap-2">
         <button 
           onClick={() => onMktSubTabChange('autopost')}
           className={`px-4 py-2.5 text-xs font-bold border-b-2 transition-all ${
             mktSubTab === 'autopost' 
               ? 'border-brand-orange text-brand-orange' 
-              : 'border-transparent text-white/40 hover:text-white'
+              : 'border-transparent text-muted-foreground hover:text-white'
           }`}
         >
           🤖 Tự động đăng bài (Facebook Auto-Post)
@@ -81,7 +81,7 @@ export const MarketingTab: React.FC<MarketingTabProps> = ({
           className={`px-4 py-2.5 text-xs font-bold border-b-2 transition-all ${
             mktSubTab === 'swipe' 
               ? 'border-brand-orange text-brand-orange' 
-              : 'border-transparent text-white/40 hover:text-white'
+              : 'border-transparent text-muted-foreground hover:text-white'
           }`}
         >
           📂 Thư viện Content Triệu View
@@ -93,13 +93,13 @@ export const MarketingTab: React.FC<MarketingTabProps> = ({
         <div className="space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Settings Form Column */}
-            <form onSubmit={onSaveMarketingSettings} className="lg:col-span-2 glass-card p-6 rounded-2xl border border-white/5 space-y-5">
-              <h4 className="text-xs font-bold text-white uppercase tracking-wider">Cấu hình kết nối Facebook & AI</h4>
+            <form onSubmit={onSaveMarketingSettings} className="lg:col-span-2 glass-card p-6 rounded-2xl border border-border space-y-5">
+              <h4 className="text-xs font-bold text-foreground uppercase tracking-wider">Cấu hình kết nối Facebook & AI</h4>
               
-              <div className="flex items-center justify-between p-4 bg-white/5 rounded-xl border border-white/5">
+              <div className="flex items-center justify-between p-4 bg-muted/50 rounded-xl border border-border">
                 <div>
-                  <div className="text-xs font-bold text-white">Kích hoạt Auto-Post tự động</div>
-                  <div className="text-[10px] text-white/40 mt-0.5">Tự động đăng bài tiếp thị hàng ngày lên Facebook Page của bạn.</div>
+                  <div className="text-xs font-bold text-foreground">Kích hoạt Auto-Post tự động</div>
+                  <div className="text-[10px] text-muted-foreground mt-0.5">Tự động đăng bài tiếp thị hàng ngày lên Facebook Page của bạn.</div>
                 </div>
                 <label className="relative inline-flex items-center cursor-pointer">
                   <input 
@@ -108,29 +108,29 @@ export const MarketingTab: React.FC<MarketingTabProps> = ({
                     onChange={(e) => onMktIsActiveChange(e.target.checked)}
                     className="sr-only peer"
                   />
-                  <div className="w-9 h-5 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-brand-orange"></div>
+                  <div className="w-9 h-5 bg-muted/50 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-brand-orange"></div>
                 </label>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-[11px] text-white/50 font-semibold mb-2">Facebook Page ID</label>
+                  <label className="block text-[11px] text-muted-foreground font-semibold mb-2">Facebook Page ID</label>
                   <input 
                     type="text" 
                     value={mktFbPageId}
                     onChange={(e) => onMktFbPageIdChange(e.target.value)}
                     placeholder="Nhập Page ID của bạn (Ví dụ: 10006394...)"
-                    className="w-full px-4 py-3 rounded-xl text-xs text-white glass-input"
+                    className="w-full px-4 py-3 rounded-xl text-xs text-foreground glass-input"
                     required={mktIsActive}
                   />
                 </div>
                 
                 <div>
-                  <label className="block text-[11px] text-white/50 font-semibold mb-2">Sản phẩm cần quảng bá chính</label>
+                  <label className="block text-[11px] text-muted-foreground font-semibold mb-2">Sản phẩm cần quảng bá chính</label>
                   <select 
                     value={mktTargetProductId}
                     onChange={(e) => onMktTargetProductIdChange(e.target.value)}
-                    className="w-full px-4 py-3 rounded-xl text-xs text-white glass-input"
+                    className="w-full px-4 py-3 rounded-xl text-xs text-foreground glass-input"
                     required={mktIsActive}
                   >
                     <option value="">-- Chọn sản phẩm --</option>
@@ -143,7 +143,7 @@ export const MarketingTab: React.FC<MarketingTabProps> = ({
               </div>
 
               <div>
-                <label className="block text-[11px] text-white/50 font-semibold mb-2 flex items-center justify-between">
+                <label className="block text-[11px] text-muted-foreground font-semibold mb-2 flex items-center justify-between">
                   <span>Facebook Page Access Token (Mã kết nối)</span>
                   <a href="https://developers.facebook.com" target="_blank" rel="noopener noreferrer" className="text-[10px] text-brand-orange underline">Hướng dẫn lấy token ↗</a>
                 </label>
@@ -152,18 +152,18 @@ export const MarketingTab: React.FC<MarketingTabProps> = ({
                   value={mktFbPageToken}
                   onChange={(e) => onMktFbPageTokenChange(e.target.value)}
                   placeholder="EAAW..."
-                  className="w-full px-4 py-3 rounded-xl text-xs text-white glass-input"
+                  className="w-full px-4 py-3 rounded-xl text-xs text-foreground glass-input"
                   required={mktIsActive}
                 />
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-[11px] text-white/50 font-semibold mb-2">Phong cách viết bài của AI</label>
+                  <label className="block text-[11px] text-muted-foreground font-semibold mb-2">Phong cách viết bài của AI</label>
                   <select 
                     value={mktStyle}
                     onChange={(e) => onMktStyleChange(e.target.value)}
-                    className="w-full px-4 py-3 rounded-xl text-xs text-white glass-input"
+                    className="w-full px-4 py-3 rounded-xl text-xs text-foreground glass-input"
                   >
                     <option value="Thuyết phục">Thuyết phục (AIDA/PAS)</option>
                     <option value="Hài hước">Hài hước & Cà khịa</option>
@@ -173,7 +173,7 @@ export const MarketingTab: React.FC<MarketingTabProps> = ({
                 </div>
 
                 <div>
-                  <label className="block text-[11px] text-white/50 font-semibold mb-2 flex items-center justify-between">
+                  <label className="block text-[11px] text-muted-foreground font-semibold mb-2 flex items-center justify-between">
                     <span>Google Gemini API Key (Không bắt buộc)</span>
                     <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer" className="text-[10px] text-brand-orange underline">Lấy API Key ↗</a>
                   </label>
@@ -182,7 +182,7 @@ export const MarketingTab: React.FC<MarketingTabProps> = ({
                     value={mktGeminiApiKey}
                     onChange={(e) => onMktGeminiApiKeyChange(e.target.value)}
                     placeholder="Mặc định dùng API Key hệ thống"
-                    className="w-full px-4 py-3 rounded-xl text-xs text-white glass-input"
+                    className="w-full px-4 py-3 rounded-xl text-xs text-foreground glass-input"
                   />
                 </div>
               </div>
@@ -200,33 +200,33 @@ export const MarketingTab: React.FC<MarketingTabProps> = ({
 
             {/* Actions & Status Column */}
             <div className="space-y-6">
-              <div className="glass-card p-6 rounded-2xl border border-white/5 space-y-4">
-                <h4 className="text-xs font-bold text-white uppercase tracking-wider">Trạng thái & Kiểm thử</h4>
+              <div className="glass-card p-6 rounded-2xl border border-border space-y-4">
+                <h4 className="text-xs font-bold text-foreground uppercase tracking-wider">Trạng thái & Kiểm thử</h4>
                 
                 <div className="space-y-2 text-xs">
-                  <div className="flex justify-between items-center py-1 border-b border-white/5">
-                    <span className="text-white/50">Tình trạng:</span>
-                    <span className={`font-bold ${mktIsActive ? 'text-green-400' : 'text-white/30'}`}>
+                  <div className="flex justify-between items-center py-1 border-b border-border">
+                    <span className="text-muted-foreground">Tình trạng:</span>
+                    <span className={`font-bold ${mktIsActive ? 'text-green-400' : 'text-muted-foreground'}`}>
                       {mktIsActive ? 'Đang hoạt động' : 'Đang tắt'}
                     </span>
                   </div>
-                  <div className="flex justify-between items-center py-1 border-b border-white/5">
-                    <span className="text-white/50">Đăng lần cuối:</span>
-                    <span className="text-white">
+                  <div className="flex justify-between items-center py-1 border-b border-border">
+                    <span className="text-muted-foreground">Đăng lần cuối:</span>
+                    <span className="text-foreground">
                       {mktLastPostedAt ? new Date(mktLastPostedAt).toLocaleString('vi-VN') : 'Chưa đăng'}
                     </span>
                   </div>
                 </div>
 
-                <div className="pt-4 border-t border-white/5 space-y-3">
-                  <div className="text-[10px] text-white/50 leading-relaxed">
+                <div className="pt-4 border-t border-border space-y-3">
+                  <div className="text-[10px] text-muted-foreground leading-relaxed">
                     Nhấn nút dưới để bắt đầu gửi yêu cầu AI sinh bài đăng mới và trực tiếp đăng lên trang Facebook Page của bạn để kiểm tra cấu hình.
                   </div>
                   <button 
                     type="button"
                     onClick={onTestAutoPost}
                     disabled={mktTesting}
-                    className="w-full py-3 bg-white/5 hover:bg-white/10 text-white border border-white/10 text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-1.5 disabled:opacity-50 touch-target min-h-[44px]"
+                    className="w-full py-3 bg-muted/50 hover:bg-muted/50 text-foreground border border-border text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-1.5 disabled:opacity-50 touch-target min-h-[44px]"
                   >
                     {mktTesting ? 'Đang chạy thử...' : '🚀 Chạy thử đăng bài ngay'}
                   </button>
@@ -245,11 +245,11 @@ export const MarketingTab: React.FC<MarketingTabProps> = ({
                 )}
               </div>
 
-              <div className="glass-card p-6 rounded-2xl border border-white/5 bg-brand-orange/5 space-y-3">
-                <h4 className="text-xs font-bold text-white flex items-center gap-1.5">
+              <div className="glass-card p-6 rounded-2xl border border-border bg-brand-orange/5 space-y-3">
+                <h4 className="text-xs font-bold text-foreground flex items-center gap-1.5">
                   💡 Hướng dẫn cấu hình Facebook Page:
                 </h4>
-                <ol className="text-[10px] text-white/60 space-y-2 list-decimal pl-4 leading-relaxed">
+                <ol className="text-[10px] text-muted-foreground space-y-2 list-decimal pl-4 leading-relaxed">
                   <li>Truy cập <a href="https://developers.facebook.com" target="_blank" rel="noopener noreferrer" className="text-brand-orange underline">Meta Developers</a> và tạo một App.</li>
                   <li>Thiết lập quyền truy cập Page (`pages_manage_posts`, `pages_read_engagement`).</li>
                   <li>Lấy **Page Access Token** trọn đời để dán vào cấu hình.</li>
@@ -266,22 +266,22 @@ export const MarketingTab: React.FC<MarketingTabProps> = ({
         <div className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Card 1: Ebook Prompt ChatGPT */}
-            <div className="glass-card p-6 rounded-2xl border border-white/5 space-y-4 flex flex-col justify-between">
+            <div className="glass-card p-6 rounded-2xl border border-border space-y-4 flex flex-col justify-between">
               <div className="space-y-3">
                 <div className="w-10 h-10 bg-brand-orange/10 rounded-xl flex items-center justify-center border border-brand-orange/20">
                   <Sparkles className="w-5 h-5 text-brand-orange" />
                 </div>
-                <h4 className="font-bold text-sm text-white">Ebook: 100+ Prompt ChatGPT</h4>
-                <p className="text-xs text-white/50 leading-relaxed">Bộ tài liệu thôi miên khách hàng giúp viết bài, làm kịch bản bán hàng trong 3 giây.</p>
+                <h4 className="font-bold text-sm text-foreground">Ebook: 100+ Prompt ChatGPT</h4>
+                <p className="text-xs text-muted-foreground leading-relaxed">Bộ tài liệu thôi miên khách hàng giúp viết bài, làm kịch bản bán hàng trong 3 giây.</p>
               </div>
-              <div className="space-y-2 pt-4 border-t border-white/5">
+              <div className="space-y-2 pt-4 border-t border-border">
                 <button 
                   onClick={() => {
                     const content = `[KỊCH BẢN VIDEO TIKTOK 60S - 100+ PROMPT CHATGPT]\n- Cảnh 1: Mặt đối diện camera biểu cảm bức xúc.\n- Lời thoại (Hook): "Đừng bao giờ tự ngồi viết bài bán hàng nữa! Bạn đang lãng phí 3 tiếng cuộc đời mỗi ngày vô ích..."\n- Cảnh 2: Quay màn hình máy tính đang gõ ChatGPT chạy ra bài viết bán hàng cực đỉnh.\n- Lời thoại: "Đây là cách mình viết xong 5 bài quảng cáo Facebook chỉ trong đúng 30 giây bằng ChatGPT. Bí quyết không phải là AI thông minh, mà là do bộ PROMPT (câu lệnh) thôi miên này."\n- Cảnh 3: Chỉ tay xuống màn hình.\n- Lời thoại (CTA): "Mình đã tổng hợp hơn 100 Prompt viết bài chốt sale siêu đỉnh vào Ebook dưới link Bio của mình. Giá chỉ bằng một ly trà sữa 49k. Bấm vào mua và tải về dùng ngay để tiết kiệm 95% thời gian nhé!"`;
                     navigator.clipboard.writeText(content);
                     toast.success('Đã copy Kịch bản TikTok!');
                   }}
-                  className="w-full py-2.5 bg-white/5 hover:bg-white/10 text-white border border-white/10 text-xs font-semibold rounded-xl transition-all touch-target min-h-[38px]"
+                  className="w-full py-2.5 bg-muted/50 hover:bg-muted/50 text-foreground border border-border text-xs font-semibold rounded-xl transition-all touch-target min-h-[38px]"
                 >
                   🎬 Copy Kịch bản TikTok
                 </button>
@@ -299,22 +299,22 @@ export const MarketingTab: React.FC<MarketingTabProps> = ({
             </div>
 
             {/* Card 2: Ebook TikTok */}
-            <div className="glass-card p-6 rounded-2xl border border-white/5 space-y-4 flex flex-col justify-between">
+            <div className="glass-card p-6 rounded-2xl border border-border space-y-4 flex flex-col justify-between">
               <div className="space-y-3">
                 <div className="w-10 h-10 bg-green-500/10 rounded-xl flex items-center justify-center border border-green-500/20">
                   <Users className="w-5 h-5 text-green-400" />
                 </div>
-                <h4 className="font-bold text-sm text-white">Ebook: Bí Kíp Xây Kênh TikTok</h4>
-                <p className="text-xs text-white/50 leading-relaxed">Cẩm nang bẻ khóa thuật toán 2026, 15 mẫu Hook triệu view thu hút khách hàng tiềm năng.</p>
+                <h4 className="font-bold text-sm text-foreground">Ebook: Bí Kíp Xây Kênh TikTok</h4>
+                <p className="text-xs text-muted-foreground leading-relaxed">Cẩm nang bẻ khóa thuật toán 2026, 15 mẫu Hook triệu view thu hút khách hàng tiềm năng.</p>
               </div>
-              <div className="space-y-2 pt-4 border-t border-white/5">
+              <div className="space-y-2 pt-4 border-t border-border">
                 <button 
                   onClick={() => {
                     const content = `[KỊCH BẢN VIDEO TIKTOK 60S - BÍ KÍP XÂY KÊNH TIKTOK]\n- Cảnh 1: Mặt biểu cảm nghiêm trọng, lắc đầu.\n- Lời thoại (Hook): "Đừng đăng video lên TikTok nữa nếu kênh của bạn vẫn lẹt đẹt dưới 1000 view! Bạn đã dính phải 3 lỗi cơ bản này..."\n- Cảnh 2: Quay cảnh bảng viết hoặc màn hình máy tính chỉ ra 3 lỗi: Không tối ưu 3 giây đầu, đổi chủ đề liên tục, hashtag sai cách.\n- Lời thoại: "Lỗi lớn nhất là bạn không giữ chân được người xem trong 3 giây đầu tiên. Thuật toán TikTok 2026 chấm điểm giữ chân cực kỳ nặng."\n- Cảnh 3: Cầm điện thoại chỉ vào trang Bio của mình.\n- Lời thoại (CTA): "Mình đã soạn sẵn Lộ trình 30 ngày xây kênh từ con số 0 kèm 15 mẫu Hook giật tít ăn tiền trong Ebook ở link Bio. Bấm tải ngay chỉ với 79k để cứu kênh của bạn nhé!"`;
                     navigator.clipboard.writeText(content);
                     toast.success('Đã copy Kịch bản TikTok!');
                   }}
-                  className="w-full py-2.5 bg-white/5 hover:bg-white/10 text-white border border-white/10 text-xs font-semibold rounded-xl transition-all touch-target min-h-[38px]"
+                  className="w-full py-2.5 bg-muted/50 hover:bg-muted/50 text-foreground border border-border text-xs font-semibold rounded-xl transition-all touch-target min-h-[38px]"
                 >
                   🎬 Copy Kịch bản TikTok
                 </button>
@@ -332,22 +332,22 @@ export const MarketingTab: React.FC<MarketingTabProps> = ({
             </div>
 
             {/* Card 3: 500+ Mẫu Canva */}
-            <div className="glass-card p-6 rounded-2xl border border-white/5 space-y-4 flex flex-col justify-between">
+            <div className="glass-card p-6 rounded-2xl border border-border space-y-4 flex flex-col justify-between">
               <div className="space-y-3">
                 <div className="w-10 h-10 bg-purple-500/10 rounded-xl flex items-center justify-center border border-purple-500/20">
                   <ShoppingBag className="w-5 h-5 text-purple-400" />
                 </div>
-                <h4 className="font-bold text-sm text-white">Ebook: 500+ Mẫu Canva</h4>
-                <p className="text-xs text-white/50 leading-relaxed">Kho tài nguyên thiết kế banner, slide thuyết trình, cv chuyên nghiệp kéo thả trong 1 click.</p>
+                <h4 className="font-bold text-sm text-foreground">Ebook: 500+ Mẫu Canva</h4>
+                <p className="text-xs text-muted-foreground leading-relaxed">Kho tài nguyên thiết kế banner, slide thuyết trình, cv chuyên nghiệp kéo thả trong 1 click.</p>
               </div>
-              <div className="space-y-2 pt-4 border-t border-white/5">
+              <div className="space-y-2 pt-4 border-t border-border">
                 <button 
                   onClick={() => {
                     const content = `[KỊCH BẢN VIDEO TIKTOK 60S - 500+ MẪU CANVA]\n- Cảnh 1: Chỉ tay vào màn hình thiết kế Canva lung linh cực đẹp.\n- Lời thoại (Hook): "Dành ra 2 tiếng để thiết kế một cái Slide thuyết trình hay Banner? Quá xưa rồi! Đây là cách mình thiết kế xong trong đúng 1 phút..."\n- Cảnh 2: Quay cảnh kéo thả một mẫu template có sẵn vô cùng nhanh chóng và đổi màu, chữ.\n- Lời thoại: "Chỉ cần chọn 1 trong 500 mẫu Canva Pro đã được thiết kế sẵn bởi các Designer chuyên nghiệp, kéo thả ảnh của bạn vào là xong. Đẹp mê ly."\n- Cảnh 3: Mặt vui vẻ kêu gọi hành động.\n- Lời thoại (CTA): "Trọn bộ 500+ mẫu Canva đa dạng lĩnh vực Slide, CV, Banner mình để link tải ở Bio. Chỉ 99k cho cả kho tài nguyên dùng trọn đời. Bấm tải ngay nhé!"`;
                     navigator.clipboard.writeText(content);
                     toast.success('Đã copy Kịch bản TikTok!');
                   }}
-                  className="w-full py-2.5 bg-white/5 hover:bg-white/10 text-white border border-white/10 text-xs font-semibold rounded-xl transition-all touch-target min-h-[38px]"
+                  className="w-full py-2.5 bg-muted/50 hover:bg-muted/50 text-foreground border border-border text-xs font-semibold rounded-xl transition-all touch-target min-h-[38px]"
                 >
                   🎬 Copy Kịch bản TikTok
                 </button>
@@ -365,11 +365,11 @@ export const MarketingTab: React.FC<MarketingTabProps> = ({
             </div>
           </div>
 
-          <div className="glass-card p-6 rounded-2xl border border-white/5 bg-brand-orange/5 space-y-3">
-            <h4 className="text-xs font-bold text-white flex items-center gap-1.5">
+          <div className="glass-card p-6 rounded-2xl border border-border bg-brand-orange/5 space-y-3">
+            <h4 className="text-xs font-bold text-foreground flex items-center gap-1.5">
               💡 Hướng dẫn tăng traffic nhanh để kiếm đơn hàng:
             </h4>
-            <ul className="text-xs text-white/60 space-y-2 list-disc pl-5 leading-relaxed">
+            <ul className="text-xs text-muted-foreground space-y-2 list-disc pl-5 leading-relaxed">
               <li>Sử dụng kịch bản video trên, dùng điện thoại quay phim hoặc ghép chữ chạy trên Canva để đăng đều đặn mỗi ngày 1-2 video lên TikTok.</li>
               <li>Đăng bài viết chia sẻ giá trị lên các Group Facebook có tệp khách hàng tiềm năng lớn.</li>
               <li>Luôn kêu gọi hành động (Call To Action) rõ ràng: Khách hàng click vào link Bio của bạn để mua sản phẩm và nhận file tự động qua Email!</li>

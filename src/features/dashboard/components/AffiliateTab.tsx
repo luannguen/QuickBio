@@ -62,17 +62,17 @@ export const AffiliateTab: React.FC<AffiliateTabProps> = ({
 
       {/* Stats cards grid */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="glass-card p-4 rounded-xl border border-white/5 space-y-1.5">
-          <span className="text-[10px] text-white/40 uppercase font-semibold">Tổng lượt Click</span>
-          <div className="text-xl font-bold text-white">{clicksCount}</div>
-          <p className="text-[9px] text-white/30">Lượt click link giới thiệu</p>
+        <div className="glass-card p-4 rounded-xl border border-border space-y-1.5">
+          <span className="text-[10px] text-muted-foreground uppercase font-semibold">Tổng lượt Click</span>
+          <div className="text-xl font-bold text-foreground">{clicksCount}</div>
+          <p className="text-[9px] text-muted-foreground">Lượt click link giới thiệu</p>
         </div>
 
-        <div className="glass-card p-4 rounded-xl border border-white/5 space-y-1.5 flex flex-col justify-between">
+        <div className="glass-card p-4 rounded-xl border border-border space-y-1.5 flex flex-col justify-between">
           <div>
-            <span className="text-[10px] text-white/40 uppercase font-semibold">Hoa hồng chờ duyệt</span>
+            <span className="text-[10px] text-muted-foreground uppercase font-semibold">Hoa hồng chờ duyệt</span>
             <div className="text-xl font-bold text-yellow-500">{pendingAmount.toLocaleString('vi-VN')}đ</div>
-            <p className="text-[9px] text-white/30">Có thể rút (tối thiểu 50k)</p>
+            <p className="text-[9px] text-muted-foreground">Có thể rút (tối thiểu 50k)</p>
           </div>
           {pendingAmount >= 50000 && (
             <button
@@ -86,27 +86,27 @@ export const AffiliateTab: React.FC<AffiliateTabProps> = ({
           )}
         </div>
 
-        <div className="glass-card p-4 rounded-xl border border-white/5 space-y-1.5">
-          <span className="text-[10px] text-white/40 uppercase font-semibold">Hoa hồng đang rút</span>
+        <div className="glass-card p-4 rounded-xl border border-border space-y-1.5">
+          <span className="text-[10px] text-muted-foreground uppercase font-semibold">Hoa hồng đang rút</span>
           <div className="text-xl font-bold text-blue-400">{requestedAmount.toLocaleString('vi-VN')}đ</div>
-          <p className="text-[9px] text-white/30">Đang đối soát chuyển khoản</p>
+          <p className="text-[9px] text-muted-foreground">Đang đối soát chuyển khoản</p>
         </div>
 
-        <div className="glass-card p-4 rounded-xl border border-white/5 space-y-1.5">
-          <span className="text-[10px] text-white/40 uppercase font-semibold">Hoa hồng đã nhận</span>
+        <div className="glass-card p-4 rounded-xl border border-border space-y-1.5">
+          <span className="text-[10px] text-muted-foreground uppercase font-semibold">Hoa hồng đã nhận</span>
           <div className="text-xl font-bold text-green-500">{paidAmount.toLocaleString('vi-VN')}đ</div>
-          <p className="text-[9px] text-white/30">Đã nhận về tài khoản</p>
+          <p className="text-[9px] text-muted-foreground">Đã nhận về tài khoản</p>
         </div>
       </div>
 
       {/* Analytics chart */}
-      <div className="glass-card p-6 rounded-2xl border border-white/5 space-y-6">
+      <div className="glass-card p-6 rounded-2xl border border-border space-y-6">
         <div className="flex justify-between items-center">
           <div>
-            <h4 className="text-xs font-bold text-white uppercase tracking-wider">Hiệu suất Tiếp thị & Lượt Click</h4>
-            <p className="text-[10px] text-white/40">Thống kê lượng click qua link giới thiệu trong 7 ngày qua</p>
+            <h4 className="text-xs font-bold text-foreground uppercase tracking-wider">Hiệu suất Tiếp thị & Lượt Click</h4>
+            <p className="text-[10px] text-muted-foreground">Thống kê lượng click qua link giới thiệu trong 7 ngày qua</p>
           </div>
-          <div className="flex items-center gap-4 text-[10px] text-white/50">
+          <div className="flex items-center gap-4 text-[10px] text-muted-foreground">
             <div className="flex items-center gap-1.5">
               <span className="w-2.5 h-2.5 rounded-full bg-brand-orange"></span>
               <span>Lượt Click</span>
@@ -115,7 +115,7 @@ export const AffiliateTab: React.FC<AffiliateTabProps> = ({
         </div>
         
         {/* CSS Chart */}
-        <div className="h-32 flex items-end justify-between gap-4 pt-4 border-b border-white/5">
+        <div className="h-32 flex items-end justify-between gap-4 pt-4 border-b border-border">
           {[
             { day: 'Thứ 2', val: 12 },
             { day: 'Thứ 3', val: 19 },
@@ -136,16 +136,16 @@ export const AffiliateTab: React.FC<AffiliateTabProps> = ({
                   style={{ height: `${heightPercent}%` }} 
                   className="w-full bg-gradient-to-t from-brand-orange/40 to-brand-coral rounded-t-lg transition-all duration-500 hover:from-brand-coral hover:to-brand-orange relative"
                 >
-                  <div className="absolute inset-0 bg-white/10 opacity-0 hover:opacity-100 transition-opacity rounded-t-lg"></div>
+                  <div className="absolute inset-0 bg-muted/50 opacity-0 hover:opacity-100 transition-opacity rounded-t-lg"></div>
                 </div>
-                <span className="text-[9px] text-white/40 mt-1 whitespace-nowrap">{item.day}</span>
+                <span className="text-[9px] text-muted-foreground mt-1 whitespace-nowrap">{item.day}</span>
               </div>
             );
           })}
         </div>
       </div>
 
-      <form onSubmit={onSaveAffiliate} className="glass-card p-6 rounded-2xl border border-white/5 space-y-6">
+      <form onSubmit={onSaveAffiliate} className="glass-card p-6 rounded-2xl border border-border space-y-6">
         {affiliateSuccess && (
           <div className="p-4 bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-semibold rounded-xl flex items-center gap-2">
             <Check className="w-4 h-4" />
@@ -155,39 +155,39 @@ export const AffiliateTab: React.FC<AffiliateTabProps> = ({
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="block text-xs text-white/50 font-semibold mb-2">Mã giới thiệu độc quyền (Viết liền, không dấu)</label>
+            <label className="block text-xs text-muted-foreground font-semibold mb-2">Mã giới thiệu độc quyền (Viết liền, không dấu)</label>
             <input 
               type="text" 
               value={affiliateCode}
               onChange={(e) => onAffiliateCodeChange(e.target.value)}
               placeholder="Ví dụ: luannguyen, mmo99"
-              className="w-full px-4 py-3 rounded-xl text-xs text-white glass-input"
+              className="w-full px-4 py-3 rounded-xl text-xs text-foreground glass-input"
               required
             />
           </div>
 
           <div>
-            <label className="block text-xs text-white/50 font-semibold mb-2">Tài khoản nhận tiền (Tên ngân hàng, số TK, chủ TK)</label>
+            <label className="block text-xs text-muted-foreground font-semibold mb-2">Tài khoản nhận tiền (Tên ngân hàng, số TK, chủ TK)</label>
             <input 
               type="text" 
               value={paymentInfo}
               onChange={(e) => onPaymentInfoChange(e.target.value)}
               placeholder="Ví dụ: MBBank - 0912345678 - NGUYEN VAN A"
-              className="w-full px-4 py-3 rounded-xl text-xs text-white glass-input"
+              className="w-full px-4 py-3 rounded-xl text-xs text-foreground glass-input"
               required
             />
           </div>
         </div>
 
         {affiliateCode && (
-          <div className="p-4 bg-white/5 rounded-xl border border-white/10 space-y-2">
-            <span className="text-[10px] text-white/40 font-bold uppercase tracking-wider block">Đường dẫn giới thiệu của bạn:</span>
+          <div className="p-4 bg-muted/50 rounded-xl border border-border space-y-2">
+            <span className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider block">Đường dẫn giới thiệu của bạn:</span>
             <div className="flex gap-2 items-center">
               <input 
                 type="text" 
                 readOnly 
                 value={`${window.location.origin}/${userSlug || 'luannguyen'}?ref=${affiliateCode}`}
-                className="flex-1 bg-black/40 border border-white/5 rounded-lg px-3 py-2 text-xs font-mono text-brand-orange outline-none"
+                className="flex-1 bg-black/40 border border-border rounded-lg px-3 py-2 text-xs font-mono text-brand-orange outline-none"
               />
               <button
                 type="button"
@@ -209,7 +209,7 @@ export const AffiliateTab: React.FC<AffiliateTabProps> = ({
                 )}
               </button>
             </div>
-            <span className="text-[9px] text-white/30 block">
+            <span className="text-[9px] text-muted-foreground block">
               Khi CTV mang link này đi chia sẻ, khách hàng mua sản phẩm trên Bio cá nhân của bạn, CTV sẽ được hệ thống phân phối hoa hồng tự động.
             </span>
           </div>
@@ -224,14 +224,14 @@ export const AffiliateTab: React.FC<AffiliateTabProps> = ({
       </form>
 
       {/* CTV order list */}
-      <div className="glass-card p-6 rounded-2xl border border-white/5 space-y-4">
-        <h4 className="text-xs font-bold text-white uppercase tracking-wider">Danh sách đơn hàng CTV bán hộ</h4>
+      <div className="glass-card p-6 rounded-2xl border border-border space-y-4">
+        <h4 className="text-xs font-bold text-foreground uppercase tracking-wider">Danh sách đơn hàng CTV bán hộ</h4>
         {commissions.length === 0 ? (
-          <p className="text-xs text-white/30 text-center py-4">Chưa phát sinh đơn hàng giới thiệu nào.</p>
+          <p className="text-xs text-muted-foreground text-center py-4">Chưa phát sinh đơn hàng giới thiệu nào.</p>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-xs text-left text-white/70">
-              <thead className="text-[10px] text-white/40 uppercase border-b border-white/5 bg-white/5 font-mono">
+            <table className="w-full text-xs text-left text-muted-foreground">
+              <thead className="text-[10px] text-muted-foreground uppercase border-b border-border bg-muted/50 font-mono">
                 <tr>
                   <th className="px-4 py-3">Mã ĐH</th>
                   <th className="px-4 py-3">Sản phẩm</th>
@@ -243,7 +243,7 @@ export const AffiliateTab: React.FC<AffiliateTabProps> = ({
               </thead>
               <tbody>
                 {commissions.map((c, i) => (
-                  <tr key={i} className="border-b border-white/5 hover:bg-white/5">
+                  <tr key={i} className="border-b border-border hover:bg-muted/50">
                     <td className="px-4 py-3 font-mono text-brand-orange">{c.orders?.payment_code}</td>
                     <td className="px-4 py-3 truncate max-w-[150px]">{c.orders?.products?.name}</td>
                     <td className="px-4 py-3">{Number(c.orders?.amount).toLocaleString()}đ</td>
@@ -263,7 +263,7 @@ export const AffiliateTab: React.FC<AffiliateTabProps> = ({
                           : 'Chờ duyệt'}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-white/40">{new Date(c.created_at).toLocaleDateString('vi-VN')}</td>
+                    <td className="px-4 py-3 text-muted-foreground">{new Date(c.created_at).toLocaleDateString('vi-VN')}</td>
                   </tr>
                 ))}
               </tbody>

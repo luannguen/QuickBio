@@ -169,6 +169,27 @@ export function useAdmin() {
     }
   }, []);
 
+  const changeUserPlan = useCallback(async (userId: string, newPlan: string): Promise<boolean> => {
+    setLoading(true);
+    setError(null);
+    try {
+      const success = await adminService.updateUserPlan(userId, newPlan);
+      if (success) {
+        // Refresh users list
+        const data = await adminService.getAllUsers();
+        setUsers(data);
+        return true;
+      }
+      return false;
+    } catch (err: any) {
+      setError(err.message || 'Lỗi khi cập nhật gói người dùng');
+      console.error(err);
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
   return {
     commissions,
     stats,
@@ -186,6 +207,7 @@ export function useAdmin() {
     loadProducts,
     approveWithdrawal,
     moderateArticle,
-    moderateProduct
+    moderateProduct,
+    changeUserPlan
   };
 }

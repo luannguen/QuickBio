@@ -51,7 +51,8 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
     approveWithdrawal,
     moderateProduct,
     products,
-    articles
+    articles,
+    changeUserPlan
   } = useAdmin();
 
   const [activeTab, setActiveTab] = useState<TabType>('overview');
@@ -86,6 +87,37 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
       toast.success('Đã duyệt và thanh toán hoa hồng thành công!');
     } else {
       toast.error('Phê duyệt thất bại. Vui lòng kiểm tra lại!');
+    }
+  };
+
+  const handlePlanChange = async (userId: string, userName: string, currentPlan: string, newPlan: string) => {
+    if (currentPlan === newPlan) return;
+    
+    // Nếu downgrade (từ pro/premium xuống free)
+    if (newPlan === 'free' && currentPlan !== 'free') {
+      const confirmed = await confirm({
+        title: 'Xác nhận Hạ cấp Gói',
+        message: `Bạn đang hạ cấp ${userName} từ gói ${currentPlan.toUpperCase()} xuống FREE.\nĐiều này sẽ lập tức khoá các quyền lợi cao cấp của họ.\nBạn có chắc chắn muốn tiếp tục?`,
+        confirmText: 'Đồng ý hạ cấp',
+        variant: 'danger'
+      });
+      if (!confirmed) return;
+    } else {
+      // Xác nhận nâng cấp
+      const confirmed = await confirm({
+        title: 'Xác nhận Đổi Gói',
+        message: `Bạn muốn chuyển ${userName} sang gói ${newPlan.toUpperCase()}?`,
+        confirmText: 'Đồng ý',
+        variant: 'info'
+      });
+      if (!confirmed) return;
+    }
+
+    const success = await changeUserPlan(userId, newPlan);
+    if (success) {
+      toast.success(`Đã cập nhật gói của ${userName} thành ${newPlan.toUpperCase()}`);
+    } else {
+      toast.error('Có lỗi xảy ra khi đổi gói. Vui lòng thử lại.');
     }
   };
 
@@ -321,6 +353,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
                   <th className="py-4 px-6">Email</th>
                   <th className="py-4 px-6">Ngày tham gia</th>
                   <th className="py-4 px-6">Vai trò</th>
+                  <th className="py-4 px-6">Gói (Plan)</th>
                   <th className="py-4 px-6 text-right">Tổng Doanh Thu</th>
                 </tr>
               </thead>
@@ -337,6 +370,21 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
                       <span className={`px-2 py-1 rounded text-[10px] font-bold uppercase ${u.role === 'admin' ? 'bg-brand-orange/20 text-brand-orange' : 'bg-muted text-muted-foreground'}`}>
                         {u.role}
                       </span>
+                    </td>
+                    <td className="py-4 px-6">
+                      <select 
+                        value={u.plan || 'free'}
+                        onChange={(e) => handlePlanChange(u.id, u.full_name || u.email, u.plan || 'free', e.target.value)}
+                        className={`px-2 py-1.5 rounded-lg text-xs font-bold uppercase border-none outline-none cursor-pointer ${
+                          u.plan === 'premium' ? 'bg-purple-500/20 text-purple-400' :
+                          u.plan === 'pro' ? 'bg-semantic-info/20 text-semantic-info' : 
+                          'bg-muted text-muted-foreground'
+                        }`}
+                      >
+                        <option value="free">FREE</option>
+                        <option value="pro">PRO</option>
+                        <option value="premium">PREMIUM</option>
+                      </select>
                     </td>
                     <td className="py-4 px-6 text-right font-bold text-foreground">
                       {Number(u.total_revenue).toLocaleString('vi-VN')}đ

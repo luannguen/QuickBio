@@ -122,7 +122,7 @@ export const AIVoiceWidget: React.FC = () => {
   };
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3 font-sans">
+    <div className="fixed bottom-24 md:bottom-6 right-4 md:right-6 z-50 flex flex-col items-end gap-3 font-sans">
       {/* Thông báo lỗi nếu có */}
       {errorMsg && (
         <div className="bg-red-500/90 backdrop-blur-md text-white text-xs px-4 py-3 rounded-xl shadow-lg border border-red-400/20 max-w-xs animate-fade-in flex items-start gap-2">
@@ -134,9 +134,9 @@ export const AIVoiceWidget: React.FC = () => {
       {/* Bong bóng giới thiệu khi rảnh */}
       {!isCallActive && !connecting && (
         <div className="group/tooltip relative mr-2">
-          <div className="bg-[#0f1422]/90 border border-white/10 backdrop-blur-md text-white text-xs px-3 py-2 rounded-xl shadow-xl whitespace-nowrap animate-bounce flex items-center gap-1.5 pointer-events-none">
+          <div className="bg-foreground text-background border border-border/10 backdrop-blur-md text-xs px-3 py-2 rounded-xl shadow-xl whitespace-nowrap animate-bounce flex items-center gap-1.5 pointer-events-none">
             <Sparkles className="w-3.5 h-3.5 text-brand-orange animate-pulse" />
-            <span>Alo thử ngay Trợ lý ảo AI Lễ Tân!</span>
+            <span className="font-medium">Alo thử ngay Trợ lý ảo AI Lễ Tân!</span>
           </div>
         </div>
       )}
@@ -145,8 +145,8 @@ export const AIVoiceWidget: React.FC = () => {
       <div className="flex items-center gap-3">
         {/* Trạng thái sóng âm động khi đang gọi */}
         {isCallActive && (
-          <div className="bg-[#0f1422]/80 border border-white/5 backdrop-blur-md py-2 px-4 rounded-full flex items-center gap-3 shadow-lg animate-fade-in">
-            <span className="text-[10px] text-white/60 tracking-wider">
+          <div className="bg-card border border-border backdrop-blur-md py-2 px-4 rounded-full flex items-center gap-3 shadow-lg animate-fade-in">
+            <span className="text-[10px] text-muted-foreground tracking-wider font-semibold">
               {isListening ? 'AI ĐANG NGHE...' : 'AI ĐANG NÓI...'}
             </span>
             <div className="flex gap-1 items-end h-5">

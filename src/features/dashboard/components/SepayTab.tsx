@@ -33,7 +33,7 @@ export const SepayTab: React.FC<SepayTabProps> = ({
         Cấu hình Cổng thanh toán VietQR & Ngân hàng
       </h3>
 
-      <form onSubmit={onSaveBankConfig} className="glass-card p-6 rounded-2xl border border-white/5 space-y-6">
+      <form onSubmit={onSaveBankConfig} className="glass-card p-6 rounded-2xl border border-border space-y-6">
         
         {configSuccess && (
           <div className="p-4 bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-semibold rounded-xl flex items-center gap-2">
@@ -44,11 +44,11 @@ export const SepayTab: React.FC<SepayTabProps> = ({
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="block text-xs text-white/50 font-semibold mb-2">Ngân hàng thụ hưởng</label>
+            <label className="block text-xs text-muted-foreground font-semibold mb-2">Ngân hàng thụ hưởng</label>
             <select 
               value={bankCode}
               onChange={(e) => onBankCodeChange(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl text-xs text-white bg-[#080B11] border border-white/10 outline-none focus:border-brand-orange/40"
+              className="w-full px-4 py-3 rounded-xl text-xs text-foreground bg-background border border-border outline-none focus:border-brand-orange/40"
             >
               <option value="MBBank">MBBank (Ngân hàng Quân Đội)</option>
               <option value="Vietcombank">Vietcombank (VCB)</option>
@@ -60,13 +60,13 @@ export const SepayTab: React.FC<SepayTabProps> = ({
           </div>
 
           <div>
-            <label className="block text-xs text-white/50 font-semibold mb-2">Số tài khoản ngân hàng</label>
+            <label className="block text-xs text-muted-foreground font-semibold mb-2">Số tài khoản ngân hàng</label>
             <input 
               type="text" 
               value={bankAccount}
               onChange={(e) => onBankAccountChange(e.target.value.replace(/[^0-9]/g, ''))}
               placeholder="Ví dụ: 9999999999"
-              className="w-full px-4 py-3 rounded-xl text-xs text-white glass-input"
+              className="w-full px-4 py-3 rounded-xl text-xs text-foreground glass-input"
               required
             />
           </div>
@@ -74,19 +74,19 @@ export const SepayTab: React.FC<SepayTabProps> = ({
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="block text-xs text-white/50 font-semibold mb-2">Họ và Tên chủ tài khoản (Viết hoa không dấu)</label>
+            <label className="block text-xs text-muted-foreground font-semibold mb-2">Họ và Tên chủ tài khoản (Viết hoa không dấu)</label>
             <input 
               type="text" 
               value={accountName}
               onChange={(e) => onAccountNameChange(e.target.value.toUpperCase())}
               placeholder="NGUYEN VAN A"
-              className="w-full px-4 py-3 rounded-xl text-xs text-white glass-input"
+              className="w-full px-4 py-3 rounded-xl text-xs text-foreground glass-input"
               required
             />
           </div>
 
           <div>
-            <label className="block text-xs text-white/50 font-semibold mb-2 flex items-center gap-1">
+            <label className="block text-xs text-muted-foreground font-semibold mb-2 flex items-center gap-1">
               <Key className="w-3.5 h-3.5 text-brand-orange" />
               SePay Webhook API Key
             </label>
@@ -95,20 +95,20 @@ export const SepayTab: React.FC<SepayTabProps> = ({
               value={apiKey}
               onChange={(e) => onApiKeyChange(e.target.value)}
               placeholder="Để trống nếu muốn dùng Webhook Simulator"
-              className="w-full px-4 py-3 rounded-xl text-xs text-white glass-input"
+              className="w-full px-4 py-3 rounded-xl text-xs text-foreground glass-input"
             />
           </div>
         </div>
 
-        <div className="bg-brand-card/40 p-4 rounded-xl border border-white/5 space-y-3">
-          <h4 className="text-xs font-bold text-white flex items-center gap-1.5">
+        <div className="bg-brand-card/40 p-4 rounded-xl border border-border space-y-3">
+          <h4 className="text-xs font-bold text-foreground flex items-center gap-1.5">
             <Info className="w-4 h-4 text-brand-orange" />
             Hướng dẫn nhận tiền tự động bằng SePay (Miễn phí):
           </h4>
-          <ol className="text-[11px] text-white/50 list-decimal pl-4 space-y-1.5 leading-relaxed">
+          <ol className="text-[11px] text-muted-foreground list-decimal pl-4 space-y-1.5 leading-relaxed">
             <li>Truy cập <a href="https://sepay.vn" target="_blank" rel="noopener noreferrer" className="text-brand-orange underline">SePay.vn <ExternalLink className="w-3 h-3 inline" /></a> và đăng ký tài khoản (Free).</li>
             <li>Liên kết tài khoản ngân hàng của bạn vào SePay.</li>
-            <li>Tạo Webhook trong SePay, trỏ URL webhook về: <code className="text-brand-orange bg-white/5 px-1 py-0.5 rounded select-all font-mono">https://quickbio.vercel.app/api/webhook</code></li>
+            <li>Tạo Webhook trong SePay, trỏ URL webhook về: <code className="text-brand-orange bg-muted/50 px-1 py-0.5 rounded select-all font-mono">https://quickbio.vercel.app/api/webhook</code></li>
             <li>Copy API Key SePay và dán vào ô bên trên để xác thực giao dịch an toàn.</li>
           </ol>
         </div>

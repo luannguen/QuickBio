@@ -28,7 +28,7 @@ export const GlobalHeader: React.FC<GlobalHeaderProps> = ({
   const isAdmin = user?.role === 'admin';
 
   return (
-    <header className="relative z-50 max-w-7xl mx-auto px-4 lg:px-6 py-4 lg:py-6 flex justify-between items-center border-b lg:border-none border-border bg-brand-card/10 lg:bg-transparent backdrop-blur-md lg:backdrop-blur-none">
+    <header className="relative z-[100] max-w-7xl mx-auto px-4 lg:px-6 py-4 lg:py-6 flex justify-between items-center border-b lg:border-none border-border bg-background/80 lg:bg-transparent backdrop-blur-md lg:backdrop-blur-none">
       <button 
         onClick={onNavigateToHome}
         className="flex items-center gap-1.5 lg:gap-2 hover:opacity-80 transition-opacity cursor-pointer focus:outline-none relative z-50"
@@ -90,7 +90,7 @@ export const GlobalHeader: React.FC<GlobalHeaderProps> = ({
 
       {/* Mobile Menu Overlay */}
       {isMobileMenuOpen && (
-        <div className="fixed inset-0 top-0 left-0 w-full h-screen bg-background/95 backdrop-blur-xl z-40 flex flex-col pt-24 px-6 gap-4 lg:hidden animate-in fade-in slide-in-from-top-4 duration-300">
+        <div className="fixed inset-0 top-0 left-0 w-full h-[100dvh] bg-background/98 backdrop-blur-xl z-[90] flex flex-col pt-24 px-6 gap-4 lg:hidden animate-in fade-in slide-in-from-top-4 duration-300">
           {onNavigateToBlog && (
             <Button onClick={() => { onNavigateToBlog(); setIsMobileMenuOpen(false); }} variant="ghost" className="w-full justify-start text-lg h-14">
               <FileText className="w-5 h-5 mr-3" /> Bài viết

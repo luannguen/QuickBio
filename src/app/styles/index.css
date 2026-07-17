@@ -6,23 +6,23 @@
 
 @layer base {
   :root {
-    --background: #f8fafc;
-    --foreground: #0f172a;
-    --card: #ffffff;
-    --card-foreground: #0f172a;
-    --border: #e2e8f0;
-    --muted: #f1f5f9;
-    --muted-foreground: #64748b;
+    --background: 210 40% 98%;
+    --foreground: 222 47% 11%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+    --border: 214 32% 91%;
+    --muted: 210 40% 96%;
+    --muted-foreground: 215 16% 47%;
   }
 
   .dark {
-    --background: #080B11;
-    --foreground: #ffffff;
-    --card: rgba(255, 255, 255, 0.02);
-    --card-foreground: #ffffff;
-    --border: rgba(255, 255, 255, 0.08);
-    --muted: rgba(255, 255, 255, 0.05);
-    --muted-foreground: rgba(255, 255, 255, 0.5);
+    --background: 220 38% 5%;
+    --foreground: 0 0% 100%;
+    --card: 220 38% 8%;
+    --card-foreground: 0 0% 100%;
+    --border: 220 20% 15%;
+    --muted: 220 20% 12%;
+    --muted-foreground: 215 20% 65%;
   }
 
   body {
@@ -46,15 +46,15 @@
 @layer utilities {
   /* Glassmorphism utilities */
   .glass-panel {
-    background: var(--card);
-    border: 1px solid var(--border);
+    background: hsl(var(--card));
+    border: 1px solid hsl(var(--border));
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
   }
 
   .glass-card {
-    background: var(--card);
-    border: 1px solid var(--border);
+    background: hsl(var(--card) / 0.8);
+    border: 1px solid hsl(var(--border) / 0.5);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.05);
@@ -65,8 +65,8 @@
   }
 
   .glass-input {
-    background: var(--card);
-    border: 1px solid var(--border);
+    background: hsl(var(--card));
+    border: 1px solid hsl(var(--border));
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -75,7 +75,7 @@
   .glass-input:focus {
     border-color: rgba(255, 107, 53, 0.4);
     box-shadow: 0 0 0 1px rgba(255, 107, 53, 0.4);
-    background: var(--muted);
+    background: hsl(var(--muted));
   }
   
   .text-gradient-orange {
@@ -98,10 +98,10 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--border);
+  background: hsl(var(--border));
   border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--muted-foreground);
+  background: hsl(var(--muted-foreground));
 }

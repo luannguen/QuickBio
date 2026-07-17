@@ -147,5 +147,26 @@ export const adminService = {
     const { data, error } = await supabase.rpc('get_admin_orders', { p_limit: limit });
     if (error) throw error;
     return data as AdminOrder[];
+  },
+
+  /**
+   * Thay đổi gói của User (Dành cho Admin)
+   */
+  updateUserPlan: async (userId: string, newPlan: string): Promise<boolean> => {
+    if (!isSupabaseConfigured || !supabase) return false;
+    
+    try {
+      const { data, error } = await supabase.rpc('admin_update_user_plan', {
+        p_user_id: userId,
+        p_new_plan: newPlan
+      });
+      
+      if (error) throw error;
+      
+      return data?.success || false;
+    } catch (err: any) {
+      console.error('Error in updateUserPlan service:', err);
+      throw err;
+    }
   }
 };

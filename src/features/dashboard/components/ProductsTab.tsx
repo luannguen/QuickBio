@@ -31,17 +31,17 @@ export const ProductsTab: React.FC<ProductsTabProps> = ({
       </div>
 
       {products.length === 0 ? (
-        <div className="glass-panel p-10 rounded-2xl border border-white/5 text-center space-y-4">
-          <ShoppingBag className="w-12 h-12 text-white/20 mx-auto" />
+        <div className="glass-panel p-10 rounded-2xl border border-border text-center space-y-4">
+          <ShoppingBag className="w-12 h-12 text-muted-foreground mx-auto" />
           <div className="space-y-1">
-            <h4 className="font-bold text-white text-sm">Chưa có sản phẩm nào</h4>
-            <p className="text-xs text-white/40">Hãy tạo sản phẩm (số hoặc vật lý) đầu tiên để bán lấy doanh thu.</p>
+            <h4 className="font-bold text-foreground text-sm">Chưa có sản phẩm nào</h4>
+            <p className="text-xs text-muted-foreground">Hãy tạo sản phẩm (số hoặc vật lý) đầu tiên để bán lấy doanh thu.</p>
           </div>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {products.map(p => (
-            <div key={p.id} className="glass-card rounded-2xl p-5 border border-white/5 hover:border-white/10 transition-all flex flex-col justify-between space-y-4">
+            <div key={p.id} className="glass-card rounded-2xl p-5 border border-border hover:border-border transition-all flex flex-col justify-between space-y-4">
               <div className="flex gap-4">
                 <img 
                   src={p.cover_image_url || 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=150&h=100&q=80'} 
@@ -49,20 +49,20 @@ export const ProductsTab: React.FC<ProductsTabProps> = ({
                   className="w-16 h-16 object-cover rounded-xl border border-white/15"
                 />
                 <div className="min-w-0 flex-1">
-                  <h4 className="font-bold text-sm text-white truncate">{p.name}</h4>
-                  <p className="text-xs text-white/50 line-clamp-2 leading-relaxed mt-1">{p.description}</p>
+                  <h4 className="font-bold text-sm text-foreground truncate">{p.name}</h4>
+                  <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed mt-1">{p.description}</p>
                   <span className="text-[10px] mt-2 inline-block font-semibold text-brand-orange bg-brand-orange/10 px-2 py-0.5 rounded">
                     {p.price.toLocaleString('vi-VN')}đ
                   </span>
                 </div>
               </div>
-              <div className="flex justify-between items-center pt-3 border-t border-white/5">
+              <div className="flex justify-between items-center pt-3 border-t border-border">
                 <div className="flex items-center gap-2">
                   <span className={`text-[10px] px-2 py-0.5 rounded font-semibold ${p.product_type === 'physical' ? 'bg-blue-500/10 text-blue-400' : 'bg-purple-500/10 text-purple-400'}`}>
                     {p.product_type === 'physical' ? 'Vật lý' : 'SP Số'}
                   </span>
                   {p.product_type === 'physical' && (
-                    <span className="text-[10px] text-white/40">
+                    <span className="text-[10px] text-muted-foreground">
                       Kho: {p.is_unlimited ? '∞' : p.inventory_count}
                     </span>
                   )}
@@ -80,7 +80,7 @@ export const ProductsTab: React.FC<ProductsTabProps> = ({
                   )}
                   <button
                     onClick={() => onEditProductClick(p)}
-                    className="px-2.5 py-1.5 hover:bg-white/5 border border-white/10 hover:border-white/20 text-xs font-semibold rounded-lg transition-colors"
+                    className="px-2.5 py-1.5 hover:bg-muted/50 border border-border hover:border-border text-xs font-semibold rounded-lg transition-colors"
                   >
                     Sửa
                   </button>
