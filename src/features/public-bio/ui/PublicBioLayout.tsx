@@ -10,6 +10,7 @@ import { ProductGrid } from './ProductGrid';
 import { BioBlocksRenderer } from './BioBlocksRenderer';
 import { CheckoutModal } from '../../../components/CheckoutModal';
 import { Button } from "@/shared/ui/Button";
+import { BIO_THEMES } from "../config/themes";
 
 interface PublicBioLayoutProps {
   bio: BioLink;
@@ -45,10 +46,21 @@ export const PublicBioLayout: React.FC<PublicBioLayoutProps> = ({
   const [activeTab, setActiveTab] = useState<'store' | 'blog'>('store');
   const isOwner = currentUserId === bio.user_id;
 
+  const currentThemeId = bio.theme_id || 'glassmorphism';
+  const themeConfig = BIO_THEMES[currentThemeId] || BIO_THEMES['glassmorphism'];
+
+  // Bio background explicitly set takes precedence over theme background
   const themeStyle = {
-    background: bio.theme?.background || 'linear-gradient(135deg, #0b0f19 0%, #161f30 100%)',
-    color: bio.theme?.textColor || '#ffffff',
-  };
+    background: bio.theme?.background || themeConfig.styles.backgroundImage || themeConfig.colors.background,
+    color: themeConfig.colors.text,
+    fontFamily: themeConfig.styles.fontFamily,
+    '--theme-accent': bio.theme?.accentColor || themeConfig.colors.accent,
+    '--theme-card-bg': themeConfig.colors.cardBg,
+    '--theme-card-border': themeConfig.colors.cardBorder,
+    '--theme-card-text': themeConfig.colors.cardText,
+  } as React.CSSProperties;
+
+  const glassmorphism = bio.theme?.glassmorphism ?? themeConfig.styles.glassmorphism;
 
   return (
     <div className="min-h-screen pb-20 flex justify-center relative overflow-hidden" style={themeStyle}>
@@ -86,8 +98,9 @@ export const PublicBioLayout: React.FC<PublicBioLayoutProps> = ({
               blocks={bio.blocks} 
               products={products} 
               onSelectProduct={setActiveProduct}
-              accentColor={bio.theme?.accentColor}
-              glassmorphism={bio.theme?.glassmorphism}
+              accentColor={bio.theme?.accentColor || themeConfig.colors.accent}
+              glassmorphism={glassmorphism}
+              themeConfig={themeConfig}
             />
           </div>
         )}

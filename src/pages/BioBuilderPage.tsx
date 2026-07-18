@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useBioBuilder } from "@/shared/hooks/useBioBuilder";
 import { bioService } from "@/entities/bio/api";
-import { productService, Product } from "@/entities/product/api";
+import { productService } from "@/entities/product/api";
+import type { Product } from "@/entities/product/api";
 import { 
   Sparkles, 
   Save, 
@@ -11,10 +12,12 @@ import {
   Smartphone, 
   Check, 
   Loader2, 
-  Link as LinkIcon 
+  Link as LinkIcon,
+  Palette
 } from 'lucide-react';
 import { MediaPicker } from "@/shared/components/media/MediaPicker";
 import { BioBlocksEditor } from "@/features/dashboard/components/bio-blocks/BioBlocksEditor";
+import { BIO_THEMES } from "@/features/public-bio/config/themes";
 interface BioBuilderProps {
   userId: string;
   onNavigateToDashboard: () => void;
@@ -249,14 +252,51 @@ export const BioBuilder: React.FC<BioBuilderProps> = ({ userId, onNavigateToDash
           {/* Section 2: Giao diện (Theme) */}
           <div className="space-y-4">
             <h3 className="text-sm font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-2 border-b border-border pb-2">
-              <Layout className="w-4 h-4 text-brand-orange" />
-              2. Thiết kế Giao diện (Theme)
+              <Palette className="w-4 h-4 text-brand-orange" />
+              2. Giao diện (Themes & Tùy chỉnh)
             </h3>
 
-            <div className="space-y-4">
+            <div className="space-y-6">
+              {/* Preset Themes */}
+              <div>
+                <label className="block text-xs text-muted-foreground font-semibold mb-2.5">Giao diện mẫu (1-Click Theme)</label>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                  {Object.values(BIO_THEMES).map((theme) => (
+                    <button
+                      key={theme.id}
+                      onClick={() => {
+                        updateBioFields({ theme_id: theme.id });
+                        if (theme.styles.backgroundImage) {
+                          updateTheme({ background: theme.styles.backgroundImage });
+                        }
+                        updateTheme({
+                          accentColor: theme.colors.accent,
+                          glassmorphism: theme.styles.glassmorphism
+                        });
+                      }}
+                      className={`h-16 rounded-xl border p-2 text-left relative overflow-hidden transition-all transform active:scale-95 ${
+                        bio.theme_id === theme.id || (!bio.theme_id && theme.id === 'glassmorphism')
+                          ? 'border-brand-orange shadow-lg shadow-brand-orange/10' 
+                          : 'border-border hover:border-border'
+                      }`}
+                      style={{ background: theme.styles.backgroundImage || theme.colors.background }}
+                    >
+                      <div className="absolute inset-0 bg-black/40 flex items-end p-2">
+                        <span className="text-[10px] font-bold text-white">{theme.name}</span>
+                      </div>
+                      {(bio.theme_id === theme.id || (!bio.theme_id && theme.id === 'glassmorphism')) && (
+                        <div className="absolute top-1.5 right-1.5 w-4 h-4 rounded-full bg-brand-orange flex items-center justify-center z-10">
+                          <Check className="w-3 h-3 text-white" />
+                        </div>
+                      )}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
               {/* Background gradient selection */}
               <div>
-                <label className="block text-xs text-muted-foreground font-semibold mb-2.5">Hình nền (Background)</label>
+                <label className="block text-xs text-muted-foreground font-semibold mb-2.5">Tùy chỉnh Hình nền (Background Override)</label>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                   {backgrounds.map((bg) => (
                     <button
@@ -270,11 +310,11 @@ export const BioBuilder: React.FC<BioBuilderProps> = ({ userId, onNavigateToDash
                       style={{ background: bg.value }}
                     >
                       <div className="absolute inset-0 bg-black/40 flex items-end p-2">
-                        <span className="text-[10px] font-bold text-muted-foreground">{bg.name}</span>
+                        <span className="text-[10px] font-bold text-white">{bg.name}</span>
                       </div>
                       {bio.theme.background === bg.value && (
                         <div className="absolute top-1.5 right-1.5 w-4 h-4 rounded-full bg-brand-orange flex items-center justify-center">
-                          <Check className="w-3 h-3 text-foreground" />
+                          <Check className="w-3 h-3 text-white" />
                         </div>
                       )}
                     </button>

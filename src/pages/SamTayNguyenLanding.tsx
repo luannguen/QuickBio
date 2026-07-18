@@ -6,6 +6,7 @@ import { supabase, isSupabaseConfigured, mockDb } from "@/shared/api/supabase";
 
 interface SamTayNguyenLandingProps {
   onNavigateToHome: () => void;
+  landingData?: any;
 }
 
 const SAM_PRODUCT: Product = {
@@ -25,7 +26,7 @@ const SAM_PRODUCT: Product = {
   updated_at: new Date().toISOString()
 };
 
-export function SamTayNguyenLanding({ onNavigateToHome }: SamTayNguyenLandingProps) {
+export function SamTayNguyenLanding({ onNavigateToHome, landingData }: SamTayNguyenLandingProps) {
   const [showCheckout, setShowCheckout] = useState(false);
   const [creatorId, setCreatorId] = useState<string>('');
 
@@ -106,8 +107,12 @@ export function SamTayNguyenLanding({ onNavigateToHome }: SamTayNguyenLandingPro
 
     script.onload = () => {
       if ((window as any).mountScrollWorld) {
+        const brandHtml = landingData?.logo_url 
+          ? `<img src="${landingData.logo_url}" style="height: 32px; object-fit: contain;" alt="Logo" />`
+          : 'Hapico Sâm';
+          
         engineInstance = (window as any).mountScrollWorld(document.getElementById('sam-world-container'), {
-          brand: { name: 'Hapico Sâm', href: '/' },
+          brand: { name: brandHtml, href: '/' },
           diveScroll: 1.4,
           connScroll: 0.9,
           hint: 'Cuộn chuột để bắt đầu hành trình',

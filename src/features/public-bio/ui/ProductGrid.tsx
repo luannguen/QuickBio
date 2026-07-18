@@ -26,7 +26,13 @@ export const ProductGrid: React.FC<ProductGridProps> = ({ products, onSelectProd
         return (
           <div 
             key={product.id} 
-            className="glass-card rounded-3xl p-5 border border-border hover:border-brand-orange/20 hover:bg-muted/50.04] transition-all duration-300 flex flex-col sm:flex-row gap-5 transform hover:-translate-y-1 hover:shadow-2xl hover:shadow-black/40 relative overflow-hidden group text-left cursor-pointer"
+            className="rounded-3xl p-5 hover:bg-muted/50 transition-all duration-300 flex flex-col sm:flex-row gap-5 transform hover:-translate-y-1 hover:shadow-2xl hover:shadow-black/40 relative overflow-hidden group text-left cursor-pointer"
+            style={{ 
+              backgroundColor: 'var(--theme-card-bg)', 
+              borderColor: 'var(--theme-card-border)',
+              borderWidth: '1px',
+              borderStyle: 'solid'
+            }}
             onClick={handleClick}
           >
             <div className="absolute inset-0 bg-gradient-to-tr from-brand-orange/0 via-white/0 to-brand-coral/0 group-hover:from-brand-orange/[0.02] group-hover:to-brand-coral/[0.02] transition-colors duration-500 pointer-events-none"></div>
@@ -49,10 +55,10 @@ export const ProductGrid: React.FC<ProductGridProps> = ({ products, onSelectProd
 
             <div className="flex-1 flex flex-col justify-between space-y-3 min-w-0">
               <div className="space-y-1.5 text-left pt-2 sm:pt-0">
-                <h4 className="text-sm font-bold text-foreground group-hover:text-brand-orange transition-colors truncate">
+                <h4 className="text-sm font-bold truncate transition-colors" style={{ color: 'var(--theme-card-text)' }}>
                   {product.name}
                 </h4>
-                <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
+                <p className="text-xs opacity-70 line-clamp-2 leading-relaxed" style={{ color: 'var(--theme-card-text)' }}>
                   {product.description}
                 </p>
               </div>

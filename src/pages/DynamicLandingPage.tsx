@@ -80,14 +80,18 @@ export function DynamicLandingPage({ bioSlug, landingSlug, onNavigateToHome, onN
   // Phân bổ component theo template_id
   switch (landingData.template_id) {
     case 'sam-scroll-world':
-      return <SamTayNguyenLanding onNavigateToHome={onNavigateToHome} />;
+      return <SamTayNguyenLanding onNavigateToHome={onNavigateToHome} landingData={landingData} />;
     
     // Thêm các template khác ở đây trong tương lai
     default:
       return (
         <div className="min-h-screen flex items-center justify-center bg-background">
           <div className="text-center p-8 max-w-sm">
-            <h1 className="text-2xl font-bold text-foreground mb-2">{landingData.title}</h1>
+            {landingData.logo_url ? (
+              <img src={landingData.logo_url} alt={landingData.title} className="h-16 mx-auto mb-4 object-contain" />
+            ) : (
+              <h1 className="text-2xl font-bold text-foreground mb-2">{landingData.title}</h1>
+            )}
             <p className="text-sm text-semantic-muted mb-6">Trang này đang sử dụng giao diện mặc định chưa được hỗ trợ hoàn chỉnh.</p>
             <button 
               onClick={onNavigateToBio}

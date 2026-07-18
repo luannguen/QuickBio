@@ -5,6 +5,7 @@ import { Button } from '@/shared/ui/Button';
 import { useToastStore } from '@/shared/stores/useToastStore';
 import { Plus, LayoutTemplate, Globe, Edit, Trash2, ShieldAlert } from 'lucide-react';
 import { useConfirm } from '@/shared/stores/useModalStore';
+import { LandingPageModal } from './LandingPageModal';
 
 interface LandingPagesTabProps {
   userId: string;
@@ -16,6 +17,8 @@ interface LandingPagesTabProps {
 export const LandingPagesTab: React.FC<LandingPagesTabProps> = ({ userId, userPlan, userSlug, onProUpgradeClick }) => {
   const [pages, setPages] = useState<LandingPage[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingPage, setEditingPage] = useState<LandingPage | undefined>(undefined);
   const toast = useToastStore();
   const confirm = useConfirm();
 
@@ -38,7 +41,7 @@ export const LandingPagesTab: React.FC<LandingPagesTabProps> = ({ userId, userPl
   const maxPages = userPlan === 'premium' ? 9999 : userPlan === 'pro' ? 5 : 1;
   const canCreate = pages.length < maxPages;
 
-  const handleCreate = async () => {
+  const handleCreate = () => {
     if (!canCreate) {
       toast.error(`Gói ${userPlan.toUpperCase()} chỉ cho phép tạo tối đa ${maxPages} trang.`);
       if (userPlan !== 'premium') {
@@ -46,24 +49,13 @@ export const LandingPagesTab: React.FC<LandingPagesTabProps> = ({ userId, userPl
       }
       return;
     }
+    setEditingPage(undefined);
+    setIsModalOpen(true);
+  };
 
-    const slug = window.prompt('Nhập slug (đường dẫn) cho landing page mới (ví dụ: my-landing):');
-    if (!slug) return;
-
-    try {
-      await landingService.createLandingPage({
-        user_id: userId,
-        slug,
-        title: `Landing Page ${pages.length + 1}`,
-        template_id: 'default',
-        status: 'draft',
-        config: {}
-      });
-      toast.success('Tạo thành công!');
-      loadPages();
-    } catch (e) {
-      toast.error('Lỗi khi tạo landing page.');
-    }
+  const handleEdit = (page: LandingPage) => {
+    setEditingPage(page);
+    setIsModalOpen(true);
   };
 
   const handleDelete = async (id: string, title: string) => {
@@ -206,9 +198,9 @@ export const LandingPagesTab: React.FC<LandingPagesTabProps> = ({ userId, userPl
                   <Globe className="w-3 h-3 mr-1" />
                   Xem
                 </Button>
-                <Button variant="ghost" size="sm" className="flex-1 text-xs">
+                <Button variant="ghost" size="sm" className="flex-1 text-xs" onClick={() => handleEdit(p)}>
                   <Edit className="w-3 h-3 mr-1" />
-                  Sửa (Sắp ra mắt)
+                  Sửa
                 </Button>
                 <Button variant="ghost" size="sm" className="text-semantic-error hover:bg-semantic-error/10 hover:text-semantic-error" onClick={() => handleDelete(p.id, p.title)}>
                   <Trash2 className="w-4 h-4" />
@@ -218,6 +210,17 @@ export const LandingPagesTab: React.FC<LandingPagesTabProps> = ({ userId, userPl
           ))}
         </div>
       )}
+
+      <LandingPageModal 
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        page={editingPage}
+        userId={userId}
+        onSuccess={() => {
+          setIsModalOpen(false);
+          loadPages();
+        }}
+      />
     </div>
   );
 };

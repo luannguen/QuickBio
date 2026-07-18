@@ -12,6 +12,7 @@ export interface Product {
   inventory_count: number;
   is_unlimited: boolean;
   weight_grams: number;
+  affiliate_commission_rate?: number;
   status: 'active' | 'inactive';
   created_at: string;
   updated_at: string;

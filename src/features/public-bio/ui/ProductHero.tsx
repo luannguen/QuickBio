@@ -21,7 +21,13 @@ export const ProductHero: React.FC<ProductHeroProps> = ({ product, onSelectProdu
   return (
     <div 
       onClick={handleClick}
-      className="cursor-pointer bg-card/60 rounded-3xl border border-border p-6 flex flex-col md:flex-row gap-6 relative overflow-hidden group hover:border-brand-orange/30 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-brand-orange/5 text-left"
+      className="cursor-pointer rounded-3xl p-6 flex flex-col md:flex-row gap-6 relative overflow-hidden group transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl text-left"
+      style={{
+        backgroundColor: 'var(--theme-card-bg)',
+        borderColor: 'var(--theme-card-border)',
+        borderWidth: '1px',
+        borderStyle: 'solid'
+      }}
     >
       <div className="absolute -inset-px bg-gradient-to-tr from-brand-orange/5 via-transparent to-brand-coral/10 rounded-3xl opacity-100 group-hover:opacity-100 transition duration-500 pointer-events-none"></div>
 
@@ -40,10 +46,10 @@ export const ProductHero: React.FC<ProductHeroProps> = ({ product, onSelectProdu
 
       <div className="flex-1 flex flex-col justify-between space-y-4 text-left">
         <div className="space-y-2">
-          <h4 className="text-lg font-black text-foreground group-hover:text-brand-orange transition-colors leading-tight line-clamp-2 pt-2 md:pt-0">
+          <h4 className="text-lg font-black transition-colors leading-tight line-clamp-2 pt-2 md:pt-0" style={{ color: 'var(--theme-card-text)' }}>
             {product.name}
           </h4>
-          <p className="text-xs text-muted-foreground line-clamp-3 leading-relaxed">
+          <p className="text-xs opacity-70 line-clamp-3 leading-relaxed" style={{ color: 'var(--theme-card-text)' }}>
             {product.description}
           </p>
         </div>

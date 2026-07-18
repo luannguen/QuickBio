@@ -1,5 +1,4 @@
-import { supabase, isSupabaseConfigured } from '@/shared/api/supabase';
-import { mockDb } from '@/shared/api/mockDb';
+import { supabase, isSupabaseConfigured, mockDb } from '@/shared/api/supabase';
 
 export interface Lead {
   id: string;
@@ -31,7 +30,7 @@ export const leadService = {
         return true;
       } else {
         const leads = mockDb.get('leads') || [];
-        mockDb.set('leads', [...leads, { ...newLead, id: crypto.randomUUID() }]);
+        mockDb.save('leads', [...leads, { ...newLead, id: crypto.randomUUID() }]);
         return true;
       }
     } catch (err) {

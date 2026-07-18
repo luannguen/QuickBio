@@ -78,6 +78,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
   const [prodType, setProdType] = useState<'digital' | 'physical'>('digital');
   const [prodInventory, setProdInventory] = useState(0);
   const [prodIsUnlimited, setProdIsUnlimited] = useState(true);
+  const [prodAffiliateCommissionRate, setProdAffiliateCommissionRate] = useState(0);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
 
   // State cho Modal thêm/sửa bài viết
@@ -282,6 +283,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
           product_type: prodType,
           inventory_count: prodInventory,
           is_unlimited: prodIsUnlimited,
+          affiliate_commission_rate: prodAffiliateCommissionRate,
           weight_grams: 0
         });
       } else {
@@ -295,6 +297,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
           inventory_count: prodInventory,
           is_unlimited: prodIsUnlimited,
           weight_grams: 0,
+          affiliate_commission_rate: prodAffiliateCommissionRate,
           status: 'active'
         });
       }
@@ -308,6 +311,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
       setProdType('digital');
       setProdInventory(0);
       setProdIsUnlimited(true);
+      setProdAffiliateCommissionRate(0);
       loadDashboardData();
     } catch (err) {
       console.error(err);
@@ -324,6 +328,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
     setProdType(p.product_type || 'digital');
     setProdInventory(p.inventory_count || 0);
     setProdIsUnlimited(p.is_unlimited || true);
+    setProdAffiliateCommissionRate(p.affiliate_commission_rate || 0);
     setIsProductModalOpen(true);
   };
 
@@ -690,6 +695,7 @@ Giọng điệu: ${aiTone === 'expert' ? 'Chuyên sâu, logic' : aiTone === 'fun
     inventory_count: 0,
     is_unlimited: true,
     weight_grams: 0,
+    affiliate_commission_rate: 0,
     created_at: '',
     updated_at: ''
   };
@@ -729,6 +735,7 @@ Giọng điệu: ${aiTone === 'expert' ? 'Chuyên sâu, logic' : aiTone === 'fun
       setProdType('digital');
       setProdInventory(0);
       setProdIsUnlimited(true);
+      setProdAffiliateCommissionRate(0);
       setIsProductModalOpen(true);
     },
     onEditProductClick: handleEditProductClick,
@@ -888,6 +895,19 @@ Giọng điệu: ${aiTone === 'expert' ? 'Chuyên sâu, logic' : aiTone === 'fun
                     step={1000}
                     required
                   />
+                </div>
+                <div>
+                  <Label className="block mb-1.5">% Hoa hồng CTV Bán hộ</Label>
+                  <Input 
+                    type="number"
+                    value={prodAffiliateCommissionRate}
+                    onChange={(e) => setProdAffiliateCommissionRate(parseInt(e.target.value) || 0)}
+                    min={0}
+                    max={100}
+                    step={1}
+                    placeholder="VD: 30"
+                  />
+                  <span className="text-[10px] text-semantic-muted mt-1 block">Chiết khấu % cho Cộng tác viên bán hộ. (0-100)</span>
                 </div>
               </div>
                 

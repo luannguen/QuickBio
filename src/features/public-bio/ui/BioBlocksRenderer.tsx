@@ -5,6 +5,7 @@ import { ExternalLink, ShoppingBag, Timer, Send, CheckCircle2 } from 'lucide-rea
 import { Button } from '@/shared/ui/Button';
 import { analyticsService } from '@/entities/analytics/api';
 import { leadService } from '@/entities/lead/api';
+import type { ThemeConfig } from '../config/themes';
 
 interface BioBlocksRendererProps {
   userId?: string;
@@ -13,6 +14,7 @@ interface BioBlocksRendererProps {
   onSelectProduct: (product: Product) => void;
   accentColor?: string;
   glassmorphism?: boolean;
+  themeConfig?: ThemeConfig;
 }
 
 const CountdownRenderer: React.FC<{ block: BioBlock; style: any; accentColor: string }> = ({ block, style, accentColor }) => {
@@ -151,17 +153,19 @@ export const BioBlocksRenderer: React.FC<BioBlocksRendererProps> = ({
   blocks, 
   products, 
   onSelectProduct,
-  accentColor = '#FF6B35',
-  glassmorphism = true
+  accentColor = '#FF4500',
+  glassmorphism = true,
+  themeConfig
 }) => {
   if (!blocks || blocks.length === 0) return null;
 
-  const visibleBlocks = blocks.filter(b => b.is_visible);
+  const visibleBlocks = blocks.filter(b => b.is_visible !== false);
 
   const blockStyle = {
-    backgroundColor: glassmorphism ? 'rgba(255, 255, 255, 0.05)' : 'rgba(20, 20, 20, 0.5)',
+    backgroundColor: themeConfig ? themeConfig.colors.cardBg : (glassmorphism ? 'rgba(255, 255, 255, 0.05)' : '#ffffff'),
     backdropFilter: glassmorphism ? 'blur(10px)' : 'none',
-    border: glassmorphism ? '1px solid rgba(255, 255, 255, 0.1)' : '1px solid rgba(255, 255, 255, 0.05)',
+    border: `1px solid ${themeConfig ? themeConfig.colors.cardBorder : (glassmorphism ? 'rgba(255, 255, 255, 0.1)' : '#e5e7eb')}`,
+    color: themeConfig ? themeConfig.colors.cardText : 'inherit'
   };
 
   const handleTrackClick = (blockId: string) => {
