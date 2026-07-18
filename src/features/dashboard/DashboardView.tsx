@@ -10,6 +10,7 @@ import { AiContentTab } from './components/AiContentTab';
 import { MarketingTab } from './components/MarketingTab';
 import { ArticlesTab } from './components/ArticlesTab';
 import { AnalyticsTab } from './components/AnalyticsTab';
+import { LandingPagesTab } from './components/LandingPagesTab';
 import { Button } from "@/shared/ui/Button";
 import { Card } from "@/shared/ui/Card";
 import { ThemeToggle } from "@/shared/ui/ThemeToggle";
@@ -19,10 +20,10 @@ import {
 } from 'lucide-react';
 
 interface DashboardViewProps {
-  activeTab: 'products' | 'orders' | 'sepay' | 'affiliate' | 'ai-content' | 'marketing' | 'articles' | 'analytics';
-  setActiveTab: (tab: 'products' | 'orders' | 'sepay' | 'affiliate' | 'ai-content' | 'marketing' | 'articles' | 'analytics') => void;
+  activeTab: 'products' | 'orders' | 'sepay' | 'affiliate' | 'ai-content' | 'marketing' | 'articles' | 'analytics' | 'landing';
+  setActiveTab: (tab: 'products' | 'orders' | 'sepay' | 'affiliate' | 'ai-content' | 'marketing' | 'articles' | 'analytics' | 'landing') => void;
   user: any;
-  userPlan: 'free' | 'pro';
+  userPlan: 'free' | 'pro' | 'premium';
   products: Product[];
   orders: Order[];
   pendingOrders: Order[];
@@ -74,6 +75,8 @@ interface DashboardViewProps {
   onAffiliateCodeChange: (val: string) => void;
   paymentInfo: string;
   onPaymentInfoChange: (val: string) => void;
+  telegramChatId: string;
+  onTelegramChatIdChange: (val: string) => void;
   affiliateSuccess: boolean;
   onSaveAffiliate: (e: React.FormEvent) => void;
   linkCopied: boolean;
@@ -148,6 +151,7 @@ export const DashboardView: React.FC<DashboardViewProps> = (props) => {
     <div className="space-y-2">
       {[
         { name: 'Thống kê (Analytics)', id: 'analytics' },
+        { name: 'Landing Pages', id: 'landing' },
         { name: 'Quản lý Sản phẩm', id: 'products', count: products.length },
         { name: 'Đơn hàng mua bán', id: 'orders', count: orders.length },
         { name: 'Bài viết (Blog)', id: 'articles', count: props.articles?.length || 0 },
@@ -178,6 +182,15 @@ export const DashboardView: React.FC<DashboardViewProps> = (props) => {
     </div>
   );
 
+  const getDaysRemaining = (expiresAt?: string) => {
+    if (!expiresAt) return null;
+    const diff = new Date(expiresAt).getTime() - new Date().getTime();
+    const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
+    return days > 0 ? days : 0;
+  };
+
+  const daysRemaining = getDaysRemaining(user?.plan_expires_at);
+
   const headerContent = (
     <div className="flex justify-between items-center w-full relative">
       <div className="flex items-center gap-3">
@@ -187,9 +200,17 @@ export const DashboardView: React.FC<DashboardViewProps> = (props) => {
         <div>
           <h1 className="text-lg font-bold tracking-tight hidden lg:block">QuickBio Console</h1>
           <h1 className="text-sm font-bold tracking-tight lg:hidden">{user.full_name}</h1>
-          <p className="text-xs text-semantic-muted hidden lg:block">Quản lý cửa hàng sản phẩm số & Bio-Link của bạn</p>
-          <span className="text-[10px] text-brand-orange font-semibold uppercase lg:hidden">
-            {userPlan === 'pro' ? 'QuickBio Pro' : 'Free Account'}
+          <div className="flex items-center gap-2">
+            <p className="text-xs text-semantic-muted hidden lg:block">Quản lý cửa hàng sản phẩm số & Bio-Link của bạn</p>
+            {userPlan !== 'free' && daysRemaining !== null && (
+              <span className="text-[10px] bg-brand-orange/10 text-brand-orange px-2 py-0.5 rounded-full border border-brand-orange/20 hidden lg:inline-block">
+                Còn {daysRemaining} ngày
+              </span>
+            )}
+          </div>
+          <span className="text-[10px] text-brand-orange font-semibold uppercase lg:hidden flex items-center gap-1">
+            {userPlan === 'premium' ? 'Premium' : userPlan === 'pro' ? 'Pro' : 'Free Account'}
+            {userPlan !== 'free' && daysRemaining !== null && ` (${daysRemaining} ngày)`}
           </span>
         </div>
       </div>
@@ -414,6 +435,15 @@ export const DashboardView: React.FC<DashboardViewProps> = (props) => {
 
       {/* Render active content */}
       <Card className="p-4 lg:p-6">
+        {activeTab === 'landing' && (
+          <LandingPagesTab
+            userId={user?.id}
+            userPlan={userPlan}
+            userSlug={userSlug}
+            onProUpgradeClick={onProUpgradeClick}
+          />
+        )}
+
         {activeTab === 'products' && (
           <ProductsTab
             products={products}
@@ -461,6 +491,8 @@ export const DashboardView: React.FC<DashboardViewProps> = (props) => {
             onAffiliateCodeChange={props.onAffiliateCodeChange}
             paymentInfo={props.paymentInfo}
             onPaymentInfoChange={props.onPaymentInfoChange}
+            telegramChatId={props.telegramChatId}
+            onTelegramChatIdChange={props.onTelegramChatIdChange}
             affiliateSuccess={props.affiliateSuccess}
             onSaveAffiliate={props.onSaveAffiliate}
             linkCopied={props.linkCopied}

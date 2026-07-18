@@ -10,8 +10,9 @@ import { AdminDashboard } from "@/pages/AdminPage";
 import { BlogPage } from "@/pages/BlogPage";
 import { ArticleDetailPage } from "@/pages/ArticleDetailPage";
 import { SamTayNguyenLanding } from "@/pages/SamTayNguyenLanding";
+import { DynamicLandingPage } from "@/pages/DynamicLandingPage";
 
-type ViewType = 'landing' | 'dashboard' | 'bio-builder' | 'bio-public' | 'kiem-tien' | 'tong-dai-ai' | 'admin' | 'sam-tay-nguyen' | 'blog' | 'article';
+type ViewType = 'landing' | 'dashboard' | 'bio-builder' | 'bio-public' | 'landing-public' | 'kiem-tien' | 'tong-dai-ai' | 'admin' | 'sam-tay-nguyen' | 'blog' | 'article';
 
 function App() {
   const { user, loading } = useAuth();
@@ -28,15 +29,21 @@ function App() {
 
   const getInitialView = (): ViewType => {
     const path = window.location.pathname.replace(/^\/|\/$/g, '');
-    const firstSegment = path.split('/')[0];
-    if (firstSegment === 'dashboard') return 'dashboard';
-    if (firstSegment === 'bio-builder') return 'bio-builder';
-    if (firstSegment === 'kiem-tien') return 'kiem-tien';
-    if (firstSegment === 'tong-dai-ai') return 'tong-dai-ai';
-    if (firstSegment === 'admin') return 'admin';
-    if (firstSegment === 'sam-tay-nguyen') return 'sam-tay-nguyen';
-    if (firstSegment === 'blog') return 'blog';
-    if (firstSegment === 'article') return 'article';
+    const segments = path.split('/');
+    if (segments[0] === 'dashboard') return 'dashboard';
+    if (segments[0] === 'bio-builder') return 'bio-builder';
+    if (segments[0] === 'kiem-tien') return 'kiem-tien';
+    if (segments[0] === 'tong-dai-ai') return 'tong-dai-ai';
+    if (segments[0] === 'admin') return 'admin';
+    if (segments[0] === 'sam-tay-nguyen') return 'sam-tay-nguyen';
+    if (segments[0] === 'blog') return 'blog';
+    if (segments[0] === 'article') return 'article';
+    
+    // Check for /:bioSlug/landing/:landingSlug
+    if (segments[1] === 'landing' && segments[2]) {
+      return 'landing-public';
+    }
+
     if (path && !['landing'].includes(path)) {
       return 'bio-public';
     }
@@ -45,7 +52,18 @@ function App() {
 
   const initialSlug = getSlugFromPath();
   const [view, setView] = useState<ViewType>(getInitialView());
-  const [activeSlug, setActiveSlug] = useState<string>(initialSlug || 'luannguyen');
+  const [activeSlug, setActiveSlug] = useState<string>(() => {
+    const path = window.location.pathname.replace(/^\/|\/$/g, '');
+    const segments = path.split('/');
+    if (segments[1] === 'landing') return segments[0]; // bioSlug
+    return getSlugFromPath() || 'luannguyen';
+  });
+  const [activeLandingSlug, setActiveLandingSlug] = useState<string>(() => {
+    const path = window.location.pathname.replace(/^\/|\/$/g, '');
+    const segments = path.split('/');
+    if (segments[1] === 'landing' && segments[2]) return segments[2];
+    return '';
+  });
   const [activeArticleSlug, setActiveArticleSlug] = useState<string>(() => {
     const path = window.location.pathname.replace(/^\/|\/$/g, '');
     const segments = path.split('/');
@@ -83,33 +101,41 @@ function App() {
   // Lắng nghe sự kiện click back/forward của trình duyệt để đồng bộ route
   useEffect(() => {
     const handlePopState = () => {
-      const slug = getSlugFromPath();
-      if (slug) {
-        setActiveSlug(slug);
-        setView('bio-public');
+      const path = window.location.pathname.replace(/^\/|\/$/g, '');
+      const segments = path.split('/');
+      
+      if (segments[1] === 'landing' && segments[2]) {
+        setActiveSlug(segments[0]);
+        setActiveLandingSlug(segments[2]);
+        setView('landing-public');
       } else {
-        const path = window.location.pathname.replace(/^\/|\/$/g, '');
-        const firstSegment = path.split('/')[0];
-        if (firstSegment === 'dashboard' && user) {
-          setView('dashboard');
-        } else if (firstSegment === 'bio-builder' && user) {
-          setView('bio-builder');
-        } else if (firstSegment === 'kiem-tien') {
-          setView('kiem-tien');
-        } else if (firstSegment === 'tong-dai-ai') {
-          setView('tong-dai-ai');
-        } else if (firstSegment === 'admin') {
-          setView('admin');
-        } else if (firstSegment === 'sam-tay-nguyen') {
-          setView('sam-tay-nguyen');
-        } else if (firstSegment === 'blog') {
-          setActiveBlogSlug(path.split('/')[1] || 'platform');
-          setView('blog');
-        } else if (firstSegment === 'article') {
-          setActiveArticleSlug(path.split('/')[1] || '');
-          setView('article');
+        const slug = getSlugFromPath();
+        if (slug) {
+          setActiveSlug(slug);
+          setView('bio-public');
         } else {
-          setView('landing');
+          const firstSegment = segments[0];
+          if (firstSegment === 'dashboard' && user) {
+            setView('dashboard');
+          } else if (firstSegment === 'bio-builder' && user) {
+            setView('bio-builder');
+          } else if (firstSegment === 'kiem-tien') {
+            setView('kiem-tien');
+          } else if (firstSegment === 'tong-dai-ai') {
+            setView('tong-dai-ai');
+          } else if (firstSegment === 'admin') {
+            setView('admin');
+          } else if (firstSegment === 'sam-tay-nguyen') {
+            setView('sam-tay-nguyen');
+          } else if (firstSegment === 'blog') {
+            setActiveBlogSlug(segments[1] || 'platform');
+            setView('blog');
+          } else if (firstSegment === 'article') {
+            setActiveArticleSlug(segments[1] || '');
+            setView('article');
+          } else {
+            setView('landing');
+          }
         }
       }
     };
@@ -118,11 +144,15 @@ function App() {
     return () => window.removeEventListener('popstate', handlePopState);
   }, [user]);
 
-  const navigateTo = (newView: ViewType, slug?: string) => {
+  const navigateTo = (newView: ViewType, slug?: string, secondarySlug?: string) => {
     setView(newView);
     if (newView === 'bio-public' && slug) {
       setActiveSlug(slug);
       window.history.pushState({}, '', `/${slug}`);
+    } else if (newView === 'landing-public' && slug && secondarySlug) {
+      setActiveSlug(slug);
+      setActiveLandingSlug(secondarySlug);
+      window.history.pushState({}, '', `/${slug}/landing/${secondarySlug}`);
     } else if (newView === 'blog') {
       const bSlug = slug || 'platform';
       setActiveBlogSlug(bSlug);
@@ -205,6 +235,16 @@ function App() {
           onNavigateToLanding={() => navigateTo('landing')}
           onNavigateToSam={() => navigateTo('sam-tay-nguyen')}
           onNavigateToArticle={(s) => navigateTo('article', s)}
+        />
+      );
+
+    case 'landing-public':
+      return (
+        <DynamicLandingPage
+          bioSlug={activeSlug}
+          landingSlug={activeLandingSlug}
+          onNavigateToHome={() => navigateTo('landing')}
+          onNavigateToBio={() => navigateTo('bio-public', activeSlug)}
         />
       );
 

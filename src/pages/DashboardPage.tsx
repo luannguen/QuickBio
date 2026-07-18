@@ -51,6 +51,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
   // Affiliate States
   const [affiliateCode, setAffiliateCode] = useState('');
   const [paymentInfo, setPaymentInfo] = useState('');
+  const [telegramChatId, setTelegramChatId] = useState('');
   const [commissions, setCommissions] = useState<any[]>([]);
   const [clicksCount, setClicksCount] = useState(0); 
   const [affiliateSuccess, setAffiliateSuccess] = useState(false);
@@ -168,18 +169,27 @@ export const Dashboard: React.FC<DashboardProps> = ({
         console.error('Error loading bank settings:', err);
       }
 
-      // Load dữ liệu Affiliate
+      // Load dữ liệu Affiliate và Plan
       if (isSupabaseConfigured && supabase) {
         const { data: profile } = await supabase
           .from('profiles')
-          .select('affiliate_code, payment_info, plan')
+          .select('affiliate_code, payment_info, plan_tier, plan_expires_at, telegram_chat_id')
           .eq('id', user.id)
           .single();
         
         if (profile) {
           setAffiliateCode(profile.affiliate_code || '');
           setPaymentInfo(profile.payment_info || '');
-          setUserPlan((profile.plan || 'free') as any);
+          setTelegramChatId(profile.telegram_chat_id || '');
+          
+          let tier = profile.plan_tier || 'free';
+          if (tier !== 'free' && profile.plan_expires_at) {
+            const expiry = new Date(profile.plan_expires_at);
+            if (expiry < new Date()) {
+              tier = 'free'; // Hết hạn -> trở về Free
+            }
+          }
+          setUserPlan(tier as any);
         }
 
         const { data: luanBio } = await supabase
@@ -212,6 +222,18 @@ export const Dashboard: React.FC<DashboardProps> = ({
           setMktTargetProductId(mkt.target_product_id || '');
           setMktGeminiApiKey(mkt.gemini_api_key || '');
           setMktLastPostedAt(mkt.last_posted_at || '');
+        }
+      } else {
+        // Fallback for mock data
+        if (user.plan_tier) {
+          let tier = user.plan_tier || 'free';
+          if (tier !== 'free' && user.plan_expires_at) {
+            const expiry = new Date(user.plan_expires_at);
+            if (expiry < new Date()) {
+              tier = 'free'; // Hết hạn -> trở về Free
+            }
+          }
+          setUserPlan(tier as any);
         }
       }
     } catch (err) {
@@ -416,7 +438,8 @@ export const Dashboard: React.FC<DashboardProps> = ({
           .from('profiles')
           .update({
             affiliate_code: cleanCode,
-            payment_info: paymentInfo.trim()
+            payment_info: paymentInfo.trim(),
+            telegram_chat_id: telegramChatId.trim()
           })
           .eq('id', user.id);
 
@@ -757,6 +780,8 @@ Giọng điệu: ${aiTone === 'expert' ? 'Chuyên sâu, logic' : aiTone === 'fun
     onAffiliateCodeChange: setAffiliateCode,
     paymentInfo,
     onPaymentInfoChange: setPaymentInfo,
+    telegramChatId,
+    onTelegramChatIdChange: setTelegramChatId,
     affiliateSuccess,
     onSaveAffiliate: handleSaveAffiliate,
     linkCopied,

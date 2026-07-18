@@ -40,6 +40,7 @@ export interface BioLink {
     instagram?: string;
     twitter?: string;
   };
+  hide_watermark?: boolean;
   blocks?: BioBlock[]; // Hệ thống Block kéo thả mới
   status: 'draft' | 'published';
   created_at: string;

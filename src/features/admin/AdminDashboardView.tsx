@@ -93,6 +93,8 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
   const handlePlanChange = async (userId: string, userName: string, currentPlan: string, newPlan: string) => {
     if (currentPlan === newPlan) return;
     
+    let durationMonths = 12; // Default to 12 months
+    
     // Nếu downgrade (từ pro/premium xuống free)
     if (newPlan === 'free' && currentPlan !== 'free') {
       const confirmed = await confirm({
@@ -102,18 +104,30 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
         variant: 'danger'
       });
       if (!confirmed) return;
+      durationMonths = 0; // Free doesn't expire
     } else {
+      // Prompt for duration when upgrading
+      const inputDurationStr = window.prompt(`Bạn muốn chuyển ${userName} sang gói ${newPlan.toUpperCase()}.\nVui lòng nhập số tháng sử dụng (mặc định 12):`, '12');
+      if (inputDurationStr === null) return; // User cancelled
+      
+      const parsedDuration = parseInt(inputDurationStr, 10);
+      if (isNaN(parsedDuration) || parsedDuration <= 0) {
+        toast.error('Số tháng không hợp lệ. Vui lòng thử lại.');
+        return;
+      }
+      durationMonths = parsedDuration;
+
       // Xác nhận nâng cấp
       const confirmed = await confirm({
         title: 'Xác nhận Đổi Gói',
-        message: `Bạn muốn chuyển ${userName} sang gói ${newPlan.toUpperCase()}?`,
+        message: `Chuyển ${userName} sang gói ${newPlan.toUpperCase()} trong ${durationMonths} tháng?`,
         confirmText: 'Đồng ý',
         variant: 'info'
       });
       if (!confirmed) return;
     }
 
-    const res = await changeUserPlan(userId, newPlan);
+    const res = await changeUserPlan(userId, newPlan, durationMonths);
     if (res.success) {
       toast.success(`Đã cập nhật gói của ${userName} thành ${newPlan.toUpperCase()}`);
       // Nếu Admin tự đổi gói cho chính mình thì reload trang để cập nhật lại quyền trên UI
@@ -376,19 +390,26 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
                       </span>
                     </td>
                     <td className="py-4 px-6">
-                      <select 
-                        value={u.plan || 'free'}
-                        onChange={(e) => handlePlanChange(u.id, u.full_name || u.email, u.plan || 'free', e.target.value)}
-                        className={`px-2 py-1.5 rounded-lg text-xs font-bold uppercase border-none outline-none cursor-pointer ${
-                          u.plan === 'premium' ? 'bg-purple-500/20 text-purple-400' :
-                          u.plan === 'pro' ? 'bg-semantic-info/20 text-semantic-info' : 
-                          'bg-muted text-muted-foreground'
-                        }`}
-                      >
-                        <option value="free">FREE</option>
-                        <option value="pro">PRO</option>
-                        <option value="premium">PREMIUM</option>
-                      </select>
+                      <div className="flex flex-col gap-1 items-start">
+                        <select 
+                          value={u.plan || 'free'}
+                          onChange={(e) => handlePlanChange(u.id, u.full_name || u.email, u.plan || 'free', e.target.value)}
+                          className={`px-2 py-1.5 rounded-lg text-xs font-bold uppercase border-none outline-none cursor-pointer ${
+                            u.plan === 'premium' ? 'bg-purple-500/20 text-purple-400' :
+                            u.plan === 'pro' ? 'bg-semantic-info/20 text-semantic-info' : 
+                            'bg-muted text-muted-foreground'
+                          }`}
+                        >
+                          <option value="free">FREE</option>
+                          <option value="pro">PRO</option>
+                          <option value="premium">PREMIUM</option>
+                        </select>
+                        {u.plan !== 'free' && u.plan_expires_at && (
+                          <div className="text-[10px] text-semantic-muted">
+                            HSD: {new Date(u.plan_expires_at).toLocaleDateString('vi-VN')}
+                          </div>
+                        )}
+                      </div>
                     </td>
                     <td className="py-4 px-6 text-right font-bold text-foreground">
                       {Number(u.total_revenue).toLocaleString('vi-VN')}đ

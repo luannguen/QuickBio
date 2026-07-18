@@ -37,6 +37,8 @@ export interface AdminUser {
   full_name: string;
   avatar_url: string | null;
   plan: string;
+  plan_purchased_at?: string;
+  plan_expires_at?: string;
   role: string;
   created_at: string;
   total_revenue: number;
@@ -152,13 +154,14 @@ export const adminService = {
   /**
    * Thay đổi gói của User (Dành cho Admin)
    */
-  updateUserPlan: async (userId: string, newPlan: string): Promise<{success: boolean, message?: string}> => {
+  updateUserPlan: async (userId: string, newPlan: string, durationMonths?: number): Promise<{success: boolean, message?: string}> => {
     if (!isSupabaseConfigured || !supabase) return { success: false, message: 'MockDB: Cập nhật gói người dùng' };
     
     try {
       const { data, error } = await supabase.rpc('admin_update_user_plan', {
         p_user_id: userId,
-        p_new_plan: newPlan
+        p_new_plan: newPlan,
+        p_duration_months: durationMonths || 12 // Thêm tham số tháng (cần cập nhật RPC trong Supabase thực tế)
       });
       
       if (error) {

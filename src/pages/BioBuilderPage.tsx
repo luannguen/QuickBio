@@ -316,6 +316,32 @@ export const BioBuilder: React.FC<BioBuilderProps> = ({ userId, onNavigateToDash
                     }`} />
                   </button>
                 </div>
+
+                {/* Watermark toggle */}
+                <div className="flex items-center justify-between p-3 rounded-xl bg-brand-card/40 border border-border mt-5 sm:mt-0">
+                  <div>
+                    <span className="text-xs font-semibold flex items-center gap-1 text-foreground">
+                      Ẩn Watermark QuickBio
+                      {bio.subscription_tier === 'free' && <span className="text-[9px] bg-yellow-500/20 text-yellow-500 px-1.5 py-0.5 rounded ml-1">👑 PRO</span>}
+                    </span>
+                    <span className="text-[10px] text-muted-foreground block">Xóa chữ "Powered by QuickBio" ở cuối trang</span>
+                  </div>
+                  <button
+                    onClick={() => {
+                      if (bio.subscription_tier !== 'free') {
+                        updateBioFields({ hide_watermark: !bio.hide_watermark });
+                      }
+                    }}
+                    disabled={bio.subscription_tier === 'free'}
+                    className={`w-11 h-6 rounded-full transition-colors relative flex items-center ${
+                      bio.hide_watermark ? 'bg-brand-orange' : 'bg-muted/50'
+                    } ${bio.subscription_tier === 'free' ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  >
+                    <div className={`w-4 h-4 rounded-full bg-white shadow-md transform transition-transform duration-300 absolute ${
+                      bio.hide_watermark ? 'translate-x-6' : 'translate-x-1'
+                    }`} />
+                  </button>
+                </div>
               </div>
             </div>
           </div>

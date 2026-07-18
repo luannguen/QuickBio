@@ -269,6 +269,36 @@ export const orderService = {
       });
     }
 
+    // 3. (Mock) Gửi thông báo Telegram nếu Creator cấu hình Bot
+    try {
+      let creatorId = '';
+      if (isSupabaseConfigured && supabase) {
+        const { data: prodData } = await supabase.from('products').select('user_id, name').eq('id', targetOrder.product_id).single();
+        if (prodData) {
+          creatorId = prodData.user_id;
+          const { data: profile } = await supabase.from('profiles').select('telegram_chat_id').eq('id', creatorId).single();
+          if (profile && profile.telegram_chat_id) {
+            console.log(`[TELEGRAM MOCK] Send message to chat ${profile.telegram_chat_id}: \n` +
+              `✅ TING TING! Có đơn hàng mới!\nSản phẩm: ${prodData.name}\nDoanh thu: ${transferAmount}đ\nMã: ${paymentCode}`);
+          }
+        }
+      } else {
+        const products = mockDb.get('products');
+        const prod = products.find((p: any) => p.id === targetOrder?.product_id);
+        if (prod) {
+          creatorId = prod.user_id;
+          const profiles = mockDb.get('profiles');
+          const prof = profiles.find((p: any) => p.id === creatorId);
+          if (prof && prof.telegram_chat_id) {
+            console.log(`[TELEGRAM MOCK] Send message to chat ${prof.telegram_chat_id}: \n` +
+              `✅ TING TING! Có đơn hàng mới!\nSản phẩm: ${prod.name}\nDoanh thu: ${transferAmount}đ\nMã: ${paymentCode}`);
+          }
+        }
+      }
+    } catch (err) {
+      console.warn("Telegram notification mock error:", err);
+    }
+
     return true;
   }
 };

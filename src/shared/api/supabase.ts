@@ -28,10 +28,14 @@ const initMockData = () => {
     mockStorage.setItem('profiles', [
       {
         id: 'user-demo-123',
-        email: 'creator@quickbio.app',
-        full_name: 'Alex Nguyễn',
+        email: 'luan.nguyenthien@gmail.com', // Đổi email để khớp yêu cầu của tenant
+        full_name: 'Luân Nguyễn',
         avatar_url: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&h=150&q=80',
-        created_at: new Date().toISOString()
+        created_at: new Date().toISOString(),
+        role: 'admin',
+        plan_tier: 'premium',
+        plan_purchased_at: new Date().toISOString(),
+        plan_expires_at: new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString() // 1 năm
       }
     ]);
   }
@@ -58,6 +62,23 @@ const initMockData = () => {
           github: 'https://github.com'
         },
         status: 'published',
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      }
+    ]);
+  }
+
+  if (!mockStorage.getItem('landing_pages')) {
+    mockStorage.setItem('landing_pages', [
+      {
+        id: 'landing-demo-123',
+        user_id: 'user-demo-123',
+        slug: 'sam-tay-nguyen',
+        title: 'Trà Sâm Tây Nguyên',
+        template_id: 'sam-scroll-world',
+        config: {},
+        product_id: '9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb7d',
+        status: 'active',
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString()
       }

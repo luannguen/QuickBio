@@ -211,7 +211,7 @@ export const PublicBioLayout: React.FC<PublicBioLayoutProps> = ({
         )}
 
         {/* Footer (Nút quảng cáo QuickBio - Ẩn đi nếu là Pro/Premium) */}
-        {(!bio.subscription_tier || bio.subscription_tier === 'free') && (
+        {(bio.subscription_tier === 'free' || !bio.hide_watermark) && (
           <div className="text-center pt-10">
             <Button
               onClick={() => {

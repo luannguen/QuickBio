@@ -169,11 +169,11 @@ export function useAdmin() {
     }
   }, []);
 
-  const changeUserPlan = useCallback(async (userId: string, newPlan: string): Promise<{success: boolean, message?: string}> => {
+  const changeUserPlan = useCallback(async (userId: string, newPlan: string, durationMonths?: number): Promise<{success: boolean, message?: string}> => {
     setLoading(true);
     setError(null);
     try {
-      const res = await adminService.updateUserPlan(userId, newPlan);
+      const res = await adminService.updateUserPlan(userId, newPlan, durationMonths);
       if (res.success) {
         // Refresh users list
         const data = await adminService.getAllUsers();

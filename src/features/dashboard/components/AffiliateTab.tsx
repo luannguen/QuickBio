@@ -11,6 +11,8 @@ interface AffiliateTabProps {
   onAffiliateCodeChange: (val: string) => void;
   paymentInfo: string;
   onPaymentInfoChange: (val: string) => void;
+  telegramChatId: string;
+  onTelegramChatIdChange: (val: string) => void;
   affiliateSuccess: boolean;
   onSaveAffiliate: (e: React.FormEvent) => void;
   linkCopied: boolean;
@@ -28,6 +30,8 @@ export const AffiliateTab: React.FC<AffiliateTabProps> = ({
   onAffiliateCodeChange,
   paymentInfo,
   onPaymentInfoChange,
+  telegramChatId,
+  onTelegramChatIdChange,
   affiliateSuccess,
   onSaveAffiliate,
   linkCopied,
@@ -153,9 +157,9 @@ export const AffiliateTab: React.FC<AffiliateTabProps> = ({
           </div>
         )}
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           <div>
-            <label className="block text-xs text-muted-foreground font-semibold mb-2">Mã giới thiệu độc quyền (Viết liền, không dấu)</label>
+            <label className="block text-xs text-muted-foreground font-semibold mb-2">Mã giới thiệu (SaaS/Creator Affiliate)</label>
             <input 
               type="text" 
               value={affiliateCode}
@@ -167,51 +171,95 @@ export const AffiliateTab: React.FC<AffiliateTabProps> = ({
           </div>
 
           <div>
-            <label className="block text-xs text-muted-foreground font-semibold mb-2">Tài khoản nhận tiền (Tên ngân hàng, số TK, chủ TK)</label>
+            <label className="block text-xs text-muted-foreground font-semibold mb-2">Tài khoản nhận tiền (Ngân hàng, STK)</label>
             <input 
               type="text" 
               value={paymentInfo}
               onChange={(e) => onPaymentInfoChange(e.target.value)}
-              placeholder="Ví dụ: MBBank - 0912345678 - NGUYEN VAN A"
+              placeholder="MBBank - 0912345678 - NGUYEN VAN A"
               className="w-full px-4 py-3 rounded-xl text-xs text-foreground glass-input"
               required
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs text-muted-foreground font-semibold mb-2">Telegram Chat ID (Nhận thông báo đơn)</label>
+            <input 
+              type="text" 
+              value={telegramChatId}
+              onChange={(e) => onTelegramChatIdChange(e.target.value)}
+              placeholder="Ví dụ: 123456789 (Lấy từ @userinfobot)"
+              className="w-full px-4 py-3 rounded-xl text-xs text-foreground glass-input"
             />
           </div>
         </div>
 
         {affiliateCode && (
-          <div className="p-4 bg-muted/50 rounded-xl border border-border space-y-2">
-            <span className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider block">Đường dẫn giới thiệu của bạn:</span>
-            <div className="flex gap-2 items-center">
-              <input 
-                type="text" 
-                readOnly 
-                value={`${window.location.origin}/${userSlug || 'luannguyen'}?ref=${affiliateCode}`}
-                className="flex-1 bg-black/40 border border-border rounded-lg px-3 py-2 text-xs font-mono text-brand-orange outline-none"
-              />
-              <button
-                type="button"
-                onClick={() => {
-                  navigator.clipboard.writeText(`${window.location.origin}/${userSlug || 'luannguyen'}?ref=${affiliateCode}`);
-                  onLinkCopiedChange(true);
-                  setTimeout(() => onLinkCopiedChange(false), 1500);
-                }}
-                className={`p-2 rounded-lg transition-all duration-300 flex items-center justify-center gap-1 text-white touch-target min-h-[38px] ${linkCopied ? 'bg-green-500 hover:bg-green-600 scale-105 animate-pulse' : 'bg-brand-orange hover:bg-brand-coral active:scale-95'}`}
-                title="Copy Link"
-              >
-                {linkCopied ? (
-                  <>
-                    <Check className="w-4 h-4 animate-bounce" />
-                    <span className="text-[10px] font-bold px-1 font-sans">Đã copy!</span>
-                  </>
-                ) : (
-                  <Copy className="w-4 h-4" />
-                )}
-              </button>
+          <div className="space-y-4">
+            {/* Box 1: SaaS Affiliate */}
+            <div className="p-4 bg-brand-orange/5 rounded-xl border border-brand-orange/20 space-y-3">
+              <div>
+                <span className="text-[11px] font-bold text-brand-orange uppercase tracking-wider block">1. Link Giới thiệu Nền tảng (SaaS Affiliate)</span>
+                <span className="text-[10px] text-muted-foreground block mt-0.5">
+                  Dán link này vào các bài chia sẻ, MXH. Khách tạo Bio & mua gói Pro/Premium, bạn sẽ được nhận hoa hồng từ QuickBio.
+                </span>
+              </div>
+              <div className="flex gap-2 items-center">
+                <input 
+                  type="text" 
+                  readOnly 
+                  value={`${window.location.origin}/?ref=${affiliateCode}`}
+                  className="flex-1 bg-black/40 border border-border rounded-lg px-3 py-2 text-xs font-mono text-brand-orange outline-none"
+                />
+                <button
+                  type="button"
+                  onClick={() => {
+                    navigator.clipboard.writeText(`${window.location.origin}/?ref=${affiliateCode}`);
+                    onLinkCopiedChange(true);
+                    setTimeout(() => onLinkCopiedChange(false), 1500);
+                  }}
+                  className={`p-2 rounded-lg transition-all duration-300 flex items-center justify-center gap-1 text-white touch-target min-h-[38px] ${linkCopied ? 'bg-green-500 hover:bg-green-600 scale-105 animate-pulse' : 'bg-brand-orange hover:bg-brand-coral active:scale-95'}`}
+                  title="Copy Link"
+                >
+                  {linkCopied ? (
+                    <>
+                      <Check className="w-4 h-4 animate-bounce" />
+                      <span className="text-[10px] font-bold px-1 font-sans">Đã copy!</span>
+                    </>
+                  ) : (
+                    <Copy className="w-4 h-4" />
+                  )}
+                </button>
+              </div>
             </div>
-            <span className="text-[9px] text-muted-foreground block">
-              Khi CTV mang link này đi chia sẻ, khách hàng mua sản phẩm trên Bio cá nhân của bạn, CTV sẽ được hệ thống phân phối hoa hồng tự động.
-            </span>
+
+            {/* Box 2: Creator Affiliate */}
+            <div className="p-4 bg-muted/50 rounded-xl border border-border space-y-3">
+              <div>
+                <span className="text-[11px] font-bold text-foreground uppercase tracking-wider block">2. Link cho Cộng tác viên (Bán hộ Khóa học/Sản phẩm)</span>
+                <span className="text-[10px] text-muted-foreground block mt-0.5">
+                  Cấp cấu trúc link này cho CTV của bạn đi bán hàng. CTV thay `MA_CUA_CTV` bằng mã của họ. Khi có đơn, hoa hồng sẽ chia tự động.
+                </span>
+              </div>
+              <div className="flex gap-2 items-center">
+                <input 
+                  type="text" 
+                  readOnly 
+                  value={`${window.location.origin}/${userSlug || 'luannguyen'}?ref=MA_CUA_CTV`}
+                  className="flex-1 bg-black/40 border border-border rounded-lg px-3 py-2 text-xs font-mono text-muted-foreground outline-none"
+                />
+                <button
+                  type="button"
+                  onClick={() => {
+                    navigator.clipboard.writeText(`${window.location.origin}/${userSlug || 'luannguyen'}?ref=MA_CUA_CTV`);
+                  }}
+                  className="p-2 rounded-lg transition-all duration-300 flex items-center justify-center gap-1 text-white touch-target min-h-[38px] bg-slate-700 hover:bg-slate-600 active:scale-95"
+                  title="Copy Cấu trúc Link"
+                >
+                  <Copy className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
           </div>
         )}
 
