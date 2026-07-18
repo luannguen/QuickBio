@@ -3,7 +3,7 @@ import { Sparkles, AlertTriangle, Loader2, Copy } from 'lucide-react';
 import { useToastStore } from "@/shared/stores/useToastStore";
 
 interface AiContentTabProps {
-  userPlan: 'free' | 'pro';
+  userPlan: 'free' | 'pro' | 'premium';
   aiTopic: string;
   onAiTopicChange: (val: string) => void;
   aiChannel: string;

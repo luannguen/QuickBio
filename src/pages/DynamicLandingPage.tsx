@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { bioService } from "@/entities/bio/api";
-import { landingService, LandingPage } from "@/entities/landing/api";
+import { landingService } from "@/entities/landing/api";
+import type { LandingPage } from "@/entities/landing/api";
 import { SamTayNguyenLanding } from './SamTayNguyenLanding';
 
 interface DynamicLandingPageProps {

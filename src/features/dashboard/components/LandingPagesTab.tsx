@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { landingService, LandingPage } from '@/entities/landing/api';
+import { landingService } from '@/entities/landing/api';
+import type { LandingPage } from '@/entities/landing/api';
 import { Button } from '@/shared/ui/Button';
 import { useToastStore } from '@/shared/stores/useToastStore';
 import { Plus, LayoutTemplate, Globe, Edit, Trash2, ShieldAlert } from 'lucide-react';

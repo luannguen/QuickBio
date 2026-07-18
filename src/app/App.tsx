@@ -50,7 +50,6 @@ function App() {
     return 'landing';
   };
 
-  const initialSlug = getSlugFromPath();
   const [view, setView] = useState<ViewType>(getInitialView());
   const [activeSlug, setActiveSlug] = useState<string>(() => {
     const path = window.location.pathname.replace(/^\/|\/$/g, '');
