@@ -199,46 +199,65 @@ export const AffiliateTab: React.FC<AffiliateTabProps> = ({
             {/* Box 1: SaaS Affiliate */}
             <div className="p-4 bg-brand-orange/5 rounded-xl border border-brand-orange/20 space-y-3">
               <div>
-                <span className="text-[11px] font-bold text-brand-orange uppercase tracking-wider block">1. Link Giới thiệu Nền tảng (SaaS Affiliate)</span>
+                <span className="text-[11px] font-bold text-brand-orange uppercase tracking-wider block">1. Giới thiệu nền tảng QuickBio (Nhận hoa hồng từ hệ thống)</span>
                 <span className="text-[10px] text-muted-foreground block mt-0.5">
-                  Dán link này vào các bài chia sẻ, MXH. Khách tạo Bio & mua gói Pro/Premium, bạn sẽ được nhận hoa hồng từ QuickBio.
+                  Gắn link trang chủ hoặc link trang Bio của bạn lên mạng xã hội. Nếu người xem đăng ký tài khoản và nâng cấp VIP, bạn sẽ nhận được hoa hồng!
                 </span>
               </div>
-              <div className="flex gap-2 items-center">
-                <input 
-                  type="text" 
-                  readOnly 
-                  value={`${window.location.origin}/?ref=${affiliateCode}`}
-                  className="flex-1 bg-black/40 border border-border rounded-lg px-3 py-2 text-xs font-mono text-brand-orange outline-none"
-                />
-                <button
-                  type="button"
-                  onClick={() => {
-                    navigator.clipboard.writeText(`${window.location.origin}/?ref=${affiliateCode}`);
-                    onLinkCopiedChange(true);
-                    setTimeout(() => onLinkCopiedChange(false), 1500);
-                  }}
-                  className={`p-2 rounded-lg transition-all duration-300 flex items-center justify-center gap-1 text-white touch-target min-h-[38px] ${linkCopied ? 'bg-green-500 hover:bg-green-600 scale-105 animate-pulse' : 'bg-brand-orange hover:bg-brand-coral active:scale-95'}`}
-                  title="Copy Link"
-                >
-                  {linkCopied ? (
-                    <>
-                      <Check className="w-4 h-4 animate-bounce" />
-                      <span className="text-[10px] font-bold px-1 font-sans">Đã copy!</span>
-                    </>
-                  ) : (
-                    <Copy className="w-4 h-4" />
-                  )}
-                </button>
+              
+              <div className="space-y-2">
+                <div className="flex gap-2 items-center">
+                  <span className="text-[10px] font-semibold w-16 text-muted-foreground">Trang chủ:</span>
+                  <input 
+                    type="text" 
+                    readOnly 
+                    value={`${window.location.origin}/?ref=${affiliateCode}`}
+                    className="flex-1 bg-black/40 border border-border rounded-lg px-3 py-2 text-[10px] sm:text-xs font-mono text-brand-orange outline-none"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      navigator.clipboard.writeText(`${window.location.origin}/?ref=${affiliateCode}`);
+                      onLinkCopiedChange(true);
+                      setTimeout(() => onLinkCopiedChange(false), 1500);
+                    }}
+                    className={`p-1.5 sm:p-2 rounded-lg transition-all duration-300 flex items-center justify-center gap-1 text-white touch-target min-h-[38px] ${linkCopied ? 'bg-green-500 hover:bg-green-600 scale-105' : 'bg-brand-orange hover:bg-brand-coral active:scale-95'}`}
+                    title="Copy Link"
+                  >
+                    {linkCopied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                  </button>
+                </div>
+                
+                <div className="flex gap-2 items-center">
+                  <span className="text-[10px] font-semibold w-16 text-muted-foreground">Trang Bio:</span>
+                  <input 
+                    type="text" 
+                    readOnly 
+                    value={`${window.location.origin}/${userSlug || 'luannguyen'}?ref=${affiliateCode}`}
+                    className="flex-1 bg-black/40 border border-border rounded-lg px-3 py-2 text-[10px] sm:text-xs font-mono text-brand-orange outline-none"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      navigator.clipboard.writeText(`${window.location.origin}/${userSlug || 'luannguyen'}?ref=${affiliateCode}`);
+                      onLinkCopiedChange(true);
+                      setTimeout(() => onLinkCopiedChange(false), 1500);
+                    }}
+                    className={`p-1.5 sm:p-2 rounded-lg transition-all duration-300 flex items-center justify-center gap-1 text-white touch-target min-h-[38px] ${linkCopied ? 'bg-green-500 hover:bg-green-600 scale-105' : 'bg-brand-orange hover:bg-brand-coral active:scale-95'}`}
+                    title="Copy Link"
+                  >
+                    {linkCopied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                  </button>
+                </div>
               </div>
             </div>
 
             {/* Box 2: Creator Affiliate */}
             <div className="p-4 bg-muted/50 rounded-xl border border-border space-y-3">
               <div>
-                <span className="text-[11px] font-bold text-foreground uppercase tracking-wider block">2. Link cho Cộng tác viên (Bán hộ Khóa học/Sản phẩm)</span>
+                <span className="text-[11px] font-bold text-foreground uppercase tracking-wider block">2. Giới thiệu sản phẩm của bạn (CTV Bán hộ)</span>
                 <span className="text-[10px] text-muted-foreground block mt-0.5">
-                  Cấp cấu trúc link này cho CTV của bạn đi bán hàng. CTV thay `MA_CUA_CTV` bằng mã của họ. Khi có đơn, hoa hồng sẽ chia tự động.
+                  Gửi cấu trúc link này cho CTV của bạn. CTV thay <strong>MA_CUA_CTV</strong> bằng mã của họ. Khi có khách mua hàng từ link này, hoa hồng sẽ chia tự động qua SePay.
                 </span>
               </div>
               <div className="flex gap-2 items-center">
@@ -246,7 +265,7 @@ export const AffiliateTab: React.FC<AffiliateTabProps> = ({
                   type="text" 
                   readOnly 
                   value={`${window.location.origin}/${userSlug || 'luannguyen'}?ref=MA_CUA_CTV`}
-                  className="flex-1 bg-black/40 border border-border rounded-lg px-3 py-2 text-xs font-mono text-muted-foreground outline-none"
+                  className="flex-1 bg-black/40 border border-border rounded-lg px-3 py-2 text-[10px] sm:text-xs font-mono text-muted-foreground outline-none"
                 />
                 <button
                   type="button"

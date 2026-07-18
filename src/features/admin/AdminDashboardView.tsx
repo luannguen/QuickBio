@@ -404,9 +404,15 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
                           <option value="pro">PRO</option>
                           <option value="premium">PREMIUM</option>
                         </select>
-                        {u.plan !== 'free' && u.plan_expires_at && (
-                          <div className="text-[10px] text-semantic-muted">
-                            HSD: {new Date(u.plan_expires_at).toLocaleDateString('vi-VN')}
+                        {u.plan !== 'free' && (
+                          <div className="text-[10px] text-semantic-muted space-y-0.5 mt-1">
+                            {u.plan_purchased_at && <div>Mua: {new Date(u.plan_purchased_at).toLocaleDateString('vi-VN')}</div>}
+                            {u.plan_expires_at && (
+                              <div className={new Date(u.plan_expires_at) < new Date() ? 'text-semantic-error font-bold' : ''}>
+                                HSD: {new Date(u.plan_expires_at).toLocaleDateString('vi-VN')}
+                                {new Date(u.plan_expires_at) >= new Date() && ` (Còn ${Math.ceil((new Date(u.plan_expires_at).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))} ngày)`}
+                              </div>
+                            )}
                           </div>
                         )}
                       </div>

@@ -21,9 +21,11 @@ import {
 
 interface DashboardViewProps {
   activeTab: 'products' | 'orders' | 'sepay' | 'affiliate' | 'ai-content' | 'marketing' | 'articles' | 'analytics' | 'landing';
-  setActiveTab: (tab: 'products' | 'orders' | 'sepay' | 'affiliate' | 'ai-content' | 'marketing' | 'articles' | 'analytics' | 'landing') => void;
+  setActiveTab: React.Dispatch<React.SetStateAction<"products" | "orders" | "sepay" | "affiliate" | "ai-content" | "marketing" | "articles" | "analytics" | "landing">>;
   user: any;
   userPlan: 'free' | 'pro' | 'premium';
+  planPurchasedAt?: string;
+  planExpiresAt?: string;
   products: Product[];
   orders: Order[];
   pendingOrders: Order[];
@@ -126,6 +128,8 @@ export const DashboardView: React.FC<DashboardViewProps> = (props) => {
     setActiveTab,
     user,
     userPlan,
+    planPurchasedAt,
+    planExpiresAt,
     products,
     orders,
     userSlug,
@@ -395,6 +399,35 @@ export const DashboardView: React.FC<DashboardViewProps> = (props) => {
           </div>
         )}
       </Card>
+
+      {/* Plan Tracking Card */}
+      {userPlan !== 'free' && (
+        <Card className="p-4 lg:p-6 space-y-3 relative overflow-hidden border-brand-orange/30 bg-gradient-to-r from-brand-orange/5 to-transparent">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div>
+              <h3 className="text-sm font-bold text-brand-orange flex items-center gap-2">
+                <Sparkles className="w-4 h-4" />
+                Đang sử dụng Gói {userPlan === 'premium' ? 'PREMIUM' : 'PRO'}
+              </h3>
+              <p className="text-xs text-semantic-muted mt-1">
+                {planPurchasedAt && `Ngày đăng ký: ${new Date(planPurchasedAt).toLocaleDateString('vi-VN')} `}
+                {planPurchasedAt && planExpiresAt && '| '}
+                {planExpiresAt && `Hết hạn: ${new Date(planExpiresAt).toLocaleDateString('vi-VN')}`}
+              </p>
+            </div>
+            {planExpiresAt && (
+              <div className="bg-background/50 backdrop-blur-md px-4 py-2 rounded-xl border border-border flex items-center gap-3">
+                <div className="text-right">
+                  <div className="text-[10px] text-semantic-muted font-bold uppercase tracking-wider">Thời gian còn lại</div>
+                  <div className="text-xl font-extrabold text-foreground leading-tight">
+                    {getDaysRemaining(planExpiresAt)} <span className="text-xs font-medium text-semantic-muted">ngày</span>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </Card>
+      )}
 
       {/* Stats cards grid */}
       <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">

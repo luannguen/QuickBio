@@ -120,6 +120,10 @@ export const Dashboard: React.FC<DashboardProps> = ({
   const [mktTestSuccess, setMktTestSuccess] = useState('');
   const [mktTestError, setMktTestError] = useState('');
 
+  // Plan info state
+  const [planPurchasedAt, setPlanPurchasedAt] = useState('');
+  const [planExpiresAt, setPlanExpiresAt] = useState('');
+
   // Load toàn bộ dữ liệu
   const loadDashboardData = async () => {
     if (!user) return;
@@ -173,7 +177,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
       if (isSupabaseConfigured && supabase) {
         const { data: profile } = await supabase
           .from('profiles')
-          .select('affiliate_code, payment_info, plan_tier, plan_expires_at, telegram_chat_id')
+          .select('affiliate_code, payment_info, plan_tier, plan_purchased_at, plan_expires_at, telegram_chat_id')
           .eq('id', user.id)
           .single();
         
@@ -190,6 +194,8 @@ export const Dashboard: React.FC<DashboardProps> = ({
             }
           }
           setUserPlan(tier as any);
+          setPlanPurchasedAt(profile.plan_purchased_at || '');
+          setPlanExpiresAt(profile.plan_expires_at || '');
         }
 
         const { data: luanBio } = await supabase
@@ -693,6 +699,8 @@ Giọng điệu: ${aiTone === 'expert' ? 'Chuyên sâu, logic' : aiTone === 'fun
     setActiveTab,
     user,
     userPlan,
+    planPurchasedAt,
+    planExpiresAt,
     products,
     orders,
     articles,
