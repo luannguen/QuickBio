@@ -3,8 +3,8 @@ import type { BioBlock } from '@/entities/bio/api';
 import type { Product } from '@/entities/product/api';
 import { ExternalLink, ShoppingBag, Timer, Send, CheckCircle2 } from 'lucide-react';
 import { Button } from '@/shared/ui/Button';
-
 import { analyticsService } from '@/entities/analytics/api';
+import { leadService } from '@/entities/lead/api';
 
 interface BioBlocksRendererProps {
   userId?: string;
@@ -84,7 +84,7 @@ const LeadFormRenderer: React.FC<{ block: BioBlock; style: any; accentColor: str
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email) return;
     setLoading(true);
@@ -96,14 +96,17 @@ const LeadFormRenderer: React.FC<{ block: BioBlock; style: any; accentColor: str
         block_id: block.id,
         metadata: { email }
       });
-    }
 
-    // Giả lập call API / Webhook
-    setTimeout(() => {
-      setLoading(false);
-      setSubmitted(true);
-      // Nếu có webhook_url, trong thực tế sẽ fetch post ở đây
-    }, 1000);
+      // Submit lead to DB
+      const success = await leadService.submitLead(userId, email, block.id);
+      if (success) {
+        setSubmitted(true);
+      } else {
+        alert("Có lỗi xảy ra, vui lòng thử lại sau!");
+      }
+    }
+    
+    setLoading(false);
   };
 
   return (
