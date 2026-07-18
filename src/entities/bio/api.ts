@@ -47,6 +47,28 @@ export interface BioLink {
   updated_at: string;
 }
 
+const migrateLegacyBlocks = (data: any): BioLink => {
+  let finalBlocks = data.blocks || [];
+  
+  if (finalBlocks.length === 0 && data.links && data.links.length > 0) {
+    finalBlocks = data.links.map((l: any) => ({
+      id: crypto.randomUUID(),
+      type: 'LINK',
+      title: l.title,
+      url: l.url,
+      is_visible: l.is_visible !== false
+    }));
+  }
+
+  const profileData = data.profiles as any;
+  return {
+    ...data,
+    blocks: finalBlocks,
+    avatar_url: profileData?.avatar_url || '',
+    subscription_tier: profileData?.plan_tier || 'free'
+  } as BioLink;
+};
+
 export const bioService = {
   // Lấy Bio-Link bằng slug (dành cho trang xem công khai)
   getBioBySlug: async (slug: string): Promise<BioLink | null> => {
@@ -64,16 +86,11 @@ export const bioService = {
       }
       if (!data) return null;
 
-      const profileData = data.profiles as any;
-      return {
-        ...data,
-        avatar_url: profileData?.avatar_url || '',
-        subscription_tier: profileData?.plan_tier || 'free'
-      } as BioLink;
+      return migrateLegacyBlocks(data);
     } else {
       const bioLinks = mockDb.get('bio_links');
       const bio = bioLinks.find((b: any) => b.slug === slug.toLowerCase() && b.status === 'published');
-      return bio || null;
+      return bio ? migrateLegacyBlocks(bio) : null;
     }
   },
 
@@ -92,16 +109,11 @@ export const bioService = {
       }
       if (!data) return null;
 
-      const profileData = data.profiles as any;
-      return {
-        ...data,
-        avatar_url: profileData?.avatar_url || '',
-        subscription_tier: profileData?.plan_tier || 'free'
-      } as BioLink;
+      return migrateLegacyBlocks(data);
     } else {
       const bioLinks = mockDb.get('bio_links');
       const bio = bioLinks.find((b: any) => b.user_id === userId);
-      return bio || null;
+      return bio ? migrateLegacyBlocks(bio) : null;
     }
   },
 

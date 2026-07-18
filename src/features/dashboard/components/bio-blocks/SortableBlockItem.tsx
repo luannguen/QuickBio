@@ -3,16 +3,18 @@ import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { GripVertical, Edit2, Trash2, Link as LinkIcon, ShoppingBag, Type, Play, Eye, EyeOff, Timer, Mail } from 'lucide-react';
 import type { BioBlock } from '@/entities/bio/api';
+import type { Product } from '@/entities/product/api';
 
 interface SortableBlockItemProps {
   id: string;
   block: BioBlock;
+  products?: Product[];
   onEdit: (block: BioBlock) => void;
   onDelete: (id: string) => void;
   onToggleVisibility: (id: string) => void;
 }
 
-export const SortableBlockItem: React.FC<SortableBlockItemProps> = ({ id, block, onEdit, onDelete, onToggleVisibility }) => {
+export const SortableBlockItem: React.FC<SortableBlockItemProps> = ({ id, block, products = [], onEdit, onDelete, onToggleVisibility }) => {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id });
   
   const style = {
@@ -61,7 +63,9 @@ export const SortableBlockItem: React.FC<SortableBlockItemProps> = ({ id, block,
           {block.title || (block.type === 'PRODUCT' ? 'Khối Sản phẩm' : 'Khối Liên kết')}
         </h4>
         <p className="text-[10px] text-muted-foreground truncate">
-          {block.type === 'PRODUCT' ? `Product ID: ${block.product_id}` : block.url || block.content || '...'}
+          {block.type === 'PRODUCT' 
+            ? (products.find(p => p.id === block.product_id)?.name || 'Chưa chọn sản phẩm') 
+            : block.url || block.content || block.discount_text || '...'}
         </p>
       </div>
 

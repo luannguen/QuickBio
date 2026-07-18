@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useBioBuilder } from "@/shared/hooks/useBioBuilder";
 import { bioService } from "@/entities/bio/api";
+import { productService, Product } from "@/entities/product/api";
 import { 
   Sparkles, 
   Save, 
@@ -35,10 +36,16 @@ export const BioBuilder: React.FC<BioBuilderProps> = ({ userId, onNavigateToDash
   const [slugInput, setSlugInput] = useState('');
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [products, setProducts] = useState<Product[]>([]);
 
   // Load Bio khi render
   useEffect(() => {
     loadBio(userId);
+    const fetchProducts = async () => {
+      const prods = await productService.getProductsByUserId(userId);
+      setProducts(prods);
+    };
+    fetchProducts();
   }, [userId, loadBio]);
 
   // Đồng bộ slug input khi bio load xong
@@ -387,6 +394,7 @@ export const BioBuilder: React.FC<BioBuilderProps> = ({ userId, onNavigateToDash
             </h3>
             <BioBlocksEditor 
               blocks={bio.blocks || []} 
+              products={products}
               onChange={(newBlocks) => updateBioFields({ blocks: newBlocks })} 
             />
           </div>

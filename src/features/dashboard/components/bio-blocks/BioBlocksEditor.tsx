@@ -16,15 +16,17 @@ import {
 } from '@dnd-kit/sortable';
 import { Plus } from 'lucide-react';
 import type { BioBlock, BioBlockType } from '@/entities/bio/api';
+import type { Product } from '@/entities/product/api';
 import { SortableBlockItem } from './SortableBlockItem';
 import { Button } from '@/shared/ui/Button';
 
 interface BioBlocksEditorProps {
   blocks: BioBlock[];
+  products?: Product[];
   onChange: (blocks: BioBlock[]) => void;
 }
 
-export const BioBlocksEditor: React.FC<BioBlocksEditorProps> = ({ blocks, onChange }) => {
+export const BioBlocksEditor: React.FC<BioBlocksEditorProps> = ({ blocks, products = [], onChange }) => {
   const [isEditing, setIsEditing] = useState<string | null>(null);
 
   const sensors = useSensors(
@@ -101,6 +103,18 @@ export const BioBlocksEditor: React.FC<BioBlocksEditorProps> = ({ blocks, onChan
                  onChange={(e) => onChange(blocks.map(b => b.id === isEditing ? { ...b, url: e.target.value } : b))}
                />
              )}
+             {blocks.find(b => b.id === isEditing)?.type === 'PRODUCT' && (
+               <select 
+                 className="w-full px-3 py-2 text-xs rounded-lg glass-input text-foreground bg-background"
+                 value={blocks.find(b => b.id === isEditing)?.product_id || ''}
+                 onChange={(e) => onChange(blocks.map(b => b.id === isEditing ? { ...b, product_id: e.target.value } : b))}
+               >
+                 <option value="">-- Chọn sản phẩm --</option>
+                 {products.map(p => (
+                   <option key={p.id} value={p.id}>{p.name}</option>
+                 ))}
+               </select>
+             )}
              {blocks.find(b => b.id === isEditing)?.type === 'COUNTDOWN' && (
                <>
                  <input 
@@ -159,6 +173,7 @@ export const BioBlocksEditor: React.FC<BioBlocksEditorProps> = ({ blocks, onChan
                   key={block.id}
                   id={block.id}
                   block={block}
+                  products={products}
                   onEdit={(b) => setIsEditing(b.id)}
                   onDelete={handleDeleteBlock}
                   onToggleVisibility={handleToggleVisibility}
