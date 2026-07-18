@@ -53,7 +53,7 @@ export const bioService = {
     if (isSupabaseConfigured && supabase) {
       const { data, error } = await supabase
         .from('bio_links')
-        .select('*, profiles(avatar_url, subscription_tier)')
+        .select('*, profiles(avatar_url, plan_tier)')
         .eq('slug', slug.toLowerCase())
         .eq('status', 'published')
         .maybeSingle();
@@ -68,7 +68,7 @@ export const bioService = {
       return {
         ...data,
         avatar_url: profileData?.avatar_url || '',
-        subscription_tier: profileData?.subscription_tier || 'free'
+        subscription_tier: profileData?.plan_tier || 'free'
       } as BioLink;
     } else {
       const bioLinks = mockDb.get('bio_links');
@@ -82,7 +82,7 @@ export const bioService = {
     if (isSupabaseConfigured && supabase) {
       const { data, error } = await supabase
         .from('bio_links')
-        .select('*, profiles(avatar_url, subscription_tier)')
+        .select('*, profiles(avatar_url, plan_tier)')
         .eq('user_id', userId)
         .maybeSingle();
 
@@ -96,7 +96,7 @@ export const bioService = {
       return {
         ...data,
         avatar_url: profileData?.avatar_url || '',
-        subscription_tier: profileData?.subscription_tier || 'free'
+        subscription_tier: profileData?.plan_tier || 'free'
       } as BioLink;
     } else {
       const bioLinks = mockDb.get('bio_links');
