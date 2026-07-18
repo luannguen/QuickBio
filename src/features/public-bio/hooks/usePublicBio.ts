@@ -4,6 +4,7 @@ import type { BioLink } from "@/entities/bio/api";
 import { productService } from "@/entities/product/api";
 import type { Product } from "@/entities/product/api";
 import { articleService } from "@/entities/article/api";
+import { analyticsService } from "@/entities/analytics/api";
 import { useCountdown } from './useCountdown';
 import { useSocialProof } from './useSocialProof';
 
@@ -31,6 +32,12 @@ export const usePublicBio = (slug: string) => {
         const bioData = await bioService.getBioBySlug(slug);
         if (bioData) {
           setBio(bioData);
+          
+          // Log analytics VIEW event
+          analyticsService.logEvent({
+            user_id: bioData.user_id,
+            event_type: 'VIEW',
+          });
           
           // Fetch products and articles concurrently
           const [productsData, articlesData] = await Promise.all([

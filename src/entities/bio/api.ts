@@ -1,5 +1,23 @@
 import { supabase, isSupabaseConfigured, mockDb } from "@/shared/api/supabase";
 
+export type BioBlockType = 'LINK' | 'PRODUCT' | 'TEXT' | 'YOUTUBE' | 'COUNTDOWN' | 'LEAD_FORM';
+
+export interface BioBlock {
+  id: string;
+  type: BioBlockType;
+  title?: string;
+  url?: string;
+  product_id?: string;
+  content?: string;
+  is_visible: boolean;
+  // For COUNTDOWN
+  expires_at?: string; // ISO date string
+  discount_text?: string;
+  // For LEAD_FORM
+  button_text?: string;
+  webhook_url?: string;
+}
+
 export interface BioLink {
   id: string;
   user_id: string;
@@ -7,6 +25,7 @@ export interface BioLink {
   title: string;
   bio_text: string;
   avatar_url: string; // Thêm avatar_url
+  subscription_tier?: string; // Thêm subscription_tier để kiểm tra gói (Free/Pro)
   theme: {
     background: string;
     textColor: string;
@@ -21,6 +40,7 @@ export interface BioLink {
     instagram?: string;
     twitter?: string;
   };
+  blocks?: BioBlock[]; // Hệ thống Block kéo thả mới
   status: 'draft' | 'published';
   created_at: string;
   updated_at: string;
@@ -32,7 +52,7 @@ export const bioService = {
     if (isSupabaseConfigured && supabase) {
       const { data, error } = await supabase
         .from('bio_links')
-        .select('*, profiles(avatar_url)')
+        .select('*, profiles(avatar_url, subscription_tier)')
         .eq('slug', slug.toLowerCase())
         .eq('status', 'published')
         .maybeSingle();
@@ -46,7 +66,8 @@ export const bioService = {
       const profileData = data.profiles as any;
       return {
         ...data,
-        avatar_url: profileData?.avatar_url || ''
+        avatar_url: profileData?.avatar_url || '',
+        subscription_tier: profileData?.subscription_tier || 'free'
       } as BioLink;
     } else {
       const bioLinks = mockDb.get('bio_links');
@@ -60,7 +81,7 @@ export const bioService = {
     if (isSupabaseConfigured && supabase) {
       const { data, error } = await supabase
         .from('bio_links')
-        .select('*, profiles(avatar_url)')
+        .select('*, profiles(avatar_url, subscription_tier)')
         .eq('user_id', userId)
         .maybeSingle();
 
@@ -73,7 +94,8 @@ export const bioService = {
       const profileData = data.profiles as any;
       return {
         ...data,
-        avatar_url: profileData?.avatar_url || ''
+        avatar_url: profileData?.avatar_url || '',
+        subscription_tier: profileData?.subscription_tier || 'free'
       } as BioLink;
     } else {
       const bioLinks = mockDb.get('bio_links');
@@ -96,6 +118,7 @@ export const bioService = {
         accentColor: '#FF6B35'
       },
       social_links: {},
+      blocks: [],
       status: 'draft'
     };
 

@@ -14,3 +14,10 @@
 - **Zero-Trust Backend**: Luôn validate inputs kể cả từ phía Client lẫn Database.
 - **Row Level Security (RLS)**: Bắt buộc cấu hình RLS trong Supabase cho các bảng có dữ liệu Tenant.
 - Không bao giờ hardcode API Keys, Supabase URL vào source code, dùng Environment Variables (`import.meta.env`).
+
+## 4. Giao diện & Trải nghiệm (UI/UX) - Bắt buộc
+- **Tuân thủ tuyệt đối**: Mọi đoạn code sinh ra có dính đến View/Giao diện đều phải tuân thủ nghiêm ngặt `rule/UI-UX-DESIGN-RULESET.md`.
+- **Tư duy Component Pattern**: Không code cứng Layout. Phải nhận diện UI đó thuộc Component Pattern nào (Modal, Bottom Sheet, Drawer, Sticky ActionBar) để bóc tách thành UI components (hoặc tái sử dụng các components trong thư mục `src/shared/ui`).
+- **Ưu tiên Mobile (Mobile-first)**: Default base classes dành cho Mobile, breakpoints (`md:`, `lg:`) dành cho PC. Kích thước tương tác tối thiểu 44px.
+- **Chỉn chu từng chi tiết**: Mọi khoảng cách (gap, padding, margin) phải dùng token chuẩn của Tailwind, các hiệu ứng click/hover/focus phải đầy đủ và mượt mà (`active:scale-95`, v.v.).
+

@@ -13,6 +13,7 @@ import {
   Link as LinkIcon 
 } from 'lucide-react';
 import { MediaPicker } from "@/shared/components/media/MediaPicker";
+import { BioBlocksEditor } from "@/features/dashboard/components/bio-blocks/BioBlocksEditor";
 interface BioBuilderProps {
   userId: string;
   onNavigateToDashboard: () => void;
@@ -350,6 +351,18 @@ export const BioBuilder: React.FC<BioBuilderProps> = ({ userId, onNavigateToDash
                 </div>
               ))}
             </div>
+          </div>
+
+          {/* Section 4: Khối Nội dung (Sản phẩm & Links) */}
+          <div className="space-y-4">
+            <h3 className="text-sm font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-2 border-b border-border pb-2">
+              <Layout className="w-4 h-4 text-brand-orange" />
+              4. Quản lý Khối Nội dung (Kéo thả)
+            </h3>
+            <BioBlocksEditor 
+              blocks={bio.blocks || []} 
+              onChange={(newBlocks) => updateBioFields({ blocks: newBlocks })} 
+            />
           </div>
 
           {/* Trạng thái xuất bản */}

@@ -7,6 +7,7 @@ import { ProfileHeader } from './ProfileHeader';
 import { SocialLinks } from './SocialLinks';
 import { ProductHero } from './ProductHero';
 import { ProductGrid } from './ProductGrid';
+import { BioBlocksRenderer } from './BioBlocksRenderer';
 import { CheckoutModal } from '../../../components/CheckoutModal';
 import { Button } from "@/shared/ui/Button";
 
@@ -75,7 +76,21 @@ export const PublicBioLayout: React.FC<PublicBioLayoutProps> = ({
         <ProfileHeader avatarUrl={bio.avatar_url} title={bio.title} bioText={bio.bio_text} />
 
         {/* Social Links */}
-        <SocialLinks socialLinks={bio.social_links} />
+        <SocialLinks socialLinks={bio.social_links} userId={bio.user_id} />
+
+        {/* Custom Drag & Drop Blocks */}
+        {bio.blocks && bio.blocks.length > 0 && (
+          <div className="py-2 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-100">
+            <BioBlocksRenderer 
+              userId={bio.user_id}
+              blocks={bio.blocks} 
+              products={products} 
+              onSelectProduct={setActiveProduct}
+              accentColor={bio.theme?.accentColor}
+              glassmorphism={bio.theme?.glassmorphism}
+            />
+          </div>
+        )}
 
         {/* Unified Storefront Tabs */}
         <div className="flex bg-black/20 backdrop-blur-md rounded-2xl p-1 border border-border/50">
@@ -195,22 +210,24 @@ export const PublicBioLayout: React.FC<PublicBioLayoutProps> = ({
           </div>
         )}
 
-        {/* Footer (Nút quảng cáo QuickBio) */}
-        <div className="text-center pt-10">
-          <Button
-            onClick={() => {
-              if (bio?.user_id) {
-                localStorage.setItem('quickbio_referrer', bio.user_id);
-              }
-              onNavigateToLanding?.();
-            }}
-            variant="ghost"
-            className="rounded-full glass-panel border border-border text-xs text-muted-foreground hover:text-foreground hover:bg-muted/50 min-h-[44px]"
-          >
-            <Sparkles className="w-3.5 h-3.5 text-brand-orange mr-2" />
-            <span>Tạo Bio Link & DigiStore miễn phí</span>
-          </Button>
-        </div>
+        {/* Footer (Nút quảng cáo QuickBio - Ẩn đi nếu là Pro/Premium) */}
+        {(!bio.subscription_tier || bio.subscription_tier === 'free') && (
+          <div className="text-center pt-10">
+            <Button
+              onClick={() => {
+                if (bio?.user_id) {
+                  localStorage.setItem('quickbio_referrer', bio.user_id);
+                }
+                onNavigateToLanding?.();
+              }}
+              variant="ghost"
+              className="rounded-full glass-panel border border-border text-xs text-muted-foreground hover:text-foreground hover:bg-muted/50 min-h-[44px]"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-brand-orange mr-2" />
+              <span>⚡ Powered by QuickBio</span>
+            </Button>
+          </div>
+        )}
 
         {/* Checkout Modal */}
         {activeProduct && (

@@ -38,7 +38,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
   const toast = useToastStore();
   const confirm = useConfirm();
 
-  const [activeTab, setActiveTab] = useState<'products' | 'orders' | 'sepay' | 'affiliate' | 'ai-content' | 'marketing' | 'articles'>('products');
+  const [activeTab, setActiveTab] = useState<'products' | 'orders' | 'sepay' | 'affiliate' | 'ai-content' | 'marketing' | 'articles' | 'analytics'>('products');
   const [products, setProducts] = useState<Product[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
   const [articles, setArticles] = useState<any[]>([]);
