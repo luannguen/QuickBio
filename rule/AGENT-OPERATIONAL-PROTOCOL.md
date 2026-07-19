@@ -1,7 +1,7 @@
 # 🌌 A.A.P v3.0 - AGENT OPERATIONAL PROTOCOL
 
 ## 1. Các Phase Kích hoạt (Triggers)
-- **Phase 1: TIẾP NHẬN & TƯ DUY** -> Kích hoạt khi nhận Task mới. Đọc `AGENTIC-BEHAVIOR.md` & `GOALS.md`.
+- **Phase 1: TIẾP NHẬN & TƯ DUY** -> Kích hoạt khi nhận Task mới. Đọc `AGENTIC-BEHAVIOR.md` & `GOALS.md`. Lên kế hoạch cấu trúc luồng dữ liệu (Data Flow), phát hiện và ngăn chặn API Waterfall bằng cách thiết kế SQL RPCs ngay từ bước này.
 - **Phase 2: QUẢN TRỊ & QUY TRÌNH** -> Kích hoạt khi lập Plan/Task. Cập nhật `PROJECT-CONTEXT.md` & `DECISION-LOG.md`.
 - **Phase 3: THỰC THI & CODING** -> Kích hoạt trước khi viết code (`write_to_file`, `replace_file_content`). Bắt buộc đọc `AI-CODING-RULES.md`.
 

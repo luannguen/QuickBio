@@ -21,3 +21,7 @@
 - **Ưu tiên Mobile (Mobile-first)**: Default base classes dành cho Mobile, breakpoints (`md:`, `lg:`) dành cho PC. Kích thước tương tác tối thiểu 44px.
 - **Chỉn chu từng chi tiết**: Mọi khoảng cách (gap, padding, margin) phải dùng token chuẩn của Tailwind, các hiệu ứng click/hover/focus phải đầy đủ và mượt mà (`active:scale-95`, v.v.).
 
+## 5. Tối ưu Hiệu suất (Performance & Data Fetching) - Bắt buộc
+- **SWR (Stale-While-Revalidate)**: BẮT BUỘC dùng `swr` cho các tác vụ lấy dữ liệu. Tuyệt đối không dùng `useEffect` + `useState` thủ công để fetch data gây Waterfall.
+- **Single-Query RPC**: Nếu một View cần dữ liệu từ 2 bảng trở lên, KHÔNG ĐƯỢC gọi nhiều API từ Client. BẮT BUỘC thiết kế 1 hàm `RPC (Stored Procedure)` trên Supabase để gom toàn bộ dữ liệu trả về trong 1 query duy nhất.
+- **Skeleton Screens**: Sử dụng Skeleton (khung xám mờ nhấp nháy) để làm Loading State cho các Content Component thay cho Spinner quay tròn. Phải tối ưu **Perceived Performance** ngang hàng với các Big Tech (Shopee, Facebook).
