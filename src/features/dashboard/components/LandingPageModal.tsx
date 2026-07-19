@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { X } from 'lucide-react';
 import { Button } from '@/shared/ui/Button';
 import type { LandingPage } from '@/entities/landing/api';
 import { landingService } from '@/entities/landing/api';
 import { useToastStore } from '@/shared/stores/useToastStore';
+import { ResponsiveModal } from '@/shared/ui/ResponsiveModal';
+import { Input } from '@/shared/ui/Input';
+import { Label } from '@/shared/ui/Label';
 
 interface LandingPageModalProps {
   isOpen: boolean;
@@ -45,8 +47,8 @@ export const LandingPageModal: React.FC<LandingPageModalProps> = ({ isOpen, onCl
 
   if (!isOpen) return null;
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
     setLoading(true);
 
     try {
@@ -79,74 +81,70 @@ export const LandingPageModal: React.FC<LandingPageModalProps> = ({ isOpen, onCl
     }
   };
 
+  const footer = (
+    <div className="flex gap-3 w-full">
+      <Button variant="secondary" className="flex-1" onClick={onClose} type="button">Hủy</Button>
+      <Button className="flex-1" onClick={handleSubmit} disabled={loading}>
+        {loading ? 'Đang lưu...' : (isEditing ? 'Cập nhật' : 'Tạo mới')}
+      </Button>
+    </div>
+  );
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm p-4">
-      <div className="bg-brand-card w-full max-w-md rounded-2xl border border-border shadow-2xl relative overflow-hidden animate-in zoom-in-95 duration-200">
-        <div className="flex items-center justify-between p-4 sm:p-6 border-b border-border">
-          <h2 className="text-lg font-bold">{isEditing ? 'Chỉnh sửa Landing Page' : 'Tạo Landing Page mới'}</h2>
-          <button onClick={onClose} className="p-2 hover:bg-white/10 rounded-full transition-colors">
-            <X className="w-5 h-5 text-muted-foreground" />
-          </button>
+    <ResponsiveModal
+      isOpen={isOpen}
+      onClose={onClose}
+      title={isEditing ? 'Chỉnh sửa Landing Page' : 'Tạo Landing Page mới'}
+      footer={footer}
+    >
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+          <Label className="mb-2 block">Tên Landing Page *</Label>
+          <Input 
+            type="text" 
+            value={formData.title}
+            onChange={(e) => setFormData({...formData, title: e.target.value})}
+            placeholder="VD: Khoá học TikTok"
+            required
+          />
         </div>
 
-        <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-4 max-h-[70vh] overflow-y-auto">
-          <div>
-            <label className="block text-sm font-semibold mb-2">Tên Landing Page *</label>
-            <input 
+        <div>
+          <Label className="mb-2 block">Đường dẫn (Slug) *</Label>
+          <div className="flex items-center gap-2">
+            <span className="text-muted-foreground text-sm">/landing/</span>
+            <Input 
               type="text" 
-              value={formData.title}
-              onChange={(e) => setFormData({...formData, title: e.target.value})}
-              className="w-full px-4 py-3 rounded-xl text-sm glass-input"
-              placeholder="VD: Khoá học TikTok"
+              value={formData.slug}
+              onChange={(e) => setFormData({...formData, slug: e.target.value.toLowerCase().replace(/\s+/g, '-')})}
+              placeholder="khoa-hoc-tiktok"
+              className="flex-1"
               required
             />
           </div>
-
-          <div>
-            <label className="block text-sm font-semibold mb-2">Đường dẫn (Slug) *</label>
-            <div className="flex items-center gap-2">
-              <span className="text-muted-foreground text-sm">/landing/</span>
-              <input 
-                type="text" 
-                value={formData.slug}
-                onChange={(e) => setFormData({...formData, slug: e.target.value.toLowerCase().replace(/\s+/g, '-')})}
-                className="flex-1 px-4 py-3 rounded-xl text-sm glass-input"
-                placeholder="khoa-hoc-tiktok"
-                required
-              />
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-sm font-semibold mb-2">Logo URL (Tuỳ chọn)</label>
-            <input 
-              type="url" 
-              value={formData.logo_url}
-              onChange={(e) => setFormData({...formData, logo_url: e.target.value})}
-              className="w-full px-4 py-3 rounded-xl text-sm glass-input"
-              placeholder="https://..."
-            />
-            <p className="text-[10px] text-muted-foreground mt-1">Sẽ hiển thị trên thanh menu thay vì tên dạng chữ.</p>
-          </div>
-
-          <div>
-            <label className="block text-sm font-semibold mb-2">Mô tả (SEO)</label>
-            <textarea 
-              value={formData.description}
-              onChange={(e) => setFormData({...formData, description: e.target.value})}
-              className="w-full px-4 py-3 rounded-xl text-sm glass-input min-h-[80px]"
-              placeholder="Giới thiệu ngắn về trang này..."
-            />
-          </div>
-        </form>
-
-        <div className="p-4 sm:p-6 border-t border-border bg-black/20 flex gap-3">
-          <Button variant="secondary" className="flex-1" onClick={onClose} type="button">Hủy</Button>
-          <Button className="flex-1" onClick={handleSubmit} disabled={loading}>
-            {loading ? 'Đang lưu...' : (isEditing ? 'Cập nhật' : 'Tạo mới')}
-          </Button>
         </div>
-      </div>
-    </div>
+
+        <div>
+          <Label className="mb-2 block">Logo URL (Tuỳ chọn)</Label>
+          <Input 
+            type="url" 
+            value={formData.logo_url}
+            onChange={(e) => setFormData({...formData, logo_url: e.target.value})}
+            placeholder="https://..."
+          />
+          <p className="text-[10px] text-muted-foreground mt-1">Sẽ hiển thị trên thanh menu thay vì tên dạng chữ.</p>
+        </div>
+
+        <div>
+          <Label className="mb-2 block">Mô tả (SEO)</Label>
+          <textarea 
+            value={formData.description}
+            onChange={(e) => setFormData({...formData, description: e.target.value})}
+            className="w-full px-4 py-3 rounded-xl text-sm glass-input min-h-[80px]"
+            placeholder="Giới thiệu ngắn về trang này..."
+          />
+        </div>
+      </form>
+    </ResponsiveModal>
   );
 };

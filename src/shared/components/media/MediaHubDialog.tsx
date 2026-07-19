@@ -1,10 +1,11 @@
-"use client";
-
 import React, { useState } from 'react';
-import { X, UploadCloud, Library, ExternalLink } from 'lucide-react';
+import { UploadCloud, Library, ExternalLink } from 'lucide-react';
 import { MediaUploader } from './MediaUploader';
 import { MediaGallery } from './MediaGallery';
 import type { MediaAsset } from '../../api/mediaService';
+import { ResponsiveModal } from '@/shared/ui/ResponsiveModal';
+import { Input } from '@/shared/ui/Input';
+import { Button } from '@/shared/ui/Button';
 
 interface MediaHubDialogProps {
   isOpen: boolean;
@@ -44,118 +45,110 @@ export function MediaHubDialog({ isOpen, onClose, userId, onSelect, initialSelec
     }
   };
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-200">
-      <div className="bg-white dark:bg-neutral-900 rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col overflow-hidden">
-        
-        {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-neutral-200 dark:border-neutral-800">
-          <h2 className="text-xl font-bold text-neutral-900 dark:text-white">Thư Viện Media</h2>
-          <button 
-            onClick={onClose}
-            className="p-2 text-neutral-500 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-full transition-colors"
-          >
-            <X size={20} />
-          </button>
-        </div>
-
-        {/* Tabs */}
-        <div className="flex px-4 border-b border-neutral-200 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-900/50">
-          <button
-            onClick={() => setActiveTab('upload')}
-            className={`flex items-center gap-2 px-6 py-3 font-medium text-sm transition-colors border-b-2 ${
-              activeTab === 'upload' 
-                ? 'border-primary text-primary' 
-                : 'border-transparent text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-200'
-            }`}
-          >
-            <UploadCloud size={18} />
-            Tải lên
-          </button>
-          <button
-            onClick={() => setActiveTab('library')}
-            className={`flex items-center gap-2 px-6 py-3 font-medium text-sm transition-colors border-b-2 ${
-              activeTab === 'library' 
-                ? 'border-primary text-primary' 
-                : 'border-transparent text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-200'
-            }`}
-          >
-            <Library size={18} />
-            Kho Ảnh Của Bạn
-          </button>
-        </div>
-
-        {/* Content Body */}
-        <div className="flex-1 overflow-auto p-6 bg-neutral-50 dark:bg-neutral-950 min-h-[400px]">
-          {activeTab === 'upload' ? (
-            <div className="max-w-2xl mx-auto flex flex-col gap-8">
-              <MediaUploader userId={userId} onUploadSuccess={handleUploadSuccess} />
-              
-              <div className="relative">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-neutral-300 dark:border-neutral-700"></div>
-                </div>
-                <div className="relative flex justify-center">
-                  <span className="px-4 bg-neutral-50 dark:bg-neutral-950 text-sm text-neutral-500">Hoặc dùng URL bên ngoài</span>
-                </div>
-              </div>
-
-              <form onSubmit={handleExternalUrlSubmit} className="flex gap-2">
-                <div className="relative flex-1">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <ExternalLink size={16} className="text-neutral-400" />
-                  </div>
-                  <input
-                    type="url"
-                    placeholder="https://example.com/image.jpg"
-                    className="w-full pl-10 pr-4 py-2 border border-neutral-300 dark:border-neutral-700 rounded-lg bg-white dark:bg-neutral-900 focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
-                    value={externalUrl}
-                    onChange={(e) => setExternalUrl(e.target.value)}
-                  />
-                </div>
-                <button 
-                  type="submit"
-                  disabled={!externalUrl}
-                  className="px-4 py-2 bg-neutral-800 text-white rounded-lg hover:bg-neutral-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                >
-                  Dùng URL
-                </button>
-              </form>
-            </div>
-          ) : (
-            <MediaGallery 
-              userId={userId} 
-              onSelect={setSelectedAsset} 
-              selectedUrl={selectedAsset?.public_url || initialSelectedUrl}
-              refreshTrigger={refreshTrigger}
-            />
-          )}
-        </div>
-
-        {/* Footer Actions */}
-        {activeTab === 'library' && (
-          <div className="p-4 border-t border-neutral-200 dark:border-neutral-800 flex justify-between items-center bg-white dark:bg-neutral-900">
-            <div className="text-sm text-neutral-500">
-              {selectedAsset ? `Đã chọn 1 ảnh (${(selectedAsset.size_bytes / 1024).toFixed(1)} KB)` : 'Chưa chọn ảnh nào'}
-            </div>
-            <div className="flex gap-3">
-              <button 
-                onClick={onClose}
-                className="px-5 py-2 font-medium text-neutral-600 hover:bg-neutral-100 dark:text-neutral-300 dark:hover:bg-neutral-800 rounded-lg transition-colors"
-              >
-                Hủy
-              </button>
-              <button 
-                onClick={handleConfirmSelect}
-                disabled={!selectedAsset}
-                className="px-5 py-2 font-medium bg-primary text-white rounded-lg hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm transition-all"
-              >
-                Xác nhận chọn
-              </button>
-            </div>
-          </div>
-        )}
+  const footer = activeTab === 'library' ? (
+    <div className="flex justify-between items-center w-full gap-3">
+      <div className="text-[10px] sm:text-sm text-neutral-500 truncate hidden sm:block">
+        {selectedAsset ? `Đã chọn 1 ảnh (${(selectedAsset.size_bytes / 1024).toFixed(1)} KB)` : 'Chưa chọn ảnh nào'}
+      </div>
+      <div className="flex gap-2 w-full sm:w-auto">
+        <Button 
+          onClick={onClose}
+          variant="secondary"
+          className="flex-1 sm:flex-none"
+        >
+          Hủy
+        </Button>
+        <Button 
+          onClick={handleConfirmSelect}
+          disabled={!selectedAsset}
+          className="flex-1 sm:flex-none"
+        >
+          Xác nhận chọn
+        </Button>
       </div>
     </div>
+  ) : null;
+
+  return (
+    <ResponsiveModal
+      isOpen={isOpen}
+      onClose={onClose}
+      title="Thư Viện Media"
+      footer={footer}
+      className="max-w-4xl p-0"
+    >
+      {/* Tabs */}
+      <div className="flex px-4 border-b border-neutral-200 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-900/50 shrink-0 overflow-x-auto hide-scrollbar">
+        <button
+          onClick={() => setActiveTab('upload')}
+          className={`flex items-center gap-2 px-4 sm:px-6 py-3 font-medium text-xs sm:text-sm transition-colors border-b-2 whitespace-nowrap ${
+            activeTab === 'upload' 
+              ? 'border-primary text-primary' 
+              : 'border-transparent text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-200'
+          }`}
+        >
+          <UploadCloud size={16} />
+          Tải lên
+        </button>
+        <button
+          onClick={() => setActiveTab('library')}
+          className={`flex items-center gap-2 px-4 sm:px-6 py-3 font-medium text-xs sm:text-sm transition-colors border-b-2 whitespace-nowrap ${
+            activeTab === 'library' 
+              ? 'border-primary text-primary' 
+              : 'border-transparent text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-200'
+          }`}
+        >
+          <Library size={16} />
+          Kho Ảnh Của Bạn
+        </button>
+      </div>
+
+      {/* Content Body */}
+      <div className="flex-1 overflow-auto p-4 sm:p-6 bg-neutral-50 dark:bg-neutral-950 min-h-[300px] sm:min-h-[400px]">
+        {activeTab === 'upload' ? (
+          <div className="max-w-2xl mx-auto flex flex-col gap-6 sm:gap-8">
+            <MediaUploader userId={userId} onUploadSuccess={handleUploadSuccess} />
+            
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-neutral-300 dark:border-neutral-700"></div>
+              </div>
+              <div className="relative flex justify-center">
+                <span className="px-4 bg-neutral-50 dark:bg-neutral-950 text-xs sm:text-sm text-neutral-500">Hoặc dùng URL bên ngoài</span>
+              </div>
+            </div>
+
+            <form onSubmit={handleExternalUrlSubmit} className="flex gap-2 flex-col sm:flex-row">
+              <div className="relative flex-1">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <ExternalLink size={16} className="text-neutral-400" />
+                </div>
+                <Input
+                  type="url"
+                  placeholder="https://example.com/image.jpg"
+                  className="w-full pl-9 h-10"
+                  value={externalUrl}
+                  onChange={(e) => setExternalUrl(e.target.value)}
+                />
+              </div>
+              <Button 
+                type="submit"
+                disabled={!externalUrl}
+                className="h-10"
+              >
+                Dùng URL
+              </Button>
+            </form>
+          </div>
+        ) : (
+          <MediaGallery 
+            userId={userId} 
+            onSelect={setSelectedAsset} 
+            selectedUrl={selectedAsset?.public_url || initialSelectedUrl}
+            refreshTrigger={refreshTrigger}
+          />
+        )}
+      </div>
+    </ResponsiveModal>
   );
 }

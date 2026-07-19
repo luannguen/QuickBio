@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { X, Mail, Lock } from 'lucide-react';
+import { Mail, Lock } from 'lucide-react';
 import { supabase } from "@/shared/api/supabase";
 import { Button } from "@/shared/ui/Button";
 import { Input } from "@/shared/ui/Input";
 import { Label } from "@/shared/ui/Label";
-import { Card } from "@/shared/ui/Card";
+import { ResponsiveModal } from "@/shared/ui/ResponsiveModal";
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -20,8 +20,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
-
-  if (!isOpen) return null;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -77,114 +75,108 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess
   };
 
   return (
-    <div className="fixed inset-0 z-[60] flex items-end sm:items-center justify-center sm:p-4 bg-black/60 backdrop-blur-sm">
-      <Card className="relative w-full sm:max-w-md p-6 sm:p-8 rounded-t-3xl rounded-b-none sm:rounded-2xl border-t sm:border border-brand-dark/20 bg-card animate-in slide-in-from-bottom-full sm:slide-in-from-bottom-0 sm:zoom-in-95 duration-300">
-        <button 
-          onClick={onClose}
-          className="absolute top-4 right-4 p-2 text-muted-foreground hover:text-foreground bg-muted/50 hover:bg-muted rounded-full transition-colors"
-        >
-          <X className="w-5 h-5" />
-        </button>
-
-        {/* Mobile Drag Handle */}
-        <div className="w-12 h-1.5 bg-muted rounded-full mx-auto mb-6 sm:hidden" />
-
-        <h2 className="text-2xl font-bold text-foreground mb-2">
+    <ResponsiveModal
+      isOpen={isOpen}
+      onClose={onClose}
+      className="max-w-md p-0"
+    >
+      <div className="text-center mb-6">
+        <h2 className="text-2xl font-bold text-white mb-2">
           {isSignUp ? 'Tạo gian hàng mới' : 'Đăng nhập Dashboard'}
         </h2>
-        <p className="text-semantic-muted text-sm mb-6">
+        <p className="text-white/60 text-sm">
           {isSignUp 
             ? 'Bắt đầu hành trình kiếm tiền tự động của bạn' 
             : 'Chào mừng bạn quay lại hệ thống'}
         </p>
+      </div>
 
-        {error && (
-          <div className="mb-4 p-3 rounded-xl bg-semantic-error/10 border border-semantic-error/20 text-semantic-error text-sm">
-            {error}
-          </div>
-        )}
-        
-        {message && (
-          <div className="mb-4 p-3 rounded-xl bg-semantic-success/10 border border-semantic-success/20 text-semantic-success text-sm">
-            {message}
-          </div>
-        )}
-
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {isSignUp && (
-            <div>
-              <Label className="block mb-1.5">Họ và Tên</Label>
-              <div className="relative">
-                <Input 
-                  type="text"
-                  required
-                  value={fullName}
-                  onChange={e => setFullName(e.target.value)}
-                  className="pl-10"
-                  placeholder="Nguyễn Văn A"
-                />
-                <span className="absolute left-3.5 top-3 text-white/40">
-                  <div className="w-4 h-4 rounded-full border-2 border-current" />
-                </span>
-              </div>
-            </div>
-          )}
-
-          <div>
-            <Label className="block mb-1.5">Email</Label>
-            <div className="relative">
-              <Input 
-                type="email"
-                required
-                value={email}
-                onChange={e => setEmail(e.target.value)}
-                className="pl-10"
-                placeholder="email@example.com"
-              />
-              <Mail className="absolute left-3.5 top-3 w-4 h-4 text-white/40" />
-            </div>
-          </div>
-
-          <div>
-            <Label className="block mb-1.5">Mật khẩu</Label>
-            <div className="relative">
-              <Input 
-                type="password"
-                required
-                minLength={6}
-                value={password}
-                onChange={e => setPassword(e.target.value)}
-                className="pl-10"
-                placeholder="••••••••"
-              />
-              <Lock className="absolute left-3.5 top-3 w-4 h-4 text-white/40" />
-            </div>
-          </div>
-
-          <Button 
-            type="submit"
-            isLoading={loading}
-            className="w-full mt-2 h-12 text-md"
-          >
-            {isSignUp ? 'Đăng ký ngay' : 'Đăng nhập'}
-          </Button>
-        </form>
-
-        <div className="mt-6 text-center">
-          <Button 
-            type="button"
-            variant="link"
-            onClick={() => {
-              setIsSignUp(!isSignUp);
-              setError(null);
-              setMessage(null);
-            }}
-            className="text-sm text-white/60 hover:text-white"
-          >
-            {isSignUp ? 'Đã có tài khoản? Đăng nhập' : 'Chưa có tài khoản? Đăng ký mới'}
-          </Button>
+      {error && (
+        <div className="mb-4 p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-500 text-sm">
+          {error}
         </div>
-      </Card>
-    </div>
+      )}
+      
+      {message && (
+        <div className="mb-4 p-3 rounded-xl bg-green-500/10 border border-green-500/20 text-green-500 text-sm">
+          {message}
+        </div>
+      )}
+
+      <form onSubmit={handleSubmit} className="space-y-4">
+        {isSignUp && (
+          <div>
+            <Label className="block mb-1.5">Họ và Tên</Label>
+            <div className="relative">
+              <Input 
+                type="text"
+                required
+                value={fullName}
+                onChange={e => setFullName(e.target.value)}
+                className="pl-10"
+                placeholder="Nguyễn Văn A"
+              />
+              <span className="absolute left-3.5 top-3 text-white/40">
+                <div className="w-4 h-4 rounded-full border-2 border-current" />
+              </span>
+            </div>
+          </div>
+        )}
+
+        <div>
+          <Label className="block mb-1.5">Email</Label>
+          <div className="relative">
+            <Input 
+              type="email"
+              required
+              value={email}
+              onChange={e => setEmail(e.target.value)}
+              className="pl-10"
+              placeholder="email@example.com"
+            />
+            <Mail className="absolute left-3.5 top-3 w-4 h-4 text-white/40" />
+          </div>
+        </div>
+
+        <div>
+          <Label className="block mb-1.5">Mật khẩu</Label>
+          <div className="relative">
+            <Input 
+              type="password"
+              required
+              minLength={6}
+              value={password}
+              onChange={e => setPassword(e.target.value)}
+              className="pl-10"
+              placeholder="••••••••"
+            />
+            <Lock className="absolute left-3.5 top-3 w-4 h-4 text-white/40" />
+          </div>
+        </div>
+
+        <Button 
+          type="submit"
+          isLoading={loading}
+          className="w-full mt-2 h-12 text-md"
+        >
+          {isSignUp ? 'Đăng ký ngay' : 'Đăng nhập'}
+        </Button>
+      </form>
+
+      <div className="mt-6 text-center">
+        <Button 
+          type="button"
+          variant="link"
+          onClick={() => {
+            setIsSignUp(!isSignUp);
+            setError(null);
+            setMessage(null);
+          }}
+          className="text-sm text-white/60 hover:text-white"
+        >
+          {isSignUp ? 'Đã có tài khoản? Đăng nhập' : 'Chưa có tài khoản? Đăng ký mới'}
+        </Button>
+      </div>
+    </ResponsiveModal>
   );
 };
