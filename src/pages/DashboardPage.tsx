@@ -15,11 +15,11 @@ import { ArticleModal } from "@/features/dashboard/components/ArticleModal";
 import { useToastStore } from "@/shared/stores/useToastStore";
 import { ResponsiveModal } from "@/shared/ui/ResponsiveModal";
 import { useConfirm } from "@/shared/stores/useModalStore";
-import { Loader2, ShoppingBag, X } from 'lucide-react';
+import { Loader2, ShoppingBag } from 'lucide-react';
 import { Button } from "@/shared/ui/Button";
 import { Input } from "@/shared/ui/Input";
 import { Label } from "@/shared/ui/Label";
-import { Card } from "@/shared/ui/Card";
+
 
 interface DashboardProps {
   onNavigateToBioBuilder: () => void;

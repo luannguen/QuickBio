@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
-import { motion, AnimatePresence, PanInfo } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
+import type { PanInfo } from 'framer-motion';
 import { X } from 'lucide-react';
 import { useIsMobile } from '@/shared/hooks/useIsMobile';
 import { cn } from '@/shared/lib/utils';
@@ -33,7 +34,7 @@ export const ResponsiveModal: React.FC<ResponsiveModalProps> = ({
     return () => { document.body.style.overflow = ''; };
   }, [isOpen]);
 
-  const handleDragEnd = (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
+  const handleDragEnd = (_event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
     // If swiped down fast enough or dragged more than 100px down
     if (info.offset.y > 100 || info.velocity.y > 500) {
       onClose();

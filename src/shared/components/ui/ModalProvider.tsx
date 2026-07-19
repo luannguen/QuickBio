@@ -8,7 +8,7 @@ export const ModalProvider: React.FC = () => {
 
   return (
     <>
-      {modals.map((modal, index) => {
+      {modals.map((modal) => {
         // We ensure zIndex layering by setting style directly if needed, but ResponsiveModal has z-[60] fixed.
         // It should be fine as ResponsiveModal uses Portals or is just rendered in order.
         return (
