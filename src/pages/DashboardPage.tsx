@@ -1,9 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from "@/shared/hooks/useAuth";
 import { useOrders } from "@/shared/hooks/useOrders";
 import { productService } from "@/entities/product/api";
 import type { Product } from "@/entities/product/api";
-import { bioService } from "@/entities/bio/api";
 import type { Order } from "@/entities/order/api";
 import { CheckoutModal } from "@/components/CheckoutModal";
 import { MediaPicker } from "@/shared/components/media/MediaPicker";
@@ -15,10 +14,12 @@ import { ArticleModal } from "@/features/dashboard/components/ArticleModal";
 import { useToastStore } from "@/shared/stores/useToastStore";
 import { ResponsiveModal } from "@/shared/ui/ResponsiveModal";
 import { useConfirm } from "@/shared/stores/useModalStore";
-import { Loader2, ShoppingBag } from 'lucide-react';
+import { ShoppingBag } from 'lucide-react';
 import { Button } from "@/shared/ui/Button";
 import { Input } from "@/shared/ui/Input";
 import { Label } from "@/shared/ui/Label";
+import { useDashboardData } from "@/features/dashboard/hooks/useDashboardData";
+import { DashboardSkeleton } from "@/features/dashboard/components/DashboardSkeleton";
 
 
 interface DashboardProps {
@@ -35,7 +36,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
   onNavigateToAdmin
 }) => {
   const { user, signOut } = useAuth();
-  const { getCreatorOrders, getBankSettings, saveBankSettings, simulatePayment } = useOrders();
+  const { saveBankSettings, simulatePayment } = useOrders();
   const toast = useToastStore();
   const confirm = useConfirm();
 
@@ -43,8 +44,6 @@ export const Dashboard: React.FC<DashboardProps> = ({
   const [products, setProducts] = useState<Product[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
   const [articles, setArticles] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-  const hasLoadedOnce = useRef(false);
   const [userPlan, setUserPlan] = useState<'free' | 'pro'>('free');
   const [luanId, setLuanId] = useState('');
   const [isProCheckoutOpen, setIsProCheckoutOpen] = useState(false);
@@ -126,145 +125,80 @@ export const Dashboard: React.FC<DashboardProps> = ({
   const [planPurchasedAt, setPlanPurchasedAt] = useState('');
   const [planExpiresAt, setPlanExpiresAt] = useState('');
 
-  // Load toàn bộ dữ liệu
-  const loadDashboardData = async () => {
-    if (!user) return;
-    if (!hasLoadedOnce.current) {
-      setLoading(true);
-    }
-
-    try {
-      // Run API calls independently to prevent one failure from blocking others
-      try {
-        const prods = await productService.getProductsByUserId(user.id);
-        setProducts(prods);
-      } catch (err) {
-        console.error('Error loading products:', err);
-      }
-
-      try {
-        const arts = await articleService.getArticlesByUserId(user.id);
-        setArticles(arts);
-      } catch (err) {
-        console.error('Error loading articles:', err);
-      }
-
-      try {
-        const bio = await bioService.getBioByUserId(user.id);
-        if (bio) setUserSlug(bio.slug);
-      } catch (err) {
-        console.error('Error loading bio:', err);
-      }
-
-      try {
-        const ords = await getCreatorOrders(user.id);
-        setOrders(ords);
-      } catch (err) {
-        console.error('Error loading orders:', err);
-      }
-
-      try {
-        const config = await getBankSettings(user.id);
-        if (config) {
-          setBankCode(config.bank_code);
-          setBankAccount(config.bank_account);
-          setAccountName(config.account_name);
-          setApiKey(config.api_key || '');
-        }
-      } catch (err) {
-        console.error('Error loading bank settings:', err);
-      }
-
-      // Load dữ liệu Affiliate và Plan
-      if (isSupabaseConfigured && supabase) {
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('affiliate_code, payment_info, plan_tier, plan_purchased_at, plan_expires_at, telegram_chat_id')
-          .eq('id', user.id)
-          .single();
-        
-        if (profile) {
-          setAffiliateCode(profile.affiliate_code || '');
-          setPaymentInfo(profile.payment_info || '');
-          setTelegramChatId(profile.telegram_chat_id || '');
-          
-          let tier = profile.plan_tier || 'free';
-          if (tier !== 'free' && profile.plan_expires_at) {
-            const expiry = new Date(profile.plan_expires_at);
-            if (expiry < new Date()) {
-              tier = 'free'; // Hết hạn -> trở về Free
-            }
-          }
-          setUserPlan(tier as any);
-          setPlanPurchasedAt(profile.plan_purchased_at || '');
-          setPlanExpiresAt(profile.plan_expires_at || '');
-        }
-
-        const { data: luanBio } = await supabase
-          .from('bio_links')
-          .select('user_id')
-          .eq('slug', 'luannguyen')
-          .maybeSingle();
-        if (luanBio) {
-          setLuanId(luanBio.user_id);
-        }
-
-        const { data: comms } = await supabase
-          .from('commissions')
-          .select('*, orders(payment_code, amount, status, paid_at, products(name))')
-          .eq('affiliate_id', user.id)
-          .order('created_at', { ascending: false });
-        
-        if (comms) {
-          setCommissions(comms);
-          setClicksCount(comms.length * 15 + 24);
-        }
-
-        // Tải cấu hình Marketing Automation
-        const mkt = await marketingService.getSettings(user.id);
-        if (mkt) {
-          setMktFbPageId(mkt.fb_page_id || '');
-          setMktFbPageToken(mkt.fb_page_token || '');
-          setMktIsActive(mkt.is_active || false);
-          setMktStyle(mkt.style || 'Thuyết phục');
-          setMktTargetProductId(mkt.target_product_id || '');
-          setMktGeminiApiKey(mkt.gemini_api_key || '');
-          setMktLastPostedAt(mkt.last_posted_at || '');
-        }
-      } else {
-        // Fallback for mock data
-        if (user.plan_tier) {
-          let tier = user.plan_tier || 'free';
-          if (tier !== 'free' && user.plan_expires_at) {
-            const expiry = new Date(user.plan_expires_at);
-            if (expiry < new Date()) {
-              tier = 'free'; // Hết hạn -> trở về Free
-            }
-          }
-          setUserPlan(tier as any);
-        }
-      }
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-      hasLoadedOnce.current = true;
-    }
-  };
+  const { dashboardData, isLoading, mutateDashboard } = useDashboardData(user?.id);
 
   useEffect(() => {
-    loadDashboardData();
-  }, [user]);
+    if (dashboardData) {
+      setProducts(dashboardData.products || []);
+      setArticles(dashboardData.articles || []);
+      if (dashboardData.bio) setUserSlug(dashboardData.bio.slug);
+      setOrders(dashboardData.orders || []);
+      
+      if (dashboardData.bank_settings) {
+        setBankCode(dashboardData.bank_settings.bank_code);
+        setBankAccount(dashboardData.bank_settings.bank_account);
+        setAccountName(dashboardData.bank_settings.account_name);
+        setApiKey(dashboardData.bank_settings.api_key || '');
+      }
 
-  if (loading || !user) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-[#080B11]">
-        <div className="text-center space-y-3">
-          <Loader2 className="w-10 h-10 animate-spin text-brand-orange mx-auto" />
-          <p className="text-sm text-white/50">Đang tải dữ liệu Dashboard...</p>
-        </div>
-      </div>
-    );
+      if (dashboardData.profile) {
+        const profile = dashboardData.profile;
+        setAffiliateCode(profile.affiliate_code || '');
+        setPaymentInfo(profile.payment_info || '');
+        setTelegramChatId(profile.telegram_chat_id || '');
+        
+        let tier = profile.plan_tier || 'free';
+        if (tier !== 'free' && profile.plan_expires_at) {
+          const expiry = new Date(profile.plan_expires_at);
+          if (expiry < new Date()) {
+            tier = 'free';
+          }
+        }
+        setUserPlan(tier as any);
+        setPlanPurchasedAt(profile.plan_purchased_at || '');
+        setPlanExpiresAt(profile.plan_expires_at || '');
+      }
+
+      if (dashboardData.luan_id) {
+        setLuanId(dashboardData.luan_id);
+      }
+
+      if (dashboardData.commissions) {
+        setCommissions(dashboardData.commissions);
+        setClicksCount(dashboardData.commissions.length * 15 + 24);
+      }
+
+      if (dashboardData.marketing_settings) {
+        const mkt = dashboardData.marketing_settings;
+        setMktFbPageId(mkt.fb_page_id || '');
+        setMktFbPageToken(mkt.fb_page_token || '');
+        setMktIsActive(mkt.is_active || false);
+        setMktStyle(mkt.style || 'Thuyết phục');
+        setMktTargetProductId(mkt.target_product_id || '');
+        setMktGeminiApiKey(mkt.gemini_api_key || '');
+        setMktLastPostedAt(mkt.last_posted_at || '');
+      }
+    } else if (user && !isSupabaseConfigured) {
+      // Fallback for mock data
+      if (user.plan_tier) {
+        let tier = user.plan_tier || 'free';
+        if (tier !== 'free' && user.plan_expires_at) {
+          const expiry = new Date(user.plan_expires_at);
+          if (expiry < new Date()) {
+            tier = 'free'; // Hết hạn -> trở về Free
+          }
+        }
+        setUserPlan(tier as any);
+      }
+    }
+  }, [dashboardData, user]);
+
+  const loadDashboardData = () => {
+    mutateDashboard();
+  };
+
+  if (isLoading || !user) {
+    return <DashboardSkeleton />;
   }
 
   // Action handlers

@@ -1,8 +1,9 @@
 import React from 'react';
-import { Loader2, Compass } from 'lucide-react';
+import { Compass } from 'lucide-react';
 import { usePublicBio } from "@/features/public-bio/hooks/usePublicBio";
 import { PublicBioLayout } from "@/features/public-bio/ui/PublicBioLayout";
 import { Button } from "@/shared/ui/Button";
+import { PublicBioSkeleton } from "@/features/public-bio/components/PublicBioSkeleton";
 
 interface PublicBioProps {
   slug: string;
@@ -27,14 +28,7 @@ export const PublicBio: React.FC<PublicBioProps> = ({ slug, currentUserId, onNav
   } = usePublicBio(slug);
 
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="text-center space-y-3">
-          <Loader2 className="w-10 h-10 animate-spin text-brand-orange mx-auto" />
-          <p className="text-sm text-muted-foreground">Đang tải trang cá nhân...</p>
-        </div>
-      </div>
-    );
+    return <PublicBioSkeleton />;
   }
 
   if (!bio) {

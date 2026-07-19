@@ -1,18 +1,23 @@
 import { useState, useEffect } from 'react';
-import { bioService } from "@/entities/bio/api";
-import type { BioLink } from "@/entities/bio/api";
-import { productService } from "@/entities/product/api";
-import type { Product } from "@/entities/product/api";
-import { articleService } from "@/entities/article/api";
+import useSWR from 'swr';
+import { supabase, isSupabaseConfigured } from '@/shared/api/supabase';
 import { analyticsService } from "@/entities/analytics/api";
+import type { BioLink } from "@/entities/bio/api";
+import type { Product } from "@/entities/product/api";
 import { useCountdown } from './useCountdown';
 import { useSocialProof } from './useSocialProof';
 
+const fetchPublicBio = async (slug: string) => {
+  if (!isSupabaseConfigured || !supabase || !slug) return null;
+  const { data, error } = await supabase.rpc('get_public_bio_data', { p_slug: slug });
+  if (error) {
+    console.error('Error fetching public bio data:', error);
+    throw error;
+  }
+  return data;
+};
+
 export const usePublicBio = (slug: string) => {
-  const [bio, setBio] = useState<BioLink | null>(null);
-  const [products, setProducts] = useState<Product[]>([]);
-  const [articles, setArticles] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
   const [activeProduct, setActiveProduct] = useState<Product | null>(null);
 
   // 1. Lưu mã giới thiệu CTV nếu có trên URL
@@ -24,41 +29,31 @@ export const usePublicBio = (slug: string) => {
     }
   }, []);
 
-  // 2. Tải dữ liệu bio, sản phẩm và bài viết từ slug
+  // 2. Lấy dữ liệu qua SWR và RPC (1 query duy nhất)
+  const { data, isLoading } = useSWR(
+    slug ? [slug, 'public_bio'] : null,
+    () => fetchPublicBio(slug),
+    {
+      revalidateOnFocus: false,
+      dedupingInterval: 60000,
+    }
+  );
+
+  const bio: BioLink | null = data?.bio || null;
+  const products: Product[] = data?.products || [];
+  const articles: any[] = data?.articles || [];
+
+  // 3. Log view event khi bio được load xong
   useEffect(() => {
-    const loadBioData = async () => {
-      setLoading(true);
-      try {
-        const bioData = await bioService.getBioBySlug(slug);
-        if (bioData) {
-          setBio(bioData);
-          
-          // Log analytics VIEW event
-          analyticsService.logEvent({
-            user_id: bioData.user_id,
-            event_type: 'VIEW',
-          });
-          
-          // Fetch products and articles concurrently
-          const [productsData, articlesData] = await Promise.all([
-            productService.getActiveProductsByUserId(bioData.user_id),
-            articleService.getPublicArticles(bioData.user_id)
-          ]);
-          
-          setProducts(productsData || []);
-          setArticles(articlesData || []);
-        }
-      } catch (err) {
-        console.error('Failed to load public bio:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
+    if (bio?.user_id) {
+      analyticsService.logEvent({
+        user_id: bio.user_id,
+        event_type: 'VIEW',
+      });
+    }
+  }, [bio?.user_id]);
 
-    loadBioData();
-  }, [slug]);
-
-  // 3. Tích hợp sub-hooks cho đếm ngược và social proof
+  // 4. Tích hợp sub-hooks cho đếm ngược và social proof
   const { timeLeft, formattedTime } = useCountdown();
   const { showToast, toastData } = useSocialProof(products);
 
@@ -66,7 +61,7 @@ export const usePublicBio = (slug: string) => {
     bio,
     products,
     articles,
-    loading,
+    loading: isLoading,
     activeProduct,
     setActiveProduct,
     timeLeft,
