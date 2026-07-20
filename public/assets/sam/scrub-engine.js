@@ -432,8 +432,9 @@ function injectCSS() {
   }
   @media (min-width:861px){
     .sw-scene__still, .sw-scene__video {
-      width: 60vw !important;
-      left: auto !important;
+      width: 100vw !important;
+      height: 100vh !important;
+      left: 0 !important;
       right: 0 !important;
       object-fit: cover !important;
     }
@@ -441,12 +442,41 @@ function injectCSS() {
       content:"";
       position:absolute;
       inset:0;
-      width: 65vw;
-      background: linear-gradient(90deg, var(--sw-bg) 20%, color-mix(in srgb, var(--sw-bg) 95%, transparent) 55%, color-mix(in srgb, var(--sw-bg) 40%, transparent) 75%, transparent 100%);
+      width: 100vw;
+      background: rgba(0, 0, 0, 0.25);
     }
     .sw-copy {
-      left: max(5vw, calc(20vw - 230px)) !important;
-      width: min(38vw, 460px) !important;
+      left: 50% !important;
+      top: 50% !important;
+      transform: translate(-50%, -50%) !important;
+      width: min(90vw, 680px) !important;
+      text-align: center !important;
+      background: rgba(9, 11, 15, 0.72) !important;
+      backdrop-filter: blur(16px) !important;
+      -webkit-backdrop-filter: blur(16px) !important;
+      padding: 40px !important;
+      border-radius: 24px !important;
+      border: 1px solid rgba(250, 246, 238, 0.08) !important;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4) !important;
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: center !important;
+      justify-content: center !important;
+    }
+    .sw-copy__title {
+      transform: translateY(calc((0.5 - var(--sw-pr, 0.5)) * -50px)) !important;
+    }
+    .sw-copy__body {
+      transform: translateY(calc((0.5 - var(--sw-pr, 0.5)) * 50px)) !important;
+      max-width: 55ch !important;
+    }
+    .sw-copy__tags {
+      justify-content: center !important;
+      transform: translateY(calc((0.5 - var(--sw-pr, 0.5)) * 80px)) !important;
+    }
+    .sw-copy__cta {
+      justify-content: center !important;
+      transform: translateY(calc((0.5 - var(--sw-pr, 0.5)) * 110px)) scale(calc(1.1 - abs(0.5 - var(--sw-pr, 0.5)) * 0.2)) !important;
     }
   }
   .sw-copy{
