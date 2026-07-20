@@ -1,3 +1,18 @@
+export interface ArtifactTriggerCondition {
+  task_types?: string[];
+  change_sizes?: string[];
+  domains?: string[];
+  tech_stacks?: string[];
+  modules?: string[];
+  file_patterns?: string[];
+  entity_patterns?: string[];
+  requires_database_change?: boolean;
+  requires_api_change?: boolean;
+  requires_ui_change?: boolean;
+  requires_permission_change?: boolean;
+  requires_security_review?: boolean;
+}
+
 export interface DevArtifact {
   id: string;
   stable_key: string;
@@ -8,10 +23,10 @@ export interface DevArtifact {
   source_path?: string;
   version?: string;
   checksum?: string;
-  scope: 'global' | 'project' | 'domain' | 'tech_stack' | 'security';
+  scope: 'global' | 'project' | 'domain' | 'tech_stack' | 'security' | 'module' | 'task';
   status: 'active' | 'deprecated' | 'experimental' | 'archived';
   mandatory: boolean;
-  trigger_conditions?: any; // e.g. { "tech_stacks": ["nextjs"] }
+  trigger_conditions?: ArtifactTriggerCondition[];
   dependency_keys?: string[];
   conflict_keys?: string[];
   supersedes_key?: string;
@@ -20,19 +35,32 @@ export interface DevArtifact {
   updated_at?: string;
 }
 
+export interface TaskRuleRef {
+  key: string;
+  version?: string;
+  checksum?: string;
+  reason: string;
+}
+
+export interface TaskSkillRef {
+  key: string;
+  version?: string;
+  reason: string;
+}
+
 export interface DevTaskContext {
   id: string;
   task_id: string;
   context_version: number;
-  prd_reference?: any;
-  spec_reference?: any;
-  adr_references?: any[];
-  applied_rule_keys?: any[];
-  applied_skill_keys?: any[];
-  applied_pattern_keys?: any[];
-  resolved_conflicts?: any;
-  assumptions?: any[];
-  deviations?: any[];
+  prd_reference?: { document_id: string; revision: number };
+  spec_reference?: { document_id: string; revision: number };
+  adr_references?: { document_id: string; revision: number }[];
+  applied_rule_keys?: TaskRuleRef[];
+  applied_skill_keys?: TaskSkillRef[];
+  applied_pattern_keys?: TaskSkillRef[];
+  resolved_conflicts?: { artifact_a: string; artifact_b: string; resolution: string }[];
+  assumptions?: string[];
+  deviations?: string[];
   target_version_id?: string;
   created_by?: string;
   created_at?: string;

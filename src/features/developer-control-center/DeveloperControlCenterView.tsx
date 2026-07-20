@@ -16,17 +16,30 @@ import {
   Cpu,
   BrainCircuit,
   Search,
-  Filter
+  Filter,
+  FileText,
+  Layers,
+  CheckSquare,
+  Package,
+  Database,
+  AlertTriangle,
+  HeartPulse
 } from 'lucide-react';
 
-type Tab = 'overview' | 'catalog' | 'tasks' | 'changes';
+type Tab = 
+  | 'overview' 
+  | 'prds' | 'specs' | 'adrs'
+  | 'rules' | 'skills' | 'patterns'
+  | 'tasks' | 'checkpoints' | 'changes' | 'versions' | 'releases' | 'migrations'
+  | 'issues' | 'tech_debt';
 
 export const DeveloperControlCenterView: React.FC = () => {
   const [activeTab, setActiveTab] = useState<Tab>('overview');
   
-  const { data: artifacts, isLoading: loadingArtifacts, mutate: mutateArtifacts } = useDevArtifacts(activeTab === 'overview' || activeTab === 'catalog');
-  const { data: tasks, isLoading: loadingTasks, mutate: mutateTasks } = useDevTaskContexts(activeTab === 'overview' || activeTab === 'tasks');
-  const { data: changes, isLoading: loadingChanges } = useDevSystemChanges(activeTab === 'overview' || activeTab === 'changes');
+  // For simplicity, we fetch all artifacts and filter them by type locally.
+  const { data: artifacts, isLoading: loadingArtifacts, mutate: mutateArtifacts } = useDevArtifacts();
+  const { data: tasks, isLoading: loadingTasks, mutate: mutateTasks } = useDevTaskContexts();
+  const { data: changes, isLoading: loadingChanges } = useDevSystemChanges();
 
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -40,7 +53,7 @@ export const DeveloperControlCenterView: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card className="p-5 flex flex-col gap-2 border-brand-orange/20 relative overflow-hidden group">
           <div className="absolute top-0 right-0 w-32 h-32 bg-brand-orange/5 rounded-full -mr-10 -mt-10 transition-transform group-hover:scale-110" />
-          <div className="text-xs text-semantic-muted uppercase font-bold tracking-wider relative z-10">Total Artifacts (Rules/Skills)</div>
+          <div className="text-xs text-semantic-muted uppercase font-bold tracking-wider relative z-10">Total Artifacts</div>
           <div className="text-4xl font-black text-foreground flex items-center gap-3 relative z-10">
             <Code2 className="w-8 h-8 text-brand-orange" />
             {loadingArtifacts ? <Skeleton className="h-10 w-16" /> : artifacts?.length || 0}
@@ -68,10 +81,11 @@ export const DeveloperControlCenterView: React.FC = () => {
     </div>
   );
 
-  const renderCatalog = () => {
+  const renderCatalog = (artifactType: 'rule' | 'skill' | 'pattern', title: string) => {
     const filteredArtifacts = artifacts?.filter(a => 
-      a.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-      a.stable_key.toLowerCase().includes(searchQuery.toLowerCase())
+      a.artifact_type === artifactType &&
+      (a.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+       a.stable_key.toLowerCase().includes(searchQuery.toLowerCase()))
     ) || [];
 
     return (
@@ -79,14 +93,14 @@ export const DeveloperControlCenterView: React.FC = () => {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <FileJson className="w-5 h-5 text-brand-orange" />
-            <h2 className="text-xl font-extrabold">Artifact Catalog</h2>
+            <h2 className="text-xl font-extrabold">{title}</h2>
           </div>
           <div className="flex items-center gap-2">
             <div className="relative">
               <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-semantic-muted" />
               <input 
                 type="text" 
-                placeholder="Search rules, skills..."
+                placeholder={`Search ${title.toLowerCase()}...`}
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
                 className="pl-9 pr-4 py-2 rounded-lg bg-muted/50 border border-border text-sm focus:outline-none focus:border-brand-orange w-64"
@@ -109,9 +123,8 @@ export const DeveloperControlCenterView: React.FC = () => {
                 <thead className="bg-muted/50 text-semantic-muted border-b border-border">
                   <tr>
                     <th className="px-6 py-4 font-semibold uppercase tracking-wider text-xs">Artifact</th>
-                    <th className="px-6 py-4 font-semibold uppercase tracking-wider text-xs">Type</th>
-                    <th className="px-6 py-4 font-semibold uppercase tracking-wider text-xs">Scope</th>
-                    <th className="px-6 py-4 font-semibold uppercase tracking-wider text-xs">Status</th>
+                    <th className="px-6 py-4 font-semibold uppercase tracking-wider text-xs">Scope / Status</th>
+                    <th className="px-6 py-4 font-semibold uppercase tracking-wider text-xs">Triggers & Dependencies</th>
                     <th className="px-6 py-4 font-semibold uppercase tracking-wider text-xs text-right">Source</th>
                   </tr>
                 </thead>
@@ -123,27 +136,27 @@ export const DeveloperControlCenterView: React.FC = () => {
                         <div className="text-xs text-semantic-muted font-mono mt-0.5">{artifact.stable_key}</div>
                       </td>
                       <td className="px-6 py-4">
-                        <span className={`px-2 py-1 rounded text-[10px] font-bold uppercase ${
-                          artifact.artifact_type === 'rule' ? 'bg-purple-500/20 text-purple-400' :
-                          artifact.artifact_type === 'skill' ? 'bg-brand-orange/20 text-brand-orange' :
-                          'bg-muted text-muted-foreground'
-                        }`}>
-                          {artifact.artifact_type}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 text-xs font-medium">
-                        {artifact.scope}
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs font-medium">{artifact.scope}</span>
+                          <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${
+                            artifact.status === 'active' ? 'bg-semantic-success/20 text-semantic-success' :
+                            'bg-semantic-warning/20 text-semantic-warning'
+                          }`}>
+                            {artifact.status}
+                          </span>
+                        </div>
                       </td>
                       <td className="px-6 py-4">
-                        <span className={`px-2 py-1 rounded text-[10px] font-bold uppercase ${
-                          artifact.status === 'active' ? 'bg-semantic-success/20 text-semantic-success' :
-                          'bg-semantic-warning/20 text-semantic-warning'
-                        }`}>
-                          {artifact.status}
-                        </span>
-                        {artifact.mandatory && (
-                          <span className="ml-2 text-[10px] text-semantic-error border border-semantic-error/30 px-1.5 py-0.5 rounded font-bold uppercase">Required</span>
-                        )}
+                         {artifact.trigger_conditions && artifact.trigger_conditions.length > 0 ? (
+                           <div className="text-[10px] text-semantic-muted font-mono">
+                             Has Triggers
+                           </div>
+                         ) : <span className="text-muted-foreground text-xs">-</span>}
+                         {artifact.dependency_keys && artifact.dependency_keys.length > 0 && (
+                            <div className="text-[10px] text-semantic-info font-mono mt-1">
+                              Deps: {artifact.dependency_keys.length}
+                            </div>
+                         )}
                       </td>
                       <td className="px-6 py-4 text-right">
                         <div className="text-xs font-mono text-semantic-muted truncate max-w-[150px] inline-block" title={artifact.source_path}>
@@ -154,9 +167,9 @@ export const DeveloperControlCenterView: React.FC = () => {
                   ))}
                   {filteredArtifacts.length === 0 && (
                     <tr>
-                      <td colSpan={5} className="px-6 py-12 text-center text-semantic-muted">
+                      <td colSpan={4} className="px-6 py-12 text-center text-semantic-muted">
                         <Cpu className="w-8 h-8 mx-auto mb-3 opacity-20" />
-                        No artifacts found in registry.
+                        No {title.toLowerCase()} found.
                       </td>
                     </tr>
                   )}
@@ -190,8 +203,8 @@ export const DeveloperControlCenterView: React.FC = () => {
               <thead className="bg-muted/50 text-semantic-muted border-b border-border">
                 <tr>
                   <th className="px-6 py-4 font-semibold uppercase tracking-wider text-xs">Task ID</th>
-                  <th className="px-6 py-4 font-semibold uppercase tracking-wider text-xs">Rules Applied</th>
-                  <th className="px-6 py-4 font-semibold uppercase tracking-wider text-xs">Skills Applied</th>
+                  <th className="px-6 py-4 font-semibold uppercase tracking-wider text-xs">Refs (PRD/Spec/ADR)</th>
+                  <th className="px-6 py-4 font-semibold uppercase tracking-wider text-xs">Rules/Skills/Patterns</th>
                   <th className="px-6 py-4 font-semibold uppercase tracking-wider text-xs text-right">Timestamp</th>
                 </tr>
               </thead>
@@ -200,10 +213,12 @@ export const DeveloperControlCenterView: React.FC = () => {
                   <tr key={task.id} className="hover:bg-muted/30 transition-colors">
                     <td className="px-6 py-4 font-mono text-xs text-foreground font-bold">{task.task_id}</td>
                     <td className="px-6 py-4 text-xs text-semantic-muted">
-                      {task.applied_rule_keys?.length || 0} rules
+                      {task.prd_reference ? '✅ PRD ' : ''}
+                      {task.spec_reference ? '✅ Spec ' : ''}
+                      {task.adr_references && task.adr_references.length > 0 ? `✅ ${task.adr_references.length} ADRs` : ''}
                     </td>
                     <td className="px-6 py-4 text-xs text-semantic-muted">
-                      {task.applied_skill_keys?.length || 0} skills
+                      {task.applied_rule_keys?.length || 0}R / {task.applied_skill_keys?.length || 0}S / {task.applied_pattern_keys?.length || 0}P
                     </td>
                     <td className="px-6 py-4 text-xs text-right text-semantic-muted">
                       {task.created_at ? new Date(task.created_at).toLocaleString() : 'N/A'}
@@ -226,52 +241,111 @@ export const DeveloperControlCenterView: React.FC = () => {
     </div>
   );
 
+  const renderComingSoon = (title: string, icon: React.ReactNode) => (
+    <div className="p-12 text-center text-semantic-muted animate-in fade-in">
+      <div className="flex justify-center mb-4 opacity-20">{icon}</div>
+      <h3 className="text-lg font-bold mb-2">{title}</h3>
+      <p>This module is planned for the next iteration of the Developer Control Center.</p>
+    </div>
+  );
+
+  const sidebarGroups = [
+    {
+      title: "Dashboard",
+      items: [
+        { id: 'overview', label: 'Overview', icon: <BrainCircuit className="w-4 h-4" /> }
+      ]
+    },
+    {
+      title: "Documentation",
+      items: [
+        { id: 'prds', label: 'PRDs', icon: <FileText className="w-4 h-4" /> },
+        { id: 'specs', label: 'Specifications', icon: <FileJson className="w-4 h-4" /> },
+        { id: 'adrs', label: 'Architecture Decisions', icon: <Layers className="w-4 h-4" /> },
+      ]
+    },
+    {
+      title: "Artifact Catalogs",
+      items: [
+        { id: 'rules', label: 'Rule Catalog', icon: <CheckSquare className="w-4 h-4" /> },
+        { id: 'skills', label: 'Skill Catalog', icon: <Terminal className="w-4 h-4" /> },
+        { id: 'patterns', label: 'Pattern Catalog', icon: <Code2 className="w-4 h-4" /> },
+      ]
+    },
+    {
+      title: "Execution & Releases",
+      items: [
+        { id: 'tasks', label: 'Execution Contexts', icon: <Terminal className="w-4 h-4" /> },
+        { id: 'checkpoints', label: 'Checkpoints', icon: <CheckSquare className="w-4 h-4" /> },
+        { id: 'changes', label: 'System Changes', icon: <History className="w-4 h-4" /> },
+        { id: 'versions', label: 'Versions', icon: <Package className="w-4 h-4" /> },
+        { id: 'releases', label: 'Releases', icon: <GitCommit className="w-4 h-4" /> },
+        { id: 'migrations', label: 'Migrations', icon: <Database className="w-4 h-4" /> },
+      ]
+    },
+    {
+      title: "System Health",
+      items: [
+        { id: 'issues', label: 'Known Issues', icon: <AlertTriangle className="w-4 h-4" /> },
+        { id: 'tech_debt', label: 'Technical Debt', icon: <HeartPulse className="w-4 h-4" /> },
+      ]
+    }
+  ];
+
   return (
-    <div className="flex flex-col h-full bg-background/50 rounded-xl border border-border overflow-hidden">
-      <div className="flex items-center gap-1 p-2 bg-muted/30 border-b border-border overflow-x-auto">
-        <button
-          onClick={() => setActiveTab('overview')}
-          className={`px-4 py-2 text-sm font-bold rounded-lg transition-colors whitespace-nowrap ${
-            activeTab === 'overview' ? 'bg-background shadow text-foreground' : 'text-semantic-muted hover:text-foreground hover:bg-muted/50'
-          }`}
-        >
-          Dashboard
-        </button>
-        <button
-          onClick={() => setActiveTab('catalog')}
-          className={`px-4 py-2 text-sm font-bold rounded-lg transition-colors whitespace-nowrap ${
-            activeTab === 'catalog' ? 'bg-background shadow text-foreground' : 'text-semantic-muted hover:text-foreground hover:bg-muted/50'
-          }`}
-        >
-          Artifact Catalog
-        </button>
-        <button
-          onClick={() => setActiveTab('tasks')}
-          className={`px-4 py-2 text-sm font-bold rounded-lg transition-colors whitespace-nowrap ${
-            activeTab === 'tasks' ? 'bg-background shadow text-foreground' : 'text-semantic-muted hover:text-foreground hover:bg-muted/50'
-          }`}
-        >
-          Execution Contexts
-        </button>
-        <button
-          onClick={() => setActiveTab('changes')}
-          className={`px-4 py-2 text-sm font-bold rounded-lg transition-colors whitespace-nowrap ${
-            activeTab === 'changes' ? 'bg-background shadow text-foreground' : 'text-semantic-muted hover:text-foreground hover:bg-muted/50'
-          }`}
-        >
-          System Changes
-        </button>
+    <div className="flex h-full bg-background rounded-xl border border-border overflow-hidden">
+      {/* Sidebar */}
+      <div className="w-64 border-r border-border bg-muted/10 overflow-y-auto">
+        <div className="p-4 space-y-6">
+          {sidebarGroups.map((group) => (
+            <div key={group.title}>
+              <h4 className="text-xs font-bold text-semantic-muted uppercase tracking-wider mb-2 px-2">
+                {group.title}
+              </h4>
+              <div className="space-y-0.5">
+                {group.items.map((item) => (
+                  <button
+                    key={item.id}
+                    onClick={() => {
+                      setActiveTab(item.id as Tab);
+                      setSearchQuery('');
+                    }}
+                    className={`w-full flex items-center gap-3 px-3 py-2 text-sm rounded-lg transition-colors text-left ${
+                      activeTab === item.id 
+                        ? 'bg-brand-orange/10 text-brand-orange font-bold' 
+                        : 'text-foreground/70 hover:bg-muted hover:text-foreground'
+                    }`}
+                  >
+                    <span className={activeTab === item.id ? "text-brand-orange" : "text-semantic-muted"}>
+                      {item.icon}
+                    </span>
+                    {item.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
 
-      <div className="p-6 overflow-y-auto flex-1">
+      {/* Main Content */}
+      <div className="flex-1 p-8 overflow-y-auto bg-background/50">
         {activeTab === 'overview' && renderOverview()}
-        {activeTab === 'catalog' && renderCatalog()}
+        
+        {activeTab === 'rules' && renderCatalog('rule', 'Rule Catalog')}
+        {activeTab === 'skills' && renderCatalog('skill', 'Skill Catalog')}
+        {activeTab === 'patterns' && renderCatalog('pattern', 'Pattern Catalog')}
+        
         {activeTab === 'tasks' && renderTasks()}
-        {activeTab === 'changes' && (
-          <div className="p-12 text-center text-semantic-muted animate-in fade-in">
-            <History className="w-8 h-8 mx-auto mb-3 opacity-20" />
-            <p>System Changes Log will be displayed here.</p>
-          </div>
+        
+        {(
+          activeTab === 'prds' || activeTab === 'specs' || activeTab === 'adrs' ||
+          activeTab === 'checkpoints' || activeTab === 'changes' || activeTab === 'versions' || 
+          activeTab === 'releases' || activeTab === 'migrations' || activeTab === 'issues' || 
+          activeTab === 'tech_debt'
+        ) && renderComingSoon(
+          sidebarGroups.flatMap(g => g.items).find(i => i.id === activeTab)?.label || 'Module', 
+          sidebarGroups.flatMap(g => g.items).find(i => i.id === activeTab)?.icon || <History className="w-8 h-8" />
         )}
       </div>
     </div>
