@@ -39,7 +39,7 @@ export const DeveloperControlCenterView: React.FC = () => {
   // For simplicity, we fetch all artifacts and filter them by type locally.
   const { data: artifacts, isLoading: loadingArtifacts, mutate: mutateArtifacts } = useDevArtifacts();
   const { data: tasks, isLoading: loadingTasks, mutate: mutateTasks } = useDevTaskContexts();
-  const { data: changes, isLoading: loadingChanges } = useDevSystemChanges();
+  const { data: changes, isLoading: loadingChanges, mutate: mutateChanges } = useDevSystemChanges();
 
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -241,6 +241,82 @@ export const DeveloperControlCenterView: React.FC = () => {
     </div>
   );
 
+  const renderChanges = () => (
+    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <History className="w-5 h-5 text-semantic-warning" />
+          <h2 className="text-xl font-extrabold">System Changes Log</h2>
+        </div>
+        <Button onClick={() => mutateChanges()} variant="outline" size="sm">Refresh</Button>
+      </div>
+
+      <Card className="p-0 overflow-hidden border-border bg-card/50">
+        {loadingChanges && (!changes || changes.length === 0) ? (
+          <div className="p-4 space-y-4">
+             {[...Array(3)].map((_, i) => <Skeleton key={i} className="h-20 w-full" />)}
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm text-left">
+              <thead className="bg-muted/50 text-semantic-muted border-b border-border">
+                <tr>
+                  <th className="px-6 py-4 font-semibold uppercase tracking-wider text-xs">Version & Title</th>
+                  <th className="px-6 py-4 font-semibold uppercase tracking-wider text-xs">Type</th>
+                  <th className="px-6 py-4 font-semibold uppercase tracking-wider text-xs">Task Context</th>
+                  <th className="px-6 py-4 font-semibold uppercase tracking-wider text-xs text-right">Timestamp</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-border">
+                {changes?.map((change) => (
+                  <tr key={change.id} className="hover:bg-muted/30 transition-colors">
+                    <td className="px-6 py-4">
+                      <div className="flex flex-col gap-1">
+                        <div className="font-bold text-foreground text-base">{change.title}</div>
+                        <div className="flex items-center gap-2 mt-1">
+                          <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-brand-orange/10 text-brand-orange border border-brand-orange/20">
+                            {change.version_tag}
+                          </span>
+                          <span className="text-xs text-semantic-muted truncate max-w-sm" title={change.description}>
+                            {change.description}
+                          </span>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <span className={`px-2 py-1 rounded text-[10px] font-bold uppercase ${
+                        change.change_type === 'feature' ? 'bg-semantic-success/20 text-semantic-success' :
+                        change.change_type === 'bug' ? 'bg-semantic-error/20 text-semantic-error' :
+                        change.change_type === 'refactor' ? 'bg-semantic-warning/20 text-semantic-warning' :
+                        'bg-muted text-muted-foreground'
+                      }`}>
+                        {change.change_type}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 text-xs font-mono text-semantic-muted">
+                      {change.execution_context_id ? change.execution_context_id.split('-')[0] + '...' : 'Manual'}
+                    </td>
+                    <td className="px-6 py-4 text-xs text-right text-semantic-muted">
+                      {change.created_at ? new Date(change.created_at).toLocaleString() : 'N/A'}
+                    </td>
+                  </tr>
+                ))}
+                {(!changes || changes.length === 0) && (
+                  <tr>
+                    <td colSpan={4} className="px-6 py-12 text-center text-semantic-muted">
+                      <History className="w-8 h-8 mx-auto mb-3 opacity-20" />
+                      No system changes logged yet.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </Card>
+    </div>
+  );
+
   const renderComingSoon = (title: string, icon: React.ReactNode) => (
     <div className="p-12 text-center text-semantic-muted animate-in fade-in">
       <div className="flex justify-center mb-4 opacity-20">{icon}</div>
@@ -338,9 +414,11 @@ export const DeveloperControlCenterView: React.FC = () => {
         
         {activeTab === 'tasks' && renderTasks()}
         
+        {activeTab === 'changes' && renderChanges()}
+        
         {(
           activeTab === 'prds' || activeTab === 'specs' || activeTab === 'adrs' ||
-          activeTab === 'checkpoints' || activeTab === 'changes' || activeTab === 'versions' || 
+          activeTab === 'checkpoints' || activeTab === 'versions' || 
           activeTab === 'releases' || activeTab === 'migrations' || activeTab === 'issues' || 
           activeTab === 'tech_debt'
         ) && renderComingSoon(
