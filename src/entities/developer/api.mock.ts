@@ -1,4 +1,4 @@
-import type { DevArtifact, DevSystemChange, DevTaskContext, DeveloperService } from './api.types';
+import type { DevArtifact, DevSystemChange, DevTaskContext, DeveloperService, DevFeatureFlag } from './api.types';
 
 let mockArtifacts: DevArtifact[] = [
   {
@@ -18,6 +18,16 @@ let mockArtifacts: DevArtifact[] = [
 
 let mockTaskContexts: DevTaskContext[] = [];
 let mockSystemChanges: DevSystemChange[] = [];
+let mockFeatureFlags: DevFeatureFlag[] = [
+  {
+    id: '1',
+    flag_key: 'dev-control-v2',
+    name: 'Developer Control Center V2',
+    description: 'Giao diện trung tâm kiểm soát lập trình viên phiên bản 2.0',
+    is_enabled: true,
+    created_at: new Date().toISOString()
+  }
+];
 
 export const mockDeveloperService: DeveloperService = {
   getArtifacts: async () => mockArtifacts,
@@ -63,5 +73,17 @@ export const mockDeveloperService: DeveloperService = {
     } as DevSystemChange;
     mockSystemChanges.push(newChange);
     return newChange;
+  },
+
+  getFeatureFlags: async () => mockFeatureFlags,
+
+  toggleFeatureFlag: async (id: string, isEnabled: boolean) => {
+    const flag = mockFeatureFlags.find(f => f.id === id);
+    if (flag) {
+      flag.is_enabled = isEnabled;
+      flag.updated_at = new Date().toISOString();
+      return flag;
+    }
+    throw new Error("Mock feature flag not found");
   }
 };

@@ -77,6 +77,16 @@ export interface DevSystemChange {
   created_at?: string;
 }
 
+export interface DevFeatureFlag {
+  id: string;
+  flag_key: string;
+  name: string;
+  description?: string;
+  is_enabled: boolean;
+  created_at?: string;
+  updated_at?: string;
+}
+
 export interface DeveloperService {
   getArtifacts: () => Promise<DevArtifact[]>;
   getArtifactByKey: (key: string) => Promise<DevArtifact | null>;
@@ -85,4 +95,6 @@ export interface DeveloperService {
   createTaskContext: (context: Partial<DevTaskContext>) => Promise<DevTaskContext>;
   getSystemChanges: () => Promise<DevSystemChange[]>;
   createSystemChange: (change: Partial<DevSystemChange>) => Promise<DevSystemChange>;
+  getFeatureFlags: () => Promise<DevFeatureFlag[]>;
+  toggleFeatureFlag: (id: string, isEnabled: boolean) => Promise<DevFeatureFlag>;
 }

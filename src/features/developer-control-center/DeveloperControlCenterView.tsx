@@ -2,10 +2,12 @@ import React, { useState } from 'react';
 import { Card } from "@/shared/ui/Card";
 import { Button } from "@/shared/ui/Button";
 import { Skeleton } from "@/shared/ui/Skeleton";
+import { developerService } from '@/entities/developer/api';
 import { 
   useDevArtifacts, 
   useDevTaskContexts, 
-  useDevSystemChanges 
+  useDevSystemChanges,
+  useDevFeatureFlags
 } from "@/shared/hooks/useDeveloperSWR";
 import { 
   Code2, 
@@ -23,7 +25,8 @@ import {
   Package,
   Database,
   AlertTriangle,
-  HeartPulse
+  HeartPulse,
+  Flag
 } from 'lucide-react';
 
 type Tab = 
@@ -31,7 +34,7 @@ type Tab =
   | 'prds' | 'specs' | 'adrs'
   | 'rules' | 'skills' | 'patterns'
   | 'tasks' | 'checkpoints' | 'changes' | 'versions' | 'releases' | 'migrations'
-  | 'issues' | 'tech_debt';
+  | 'issues' | 'tech_debt' | 'feature_flags';
 
 export const DeveloperControlCenterView: React.FC = () => {
   const [activeTab, setActiveTab] = useState<Tab>('overview');
@@ -40,6 +43,7 @@ export const DeveloperControlCenterView: React.FC = () => {
   const { data: artifacts, isLoading: loadingArtifacts, mutate: mutateArtifacts } = useDevArtifacts();
   const { data: tasks, isLoading: loadingTasks, mutate: mutateTasks } = useDevTaskContexts();
   const { data: changes, isLoading: loadingChanges, mutate: mutateChanges } = useDevSystemChanges();
+  const { data: featureFlags, isLoading: loadingFlags, mutate: mutateFlags } = useDevFeatureFlags();
 
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -431,6 +435,92 @@ export const DeveloperControlCenterView: React.FC = () => {
     </div>
   );
 
+  const handleToggleFlag = async (id: string, isEnabled: boolean) => {
+    try {
+      await developerService.toggleFeatureFlag(id, isEnabled);
+      mutateFlags();
+    } catch (err) {
+      console.error("Failed to toggle flag:", err);
+    }
+  };
+
+  const renderFeatureFlags = () => (
+    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <Flag className="w-5 h-5 text-brand-orange" />
+          <h2 className="text-xl font-extrabold">Feature Flags</h2>
+        </div>
+        <Button onClick={() => mutateFlags()} variant="outline" size="sm">Refresh</Button>
+      </div>
+
+      <Card className="p-0 overflow-hidden border-border bg-card/50">
+        {loadingFlags && (!featureFlags || featureFlags.length === 0) ? (
+          <div className="p-4 space-y-4">
+             {[...Array(2)].map((_, i) => <Skeleton key={i} className="h-16 w-full" />)}
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm text-left">
+              <thead className="bg-muted/50 text-semantic-muted border-b border-border">
+                <tr>
+                  <th className="px-6 py-4 font-semibold uppercase tracking-wider text-xs">Flag Key & Name</th>
+                  <th className="px-6 py-4 font-semibold uppercase tracking-wider text-xs">Description</th>
+                  <th className="px-6 py-4 font-semibold uppercase tracking-wider text-xs">Status</th>
+                  <th className="px-6 py-4 font-semibold uppercase tracking-wider text-xs text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-border">
+                {featureFlags?.map((flag) => (
+                  <tr key={flag.id} className="hover:bg-muted/30 transition-colors">
+                    <td className="px-6 py-4">
+                      <div className="flex flex-col gap-1">
+                        <div className="font-bold text-foreground text-sm">{flag.name}</div>
+                        <div className="font-mono text-xs text-semantic-muted">{flag.flag_key}</div>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 text-xs text-semantic-muted">
+                      {flag.description || "-"}
+                    </td>
+                    <td className="px-6 py-4">
+                      <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${
+                        flag.is_enabled ? 'bg-semantic-success/20 text-semantic-success' : 'bg-muted text-muted-foreground'
+                      }`}>
+                        {flag.is_enabled ? 'Enabled' : 'Disabled'}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 text-right">
+                      <button
+                        onClick={() => handleToggleFlag(flag.id, !flag.is_enabled)}
+                        className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${
+                          flag.is_enabled ? 'bg-brand-orange' : 'bg-muted border border-border'
+                        }`}
+                      >
+                        <span
+                          className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                            flag.is_enabled ? 'translate-x-6' : 'translate-x-1'
+                          }`}
+                        />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+                {(!featureFlags || featureFlags.length === 0) && (
+                  <tr>
+                    <td colSpan={4} className="px-6 py-12 text-center text-semantic-muted">
+                      <Flag className="w-8 h-8 mx-auto mb-3 opacity-20" />
+                      No feature flags configured yet.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </Card>
+    </div>
+  );
+
   const renderComingSoon = (title: string, icon: React.ReactNode) => (
     <div className="p-12 text-center text-semantic-muted animate-in fade-in">
       <div className="flex justify-center mb-4 opacity-20">{icon}</div>
@@ -474,10 +564,11 @@ export const DeveloperControlCenterView: React.FC = () => {
       ]
     },
     {
-      title: "System Health",
+      title: "System Health & Governance",
       items: [
         { id: 'issues', label: 'Known Issues', icon: <AlertTriangle className="w-4 h-4" /> },
         { id: 'tech_debt', label: 'Technical Debt', icon: <HeartPulse className="w-4 h-4" /> },
+        { id: 'feature_flags', label: 'Feature Flags', icon: <Flag className="w-4 h-4" /> },
       ]
     }
   ];
@@ -530,6 +621,7 @@ export const DeveloperControlCenterView: React.FC = () => {
         
         {activeTab === 'changes' && renderChanges()}
         {activeTab === 'checkpoints' && renderCheckpoints()}
+        {activeTab === 'feature_flags' && renderFeatureFlags()}
         
         {activeTab === 'prds' && renderCatalog('prd', 'PRDs')}
         {activeTab === 'specs' && renderCatalog('spec', 'Specifications')}

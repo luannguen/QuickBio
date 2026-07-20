@@ -1,5 +1,5 @@
 import { supabase } from '@/shared/api/supabase';
-import type { DevArtifact, DevSystemChange, DevTaskContext, DeveloperService } from './api.types';
+import type { DevArtifact, DevSystemChange, DevTaskContext, DeveloperService, DevFeatureFlag } from './api.types';
 
 export const realDeveloperService: DeveloperService = {
   getArtifacts: async () => {
@@ -90,5 +90,32 @@ export const realDeveloperService: DeveloperService = {
 
     if (error) throw error;
     return data as DevSystemChange;
+  },
+
+  getFeatureFlags: async () => {
+    if (!supabase) return [];
+    const { data, error } = await supabase
+      .from('dev_feature_flags')
+      .select('*')
+      .order('flag_key', { ascending: true });
+
+    if (error) {
+      console.error('Error fetching dev_feature_flags:', error);
+      return [];
+    }
+    return data as DevFeatureFlag[];
+  },
+
+  toggleFeatureFlag: async (id: string, isEnabled: boolean) => {
+    if (!supabase) throw new Error("Supabase is not configured");
+    const { data, error } = await supabase
+      .from('dev_feature_flags')
+      .update({ is_enabled: isEnabled, updated_at: new Date().toISOString() })
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data as DevFeatureFlag;
   }
 };

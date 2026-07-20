@@ -1,6 +1,6 @@
 import useSWR from 'swr';
 import { developerService } from '@/entities/developer/api';
-import type { DevArtifact, DevTaskContext, DevSystemChange } from '@/entities/developer/api.types';
+import type { DevArtifact, DevTaskContext, DevSystemChange, DevFeatureFlag } from '@/entities/developer/api.types';
 
 export const useDevArtifacts = (shouldFetch: boolean = true) => {
   const { data, error, isLoading, mutate } = useSWR<DevArtifact[]>(
@@ -42,6 +42,24 @@ export const useDevSystemChanges = (shouldFetch: boolean = true) => {
   const { data, error, isLoading, mutate } = useSWR<DevSystemChange[]>(
     shouldFetch ? 'dev_system_changes' : null,
     developerService.getSystemChanges,
+    {
+      revalidateOnFocus: false,
+      dedupingInterval: 60000,
+    }
+  );
+
+  return {
+    data,
+    isLoading,
+    error,
+    mutate
+  };
+};
+
+export const useDevFeatureFlags = (shouldFetch: boolean = true) => {
+  const { data, error, isLoading, mutate } = useSWR<DevFeatureFlag[]>(
+    shouldFetch ? 'dev_feature_flags' : null,
+    developerService.getFeatureFlags,
     {
       revalidateOnFocus: false,
       dedupingInterval: 60000,
