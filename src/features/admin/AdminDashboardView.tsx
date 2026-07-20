@@ -26,18 +26,20 @@ import {
   TrendingUp,
   Activity,
   FileText,
-  ShoppingBag
+  ShoppingBag,
+  Code2
 } from 'lucide-react';
 import { articleService } from "@/entities/article/api";
 import { useToastStore } from "@/shared/stores/useToastStore";
 import { useConfirm } from "@/shared/stores/useModalStore";
+import { DeveloperControlCenterView } from "@/features/developer-control-center/DeveloperControlCenterView";
 
 interface AdminDashboardViewProps {
   onNavigateToHome: () => void;
   onNavigateToDashboard: () => void;
 }
 
-type TabType = 'overview' | 'users' | 'orders' | 'withdrawals' | 'articles' | 'products';
+type TabType = 'overview' | 'users' | 'orders' | 'withdrawals' | 'articles' | 'products' | 'developer';
 
 export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNavigateToHome, onNavigateToDashboard }) => {
   const { user, signOut } = useAuth();
@@ -245,6 +247,18 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
         <ShoppingBag className="w-4 h-4" />
         <span>Kiểm duyệt Sản phẩm</span>
       </button>
+
+      <button
+        onClick={() => setActiveTab('developer')}
+        className={`w-full px-4 py-3 rounded-xl text-left text-sm font-medium flex items-center gap-3 transition-all ${
+          activeTab === 'developer' 
+            ? 'bg-purple-500/10 text-purple-400 border border-purple-500/30' 
+            : 'text-semantic-muted hover:bg-muted/50 hover:text-foreground border border-transparent'
+        }`}
+      >
+        <Code2 className="w-4 h-4" />
+        <span>Dev Control Center</span>
+      </button>
       
       <button
         onClick={onNavigateToDashboard}
@@ -283,6 +297,9 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
       </button>
       <button onClick={() => setActiveTab('products')} className={`flex flex-col items-center justify-center flex-1 min-h-[44px] ${activeTab === 'products' ? 'text-brand-orange' : 'text-semantic-muted'}`}>
         <ShoppingBag className="w-5 h-5" />
+      </button>
+      <button onClick={() => setActiveTab('developer')} className={`flex flex-col items-center justify-center flex-1 min-h-[44px] ${activeTab === 'developer' ? 'text-purple-400' : 'text-semantic-muted'}`}>
+        <Code2 className="w-5 h-5" />
       </button>
     </>
   );
@@ -823,6 +840,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
       {activeTab === 'withdrawals' && renderWithdrawals()}
       {activeTab === 'articles' && renderArticles()}
       {activeTab === 'products' && renderProducts()}
+      {activeTab === 'developer' && <DeveloperControlCenterView />}
     </Layout>
   );
 };
