@@ -112,7 +112,7 @@ export function SamTayNguyenLanding({ onNavigateToHome, landingData }: SamTayNgu
 
     // Tải động script scrub-engine
     const script = document.createElement('script');
-    script.src = '/assets/sam/scrub-engine.js?v=1.4.5';
+    script.src = '/assets/sam/scrub-engine.js?v=1.4.6';
     script.async = true;
     
     let engineInstance: any = null;
