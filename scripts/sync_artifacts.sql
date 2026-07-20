@@ -2352,3 +2352,123 @@ VALUES (
   trigger_conditions = EXCLUDED.trigger_conditions,
   last_indexed_at = EXCLUDED.last_indexed_at;
 
+INSERT INTO dev_artifacts (stable_key, artifact_type, name, description, source_type, source_path, version, checksum, scope, status, mandatory, trigger_conditions, last_indexed_at)
+VALUES (
+  'prd-dev-control-center-docs',
+  'prd',
+  'dev control center docs',
+  'Project PRD: dev-control-center-docs.md',
+  'repository',
+  'docs/prds/dev-control-center-docs.md',
+  '1.0.0',
+  'fbc830b70ec5c9072e668e60504641fd',
+  'project',
+  'active',
+  false,
+  '{"task_types":["all"]}'::jsonb,
+  NOW()
+) ON CONFLICT (stable_key) DO UPDATE SET
+  name = EXCLUDED.name,
+  description = EXCLUDED.description,
+  source_path = EXCLUDED.source_path,
+  version = EXCLUDED.version,
+  checksum = EXCLUDED.checksum,
+  trigger_conditions = EXCLUDED.trigger_conditions,
+  last_indexed_at = EXCLUDED.last_indexed_at;
+
+INSERT INTO dev_artifacts (stable_key, artifact_type, name, description, source_type, source_path, version, checksum, scope, status, mandatory, trigger_conditions, last_indexed_at)
+VALUES (
+  'prd-dev-control-execution-tracking',
+  'prd',
+  'dev control execution tracking',
+  'Project PRD: dev-control-execution-tracking.md',
+  'repository',
+  'docs/prds/dev-control-execution-tracking.md',
+  '1.0.0',
+  '2446cffbcb0ff824942b87f21cda72af',
+  'project',
+  'active',
+  false,
+  '{"task_types":["all"]}'::jsonb,
+  NOW()
+) ON CONFLICT (stable_key) DO UPDATE SET
+  name = EXCLUDED.name,
+  description = EXCLUDED.description,
+  source_path = EXCLUDED.source_path,
+  version = EXCLUDED.version,
+  checksum = EXCLUDED.checksum,
+  trigger_conditions = EXCLUDED.trigger_conditions,
+  last_indexed_at = EXCLUDED.last_indexed_at;
+
+INSERT INTO dev_artifacts (stable_key, artifact_type, name, description, source_type, source_path, version, checksum, scope, status, mandatory, trigger_conditions, last_indexed_at)
+VALUES (
+  'spec-dev-control-center-docs',
+  'spec',
+  'dev control center docs',
+  'Project SPEC: dev-control-center-docs.md',
+  'repository',
+  'docs/specs/dev-control-center-docs.md',
+  '1.0.0',
+  'bdc89f014e8c37cbaf9ec8986e807285',
+  'project',
+  'active',
+  false,
+  '{"task_types":["all"]}'::jsonb,
+  NOW()
+) ON CONFLICT (stable_key) DO UPDATE SET
+  name = EXCLUDED.name,
+  description = EXCLUDED.description,
+  source_path = EXCLUDED.source_path,
+  version = EXCLUDED.version,
+  checksum = EXCLUDED.checksum,
+  trigger_conditions = EXCLUDED.trigger_conditions,
+  last_indexed_at = EXCLUDED.last_indexed_at;
+
+INSERT INTO dev_artifacts (stable_key, artifact_type, name, description, source_type, source_path, version, checksum, scope, status, mandatory, trigger_conditions, last_indexed_at)
+VALUES (
+  'spec-dev-control-execution-tracking',
+  'spec',
+  'dev control execution tracking',
+  'Project SPEC: dev-control-execution-tracking.md',
+  'repository',
+  'docs/specs/dev-control-execution-tracking.md',
+  '1.0.0',
+  '8e7a25feac6883e86ceec983eec8fd80',
+  'project',
+  'active',
+  false,
+  '{"task_types":["all"]}'::jsonb,
+  NOW()
+) ON CONFLICT (stable_key) DO UPDATE SET
+  name = EXCLUDED.name,
+  description = EXCLUDED.description,
+  source_path = EXCLUDED.source_path,
+  version = EXCLUDED.version,
+  checksum = EXCLUDED.checksum,
+  trigger_conditions = EXCLUDED.trigger_conditions,
+  last_indexed_at = EXCLUDED.last_indexed_at;
+
+INSERT INTO dev_artifacts (stable_key, artifact_type, name, description, source_type, source_path, version, checksum, scope, status, mandatory, trigger_conditions, last_indexed_at)
+VALUES (
+  'adr-001-documentation-tracking',
+  'adr',
+  '001 documentation tracking',
+  'Project ADR: 001-documentation-tracking.md',
+  'repository',
+  'docs/adrs/001-documentation-tracking.md',
+  '1.0.0',
+  'b88d0e83e5a9c9be9e2bb970ede687a6',
+  'project',
+  'active',
+  false,
+  '{"task_types":["all"]}'::jsonb,
+  NOW()
+) ON CONFLICT (stable_key) DO UPDATE SET
+  name = EXCLUDED.name,
+  description = EXCLUDED.description,
+  source_path = EXCLUDED.source_path,
+  version = EXCLUDED.version,
+  checksum = EXCLUDED.checksum,
+  trigger_conditions = EXCLUDED.trigger_conditions,
+  last_indexed_at = EXCLUDED.last_indexed_at;
+

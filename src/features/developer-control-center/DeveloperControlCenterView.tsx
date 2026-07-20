@@ -317,6 +317,59 @@ export const DeveloperControlCenterView: React.FC = () => {
     </div>
   );
 
+  const renderCheckpoints = () => (
+    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <History className="w-5 h-5 text-brand-orange" />
+          <h2 className="text-xl font-extrabold">Execution Checkpoints</h2>
+        </div>
+        <Button onClick={() => mutateTasks()} variant="outline" size="sm">Refresh</Button>
+      </div>
+
+      <Card className="p-0 overflow-hidden border-border bg-card/50">
+        {loadingTasks && (!tasks || tasks.length === 0) ? (
+          <div className="p-4 space-y-4">
+             {[...Array(3)].map((_, i) => <Skeleton key={i} className="h-16 w-full" />)}
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm text-left">
+              <thead className="bg-muted/50 text-semantic-muted border-b border-border">
+                <tr>
+                  <th className="px-6 py-4 font-semibold uppercase tracking-wider text-xs">Checkpoint ID</th>
+                  <th className="px-6 py-4 font-semibold uppercase tracking-wider text-xs">Details</th>
+                  <th className="px-6 py-4 font-semibold uppercase tracking-wider text-xs text-right">Timestamp</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-border">
+                {tasks?.map((task) => (
+                  <tr key={task.id} className="hover:bg-muted/30 transition-colors">
+                    <td className="px-6 py-4 font-mono text-xs text-foreground font-bold">{task.id}</td>
+                    <td className="px-6 py-4 text-xs text-semantic-muted">
+                      {task.assumptions && task.assumptions.length > 0 ? task.assumptions.join(", ") : task.task_id}
+                    </td>
+                    <td className="px-6 py-4 text-xs text-right text-semantic-muted">
+                      {task.created_at ? new Date(task.created_at).toLocaleString() : 'N/A'}
+                    </td>
+                  </tr>
+                ))}
+                {(!tasks || tasks.length === 0) && (
+                  <tr>
+                    <td colSpan={3} className="px-6 py-12 text-center text-semantic-muted">
+                      <History className="w-8 h-8 mx-auto mb-3 opacity-20" />
+                      No checkpoints logged yet.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </Card>
+    </div>
+  );
+
   const renderComingSoon = (title: string, icon: React.ReactNode) => (
     <div className="p-12 text-center text-semantic-muted animate-in fade-in">
       <div className="flex justify-center mb-4 opacity-20">{icon}</div>
@@ -415,13 +468,14 @@ export const DeveloperControlCenterView: React.FC = () => {
         {activeTab === 'tasks' && renderTasks()}
         
         {activeTab === 'changes' && renderChanges()}
+        {activeTab === 'checkpoints' && renderCheckpoints()}
         
         {activeTab === 'prds' && renderCatalog('prd', 'PRDs')}
         {activeTab === 'specs' && renderCatalog('spec', 'Specifications')}
         {activeTab === 'adrs' && renderCatalog('adr', 'Architecture Decisions')}
         
         {(
-          activeTab === 'checkpoints' || activeTab === 'versions' || 
+          activeTab === 'versions' || 
           activeTab === 'releases' || activeTab === 'migrations' || activeTab === 'issues' || 
           activeTab === 'tech_debt'
         ) && renderComingSoon(
