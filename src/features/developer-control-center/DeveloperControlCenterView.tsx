@@ -81,7 +81,7 @@ export const DeveloperControlCenterView: React.FC = () => {
     </div>
   );
 
-  const renderCatalog = (artifactType: 'rule' | 'skill' | 'pattern', title: string) => {
+  const renderCatalog = (artifactType: 'rule' | 'skill' | 'pattern' | 'prd' | 'spec' | 'adr', title: string) => {
     const filteredArtifacts = artifacts?.filter(a => 
       a.artifact_type === artifactType &&
       (a.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
