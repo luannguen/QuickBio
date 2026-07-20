@@ -128,7 +128,7 @@ export function SamTayNguyenLanding({ onNavigateToHome, landingData }: SamTayNgu
           diveScroll: 1.4,
           connScroll: 0.9,
           hint: 'Cuộn chuột để bắt đầu hành trình',
-          nav: true,
+          nav: false,
           atmosphere: true,
           sections: [
             {
