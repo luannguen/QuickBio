@@ -12,11 +12,11 @@ interface SamTayNguyenLandingProps {
 const SAM_PRODUCT: Product = {
   id: '9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb7d',
   user_id: '', // Sẽ được gán động
-  name: 'Hộp Trà Sâm Tây Nguyên Thượng Hạng (20 gói x 5g)',
-  price: 189000,
-  description: 'Sự kết hợp hoàn hảo giữa Sâm Ấn Độ, Sâm Bố Chính, Đinh Lăng & Linh Chi. Hỗ trợ giảm stress, bồi bổ đề kháng và giúp giấc ngủ sâu tự nhiên.',
+  name: 'Hộp ASHWA DAILY - Sâm Ấn Độ Dạng Pha Uống (20 khẩu phần)',
+  price: 299000,
+  description: 'Bột sâm pha uống tiện lợi từ cao chiết Sâm Ấn Độ (Ashwagandha) nguyên chất 550mg kết hợp Linh Chi, Đinh Lăng. Hàm lượng minh bạch, chuẩn hóa và truy xuất nguồn gốc rõ ràng.',
   cover_image_url: '/assets/sam/sam_tea_packaging.png',
-  file_url: 'https://quick-bio-lilac.vercel.app/downloads/huong-dan-thien-tra.pdf', // HD sử dụng & thiền trà
+  file_url: 'https://quick-bio-lilac.vercel.app/downloads/huong-dan-thien-tra.pdf', // HD sử dụng
   product_type: 'physical',
   inventory_count: 100,
   is_unlimited: false,
@@ -61,6 +61,12 @@ export function SamTayNguyenLanding({ onNavigateToHome, landingData }: SamTayNgu
                   weight_grams: SAM_PRODUCT.weight_grams,
                   status: 'active'
                 });
+              } else {
+                await supabase.from('products').update({
+                  name: SAM_PRODUCT.name,
+                  description: SAM_PRODUCT.description,
+                  price: SAM_PRODUCT.price
+                }).eq('id', SAM_PRODUCT.id);
               }
             } else {
               const products = mockDb.get('products');
@@ -79,6 +85,12 @@ export function SamTayNguyenLanding({ onNavigateToHome, landingData }: SamTayNgu
                   is_unlimited: SAM_PRODUCT.is_unlimited,
                   weight_grams: SAM_PRODUCT.weight_grams,
                   status: 'active'
+                });
+              } else {
+                mockDb.update('products', SAM_PRODUCT.id, {
+                  name: SAM_PRODUCT.name,
+                  description: SAM_PRODUCT.description,
+                  price: SAM_PRODUCT.price
                 });
               }
             }
@@ -109,7 +121,7 @@ export function SamTayNguyenLanding({ onNavigateToHome, landingData }: SamTayNgu
       if ((window as any).mountScrollWorld) {
         const brandHtml = landingData?.logo_url 
           ? `<img src="${landingData.logo_url}" style="height: 32px; object-fit: contain;" alt="Logo" />`
-          : 'Hapico Sâm';
+          : 'ASHWA DAILY';
           
         engineInstance = (window as any).mountScrollWorld(document.getElementById('sam-world-container'), {
           brand: { name: brandHtml, href: '/' },
@@ -121,73 +133,73 @@ export function SamTayNguyenLanding({ onNavigateToHome, landingData }: SamTayNgu
           sections: [
             {
               id: 'khoi-nguon',
-              label: 'Khởi nguồn',
+              label: 'Định vị',
               still: '/assets/sam/misty_tea_hills.png',
               stillMobile: '/assets/sam/misty_tea_hills_mobile.png',
               accent: '#D4AF37',
-              eyebrow: 'Câu chuyện Hapico Sâm',
-              title: 'Tỉnh Giấc Giữa Đại Ngàn',
-              body: 'Từ ngàn đời xưa, bazan đỏ rực nung mình dưới nắng gió Tây Nguyên đã nuôi dưỡng những mạch ngầm thảo dược vô giá. Mỗi búp trà sâm Hapico là sự giao hòa đất trời, đánh thức nguồn sinh lực nguyên bản ẩn sâu trong cơ thể bạn.',
-              tags: ['Đất đỏ Bazan', 'Tinh hoa đại ngàn', 'Sức sống nguyên bản'],
+              eyebrow: 'ASHWA DAILY',
+              title: 'Sâm Ấn Độ Cho Nhịp Sống Hiện Đại',
+              body: 'Khởi nguồn từ những rễ sâm Ấn Độ (Ashwagandha) chuẩn hóa quý giá, được tinh chế bằng công nghệ cao chiết hiện đại tại Việt Nam. Không còn là trà thảo mộc thông thường, đây là giải pháp khẩu phần phục hồi thân tâm tiện lợi cho cuộc sống năng động.',
+              tags: ['Cao chiết Ashwagandha', 'Nhịp sống hiện đại', 'Phục hồi sinh lực'],
               objectPosition: 'center 45%'
             },
             {
               id: 'sam-an-do',
-              label: 'Sâm Ấn Độ',
+              label: 'Ashwagandha',
               still: '/assets/sam/ashwagandha_diorama.png',
               stillMobile: '/assets/sam/ashwagandha_diorama_mobile.png',
               accent: '#E2A35D',
-              eyebrow: 'Sâm Ấn Độ — Ashwagandha',
-              title: 'Tĩnh Lặng Giữa Giông Bão',
-              body: 'Áp lực cuộc sống hiện đại liên tục bòn rút năng lượng tinh thần mỗi ngày. Ashwagandha đóng vai trò như một chiếc khiên cổ xưa giúp xoa dịu hệ thần kinh trung ương, điều hòa hormone stress cortisol và khôi phục nhịp ngủ tự nhiên sâu sắc.',
-              tags: ['Hạ cortisol stress', 'Tái sinh giấc ngủ', 'Chữa lành cảm xúc'],
+              eyebrow: 'Nguyên liệu trung tâm — Ashwagandha',
+              title: 'Minh Bạch 550mg Cao Chiết',
+              body: 'Trong mỗi khẩu phần, chúng tôi cung cấp chính xác 550mg cao chiết khô Ashwagandha (Sâm Ấn Độ), chuẩn hóa hoạt chất Withanolides. Giúp giảm cortisol căng thẳng, tái thiết lập chu kỳ giấc ngủ tự nhiên sâu sắc và xoa dịu hệ thần kinh trung ương.',
+              tags: ['550mg Cao chiết/gói', 'Chuẩn hóa Withanolides', 'Hạ cortisol giảm stress'],
               objectPosition: 'center 58%'
             },
             {
               id: 'sam-bo-chinh',
-              label: 'Sâm Bố Chính',
+              label: 'Phối hợp thảo dược',
               still: '/assets/sam/sam_bo_chinh_diorama.png',
               stillMobile: '/assets/sam/sam_bo_chinh_diorama_mobile.png',
               accent: '#FF8E7A',
-              eyebrow: 'Sâm Tiến Vua — Sâm Bố Chính',
-              title: 'Vương Dược Tiến Vua',
-              body: 'Từng được các vương triều phong kiến coi là quốc bảo bồi bổ sức khỏe cho các bậc quân vương, Sâm Bố Chính dồi dào chất nhầy quý và hoạt tính Saponin, giúp củng cố vững chắc hàng rào đề kháng và hồi sinh thể trạng.',
-              tags: ['Saponin hoạt tính', 'Củng cố đề kháng', 'Bồi bổ khí huyết'],
+              eyebrow: 'Công thức phối hợp tinh tuyển',
+              title: 'Đinh Lăng & Linh Chi Đỏ',
+              body: 'Công thức được tối ưu hóa sức mạnh nhờ Đinh Lăng cổ thụ hoạt huyết dưỡng não và Linh Chi Đỏ rừng sâu hỗ trợ đào thải độc tố do căng thẳng tích tụ. Các thành phần phối hợp vừa đủ, không tranh điểm nhìn với Ashwagandha.',
+              tags: ['Linh Chi & Đinh Lăng', 'Hoạt huyết dưỡng não', 'Thải độc mát gan'],
               objectPosition: 'center 56%'
             },
             {
               id: 'linh-chi-do',
-              label: 'Linh Chi Đỏ',
+              label: 'Dạng khẩu phần',
               still: '/assets/sam/linh_chi_diorama.png',
               accent: '#A94444',
-              eyebrow: 'Nấm Trường Thọ — Linh Chi Đỏ',
-              title: 'Thanh Lọc Lại Tâm Hồn',
-              body: 'Một cơ thể khỏe mạnh đích thực bắt đầu từ sự thanh sạch sâu bên trong. Linh Chi Đỏ rừng sâu hỗ trợ đào thải mọi độc tố tích tụ lâu ngày do căng thẳng và thực phẩm bẩn, mang lại sự nhẹ nhõm nhẹ nhàng.',
-              tags: ['Đào thải độc tố gan', 'Mát gan thanh nhiệt', 'Ngăn gốc tự do'],
+              eyebrow: 'Mã thị giác & Dạng bào chế',
+              title: '20 Khẩu Phần Uống Tiện Lợi',
+              body: 'Tránh xa hình ảnh ấm trà truyền thống rườm rà. ASHWA DAILY được chia sẵn thành 20 gói bột hòa tan tiện dụng. Không cần sắc nấu, không cần cân đong, dễ dàng pha nhanh ngay tại văn phòng hay khi di chuyển.',
+              tags: ['Chia sẵn 20 gói tiện lợi', 'Hòa tan nhanh', 'Mang đi dễ dàng'],
               objectPosition: 'center 54%'
             },
             {
               id: 'dinh-lang',
-              label: 'Đinh Lăng',
+              label: 'Truy xuất nguồn gốc',
               still: '/assets/sam/golden_ginseng_brew.png',
               accent: '#8CAF68',
-              eyebrow: 'Sâm của người Việt — Đinh Lăng',
-              title: 'Thông Suốt Mạch Khí Huyết',
-              body: 'Khi dòng chảy máu huyết không thông suốt, trí óc sẽ rơi vào sương mù mệt mỏi. Đinh Lăng cổ thụ hoạt huyết dưỡng não vượt trội, đẩy oxy đến từng tế bào thần kinh, khơi dậy tinh thần minh mẫn, sắc bén.',
-              tags: ['Hoạt huyết dưỡng não', 'Xua tan mệt mỏi', 'Tăng thể lực dẻo dai'],
+              eyebrow: 'Quy trình & Bằng chứng',
+              title: 'Cam Kết Vùng Trồng & Kiểm Nghiệm',
+              body: 'Mọi lô sản phẩm đều được sơ chế sấy lạnh và chiết xuất chuẩn hóa hàm lượng. Mỗi hộp ASHWA DAILY đều tích hợp mã QR truy xuất nguồn gốc vùng trồng, quy trình chiết xuất và kết quả kiểm nghiệm minh bạch.',
+              tags: ['Truy xuất nguồn gốc QR', 'Kiểm nghiệm theo lô', 'HAPICO minh bạch'],
               objectPosition: 'center 62%'
             },
             {
               id: 'thuong-tra',
-              label: 'Đặt Mua',
+              label: 'Trải nghiệm ngay',
               still: '/assets/sam/sam_tea_packaging.png',
               accent: '#D4AF37',
-              eyebrow: 'Hapico Sâm — Trà Sâm Thượng Hạng',
-              title: 'Thưởng Trà An Yên',
-              body: 'Đón nhận hương vị đượm ngọt sâu lắng của đại ngàn Tây Nguyên trong từng túi lọc Hapico Sâm cao cấp. 100% thảo mộc tự nhiên, cam kết không sử dụng hương liệu nhân tạo hay chất bảo quản. Một món quà vàng bảo vệ sức khỏe vàng.',
-              tags: ['Hộp 20 túi lọc', '100% tự nhiên', 'Đánh thức thân tâm'],
+              eyebrow: 'HAPICO ASHWA DAILY',
+              title: 'Mỗi Ngày, Dành Lại Một Khoảng Cho Chính Mình',
+              body: 'Sâm Ấn Độ dạng pha uống tiện dụng. Chi phí tối ưu chỉ 14.9K cho một lần sử dụng để tái sinh giấc ngủ và xoa dịu tâm trí. Cam kết 100% thảo mộc tự nhiên, không hương liệu nhân tạo, giảm ngọt và chất mang lactose.',
+              tags: ['20 Khẩu phần pha uống', 'Chi phí 14.9K / lần', 'HAPICO an yên'],
               cta: {
-                primary: { label: 'Đặt mua ngay - 189K', href: '#buy' },
+                primary: { label: 'Đặt mua ngay - 299K', href: '#buy' },
                 secondary: { label: 'Quay lại Trang chủ', href: '/' }
               },
               objectPosition: 'center 50%'
