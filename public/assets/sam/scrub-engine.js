@@ -218,6 +218,7 @@ function mountScrollWorld(container, config) {
         v.muted = true; v.playsInline = true; v.preload = 'auto';
         v.setAttribute('muted', ''); v.setAttribute('playsinline', '');
         v.src = URL.createObjectURL(blob);
+        if (s.objectPosition) v.style.objectPosition = s.objectPosition;
         v.addEventListener('loadedmetadata', () => { s.ready = true; read(); });
         // Reveal the video (hide the still poster) only once a real frame has
         // painted — on iOS a seeked-but-never-played muted video stays blank, so
@@ -430,12 +431,22 @@ function injectCSS() {
     background:linear-gradient(90deg,var(--sw-bg) 0%,color-mix(in srgb,var(--sw-bg) 95%,transparent) 40%,color-mix(in srgb,var(--sw-bg) 60%,transparent) 75%,transparent 100%);
   }
   @media (min-width:861px){
+    .sw-scene__still, .sw-scene__video {
+      width: 60vw !important;
+      left: auto !important;
+      right: 0 !important;
+      object-fit: cover !important;
+    }
     .sw-copylayer::before{
       content:"";
       position:absolute;
       inset:0;
-      width:min(60vw,900px);
-      background:linear-gradient(90deg,var(--sw-bg) 0%,color-mix(in srgb,var(--sw-bg) 95%,transparent) 40%,color-mix(in srgb,var(--sw-bg) 60%,transparent) 75%,transparent 100%);
+      width: 65vw;
+      background: linear-gradient(90deg, var(--sw-bg) 20%, color-mix(in srgb, var(--sw-bg) 95%, transparent) 55%, color-mix(in srgb, var(--sw-bg) 40%, transparent) 75%, transparent 100%);
+    }
+    .sw-copy {
+      left: max(5vw, calc(20vw - 230px)) !important;
+      width: min(38vw, 460px) !important;
     }
   }
   .sw-copy{

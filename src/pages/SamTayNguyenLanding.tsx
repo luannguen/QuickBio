@@ -112,7 +112,7 @@ export function SamTayNguyenLanding({ onNavigateToHome, landingData }: SamTayNgu
 
     // Tải động script scrub-engine
     const script = document.createElement('script');
-    script.src = '/assets/sam/scrub-engine.js?v=1.4.3';
+    script.src = '/assets/sam/scrub-engine.js?v=1.4.4';
     script.async = true;
     
     let engineInstance: any = null;
@@ -141,7 +141,7 @@ export function SamTayNguyenLanding({ onNavigateToHome, landingData }: SamTayNgu
               title: 'Sâm Ấn Độ Cho Nhịp Sống Hiện Đại',
               body: 'Khởi nguồn từ những rễ sâm Ấn Độ (Ashwagandha) chuẩn hóa quý giá, được tinh chế bằng công nghệ cao chiết hiện đại tại Việt Nam. Không còn là trà thảo mộc thông thường, đây là giải pháp khẩu phần phục hồi thân tâm tiện lợi cho cuộc sống năng động.',
               tags: ['Cao chiết Ashwagandha', 'Nhịp sống hiện đại', 'Phục hồi sinh lực'],
-              objectPosition: 'center 45%'
+              objectPosition: 'center bottom'
             },
             {
               id: 'sam-an-do',
@@ -153,7 +153,7 @@ export function SamTayNguyenLanding({ onNavigateToHome, landingData }: SamTayNgu
               title: 'Minh Bạch 550mg Cao Chiết',
               body: 'Trong mỗi khẩu phần, chúng tôi cung cấp chính xác 550mg cao chiết khô Ashwagandha (Sâm Ấn Độ), chuẩn hóa hoạt chất Withanolides. Giúp giảm cortisol căng thẳng, tái thiết lập chu kỳ giấc ngủ tự nhiên sâu sắc và xoa dịu hệ thần kinh trung ương.',
               tags: ['550mg Cao chiết/gói', 'Chuẩn hóa Withanolides', 'Hạ cortisol giảm stress'],
-              objectPosition: 'center 58%'
+              objectPosition: 'center bottom'
             },
             {
               id: 'sam-bo-chinh',
@@ -165,7 +165,7 @@ export function SamTayNguyenLanding({ onNavigateToHome, landingData }: SamTayNgu
               title: 'Đinh Lăng & Linh Chi Đỏ',
               body: 'Công thức được tối ưu hóa sức mạnh nhờ Đinh Lăng cổ thụ hoạt huyết dưỡng não và Linh Chi Đỏ rừng sâu hỗ trợ đào thải độc tố do căng thẳng tích tụ. Các thành phần phối hợp vừa đủ, không tranh điểm nhìn với Ashwagandha.',
               tags: ['Linh Chi & Đinh Lăng', 'Hoạt huyết dưỡng não', 'Thải độc mát gan'],
-              objectPosition: 'center 56%'
+              objectPosition: 'center bottom'
             },
             {
               id: 'linh-chi-do',
@@ -176,7 +176,7 @@ export function SamTayNguyenLanding({ onNavigateToHome, landingData }: SamTayNgu
               title: '20 Khẩu Phần Uống Tiện Lợi',
               body: 'Tránh xa hình ảnh ấm trà truyền thống rườm rà. ASHWA DAILY được chia sẵn thành 20 gói bột hòa tan tiện dụng. Không cần sắc nấu, không cần cân đong, dễ dàng pha nhanh ngay tại văn phòng hay khi di chuyển.',
               tags: ['Chia sẵn 20 gói tiện lợi', 'Hòa tan nhanh', 'Mang đi dễ dàng'],
-              objectPosition: 'center 54%'
+              objectPosition: 'center bottom'
             },
             {
               id: 'dinh-lang',
@@ -187,7 +187,7 @@ export function SamTayNguyenLanding({ onNavigateToHome, landingData }: SamTayNgu
               title: 'Cam Kết Vùng Trồng & Kiểm Nghiệm',
               body: 'Mọi lô sản phẩm đều được sơ chế sấy lạnh và chiết xuất chuẩn hóa hàm lượng. Mỗi hộp ASHWA DAILY đều tích hợp mã QR truy xuất nguồn gốc vùng trồng, quy trình chiết xuất và kết quả kiểm nghiệm minh bạch.',
               tags: ['Truy xuất nguồn gốc QR', 'Kiểm nghiệm theo lô', 'HAPICO minh bạch'],
-              objectPosition: 'center 62%'
+              objectPosition: 'center bottom'
             },
             {
               id: 'thuong-tra',
@@ -202,7 +202,7 @@ export function SamTayNguyenLanding({ onNavigateToHome, landingData }: SamTayNgu
                 primary: { label: 'Đặt mua ngay - 299K', href: '#buy' },
                 secondary: { label: 'Quay lại Trang chủ', href: '/' }
               },
-              objectPosition: 'center 50%'
+              objectPosition: 'center bottom'
             }
           ]
         });
