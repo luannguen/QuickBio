@@ -7,9 +7,8 @@ export interface UserProfile {
   avatar_url: string;
   created_at: string;
   role?: string;
-  plan_tier?: 'free' | 'pro' | 'premium';
-  plan_purchased_at?: string;
-  plan_expires_at?: string;
+  plan?: 'free' | 'pro';
+  pro_expires_at?: string;
   telegram_chat_id?: string;
 }
 

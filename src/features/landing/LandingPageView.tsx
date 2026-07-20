@@ -7,6 +7,7 @@ import { PhoneMockup } from './components/PhoneMockup';
 import { Button } from "@/shared/ui/Button";
 import { Card } from "@/shared/ui/Card";
 import { GlobalHeader } from "@/shared/components/layout/GlobalHeader";
+import { PricingTable } from "@/shared/components/PricingTable";
 
 // ============================================================
 // TiltCard Component: Parallax 3D mouse rotate effect
@@ -445,93 +446,7 @@ export const LandingPageView: React.FC<LandingPageViewProps> = ({
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-8 max-w-3xl mx-auto">
-            {/* Gói Free */}
-            <Card className="p-6 lg:p-8 text-left space-y-4 lg:space-y-6 flex flex-col justify-between relative overflow-hidden transition-all hover:border-border hover:shadow-2xl">
-              <div className="space-y-4">
-                <div className="flex justify-between items-center lg:block">
-                  <h4 className="text-sm lg:text-lg font-bold text-foreground">QuickBio Free</h4>
-                  <span className="text-lg font-black text-foreground lg:hidden">0đ</span>
-                  <p className="hidden lg:block text-xs text-muted-foreground mt-1">Dành cho người mới bắt đầu trải nghiệm MMO.</p>
-                </div>
-                <div className="hidden lg:flex items-baseline gap-1">
-                  <span className="text-3xl font-extrabold text-foreground">0đ</span>
-                  <span className="text-xs text-muted-foreground">/ trọn đời</span>
-                </div>
-                <ul className="space-y-2 lg:space-y-3 pt-0 lg:pt-4 lg:border-t border-border text-[11px] lg:text-xs text-muted-foreground">
-                  <li className="flex items-center gap-2">
-                    <span className="text-brand-orange font-bold">✓</span>
-                    <span>Tạo 1 trang Bio-Link cơ bản</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <span className="text-brand-orange font-bold">✓</span>
-                    <span>Đăng tối đa 1 sản phẩm số</span>
-                  </li>
-                  <li className="flex items-center gap-2 text-muted-foreground lg:text-muted-foreground">
-                    <span className="hidden lg:inline">✗</span>
-                    <span className="lg:hidden">✗ Không có Sáng tạo AI (Gemini)</span>
-                    <span className="hidden lg:inline">Không có Sáng tạo AI (Gemini)</span>
-                  </li>
-                  <li className="hidden lg:flex items-center gap-2 text-muted-foreground">
-                    <span>✗</span>
-                    <span>Không có hệ thống CTV Affiliate</span>
-                  </li>
-                </ul>
-              </div>
-              <Button 
-                onClick={handleStart}
-                variant="secondary"
-                className="w-full lg:mt-8"
-              >
-                Trải nghiệm miễn phí
-              </Button>
-            </Card>
-
-            {/* Gói Pro */}
-            <Card className="p-6 lg:p-8 border-brand-orange/30 text-left space-y-4 lg:space-y-6 flex flex-col justify-between relative overflow-hidden transition-all hover:border-brand-orange/50 hover:shadow-2xl hover:shadow-brand-orange/5 bg-gradient-to-b from-brand-orange/5 via-transparent to-transparent">
-              <div className="hidden lg:block absolute top-0 right-0 bg-brand-orange text-white text-[9px] font-bold px-3 py-1 rounded-bl-xl uppercase tracking-wider">
-                Phổ biến nhất
-              </div>
-              <div className="space-y-4">
-                <div className="flex justify-between items-center lg:block">
-                  <h4 className="text-sm lg:text-lg font-bold text-foreground flex items-center gap-1.5 lg:gap-2">
-                    QuickBio Pro
-                    <Sparkles className="w-3.5 h-3.5 lg:w-4 lg:h-4 text-brand-orange" />
-                  </h4>
-                  <span className="text-lg font-black text-brand-orange lg:hidden">99.000đ<span className="text-[10px] text-muted-foreground font-normal">/th</span></span>
-                  <p className="hidden lg:block text-xs text-muted-foreground mt-1">Đầy đủ vũ khí MMO đỉnh cao để kiếm tiền thụ động.</p>
-                </div>
-                <div className="hidden lg:flex items-baseline gap-1">
-                  <span className="text-3xl font-extrabold text-foreground">99.000đ</span>
-                  <span className="text-xs text-muted-foreground">/ tháng</span>
-                </div>
-                <ul className="space-y-2 lg:space-y-3 pt-0 lg:pt-4 lg:border-t border-brand-orange/10 text-[11px] lg:text-xs text-muted-foreground">
-                  <li className="flex items-center gap-2">
-                    <span className="text-brand-orange font-bold">✓</span>
-                    <span>Đăng bán sản phẩm KHÔNG giới hạn</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <span className="text-brand-orange font-bold">✓</span>
-                    <span>Sáng tạo Content Tự động (Gemini AI Pro)</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <span className="text-brand-orange font-bold">✓</span>
-                    <span>Bật Affiliate tuyển CTV không giới hạn</span>
-                  </li>
-                  <li className="hidden lg:flex items-center gap-2">
-                    <span className="text-brand-orange font-bold">✓</span>
-                    <span>Hỗ trợ thiết kế tên miền riêng (Sắp ra mắt)</span>
-                  </li>
-                </ul>
-              </div>
-              <Button 
-                onClick={handleStart}
-                className="w-full lg:mt-8 shadow-md shadow-brand-orange/10"
-              >
-                Nâng cấp Pro ngay
-              </Button>
-            </Card>
-          </div>
+          <PricingTable />
         </div>
 
         {/* FAQ Accordion Section */}

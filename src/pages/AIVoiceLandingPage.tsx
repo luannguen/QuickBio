@@ -17,6 +17,7 @@ import { Button } from "@/shared/ui/Button";
 import { Input } from "@/shared/ui/Input";
 import { Label } from "@/shared/ui/Label";
 import { GlobalHeader } from "@/shared/components/layout/GlobalHeader";
+import { PricingTable } from "@/shared/components/PricingTable";
 
 // ============================================================
 // 1. TiltCard Component: Hiệu ứng Parallax 3D xoay theo con trỏ chuột
@@ -536,6 +537,17 @@ Bên em đã tích hợp giải pháp này vào QuickBio:
               </div>
             ))}
           </div>
+        </section>
+
+        {/* Bảng giá (Pricing) */}
+        <section className="space-y-12 pt-16 border-t border-white/5">
+          <div className="text-center space-y-4 max-w-2xl mx-auto">
+            <h2 className="text-3xl md:text-4xl font-bold">Nâng Cấp Để Mở Khóa<br/><span className="text-brand-orange">Sức Mạnh Vô Hạn</span></h2>
+            <p className="text-sm text-white/60">
+              Đầu tư một lần, sử dụng mãi mãi. Chuyển đổi trạng thái từ người dùng thử sang Đối Tác Doanh Nghiệp.
+            </p>
+          </div>
+          <PricingTable />
         </section>
 
       </main>

@@ -14,7 +14,7 @@ interface SortableBlockItemProps {
   onToggleVisibility: (id: string) => void;
 }
 
-export const SortableBlockItem: React.FC<SortableBlockItemProps> = ({ id, block, products = [], onEdit, onDelete, onToggleVisibility }) => {
+export const SortableBlockItem = React.memo(function SortableBlockItem({ id, block, products = [], onEdit, onDelete, onToggleVisibility }: SortableBlockItemProps) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id });
   
   const style = {
@@ -40,7 +40,7 @@ export const SortableBlockItem: React.FC<SortableBlockItemProps> = ({ id, block,
       ref={setNodeRef} 
       style={style} 
       className={`flex items-center gap-3 bg-brand-card/40 backdrop-blur-sm p-3 rounded-xl border mb-3 transition-colors ${
-        isDragging ? 'border-brand-orange shadow-lg shadow-brand-orange/20 opacity-90' : 'border-border hover:border-border/80'
+        isDragging ? 'opacity-30 border-dashed border-border shadow-none' : 'border-border hover:border-border/80'
       } ${!block.is_visible ? 'opacity-50' : ''}`}
     >
       {/* Drag Handle */}
@@ -93,4 +93,4 @@ export const SortableBlockItem: React.FC<SortableBlockItemProps> = ({ id, block,
       </div>
     </div>
   );
-};
+});

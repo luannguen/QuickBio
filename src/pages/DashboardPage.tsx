@@ -147,16 +147,16 @@ export const Dashboard: React.FC<DashboardProps> = ({
         setPaymentInfo(profile.payment_info || '');
         setTelegramChatId(profile.telegram_chat_id || '');
         
-        let tier = profile.plan_tier || 'free';
-        if (tier !== 'free' && profile.plan_expires_at) {
-          const expiry = new Date(profile.plan_expires_at);
+        let tier = profile.plan || 'free';
+        if (tier !== 'free' && profile.pro_expires_at) {
+          const expiry = new Date(profile.pro_expires_at);
           if (expiry < new Date()) {
-            tier = 'free';
+            tier = 'free'; // Đã hết hạn
           }
         }
         setUserPlan(tier as any);
         setPlanPurchasedAt(profile.plan_purchased_at || '');
-        setPlanExpiresAt(profile.plan_expires_at || '');
+        setPlanExpiresAt(profile.pro_expires_at || '');
       }
 
       if (dashboardData.luan_id) {
@@ -180,10 +180,10 @@ export const Dashboard: React.FC<DashboardProps> = ({
       }
     } else if (user && !isSupabaseConfigured) {
       // Fallback for mock data
-      if (user.plan_tier) {
-        let tier = user.plan_tier || 'free';
-        if (tier !== 'free' && user.plan_expires_at) {
-          const expiry = new Date(user.plan_expires_at);
+      if (user.plan) {
+        let tier = user.plan || 'free';
+        if (tier !== 'free' && user.pro_expires_at) {
+          const expiry = new Date(user.pro_expires_at);
           if (expiry < new Date()) {
             tier = 'free'; // Hết hạn -> trở về Free
           }

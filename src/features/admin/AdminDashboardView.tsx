@@ -1,5 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useAdmin } from "@/shared/hooks/useAdmin";
+import { 
+  useAdminStats, 
+  useAdminUsers, 
+  useAdminOrders, 
+  useAdminWithdrawals, 
+  useAdminArticles, 
+  useAdminProducts 
+} from "@/shared/hooks/useAdminSWR";
+import { Skeleton } from "@/shared/ui/Skeleton";
 import { useAuth } from "@/shared/hooks/useAuth";
 import { Layout } from "@/app/layouts/Layout";
 import { Button } from "@/shared/ui/Button";
@@ -8,7 +17,6 @@ import { ThemeToggle } from "@/shared/ui/ThemeToggle";
 import { 
   DollarSign, 
   Check, 
-  Loader2, 
   AlertTriangle, 
   ArrowLeft,
   Users,
@@ -36,42 +44,19 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
   const toast = useToastStore();
   const confirm = useConfirm();
   const { 
-    commissions, 
-    stats,
-    users,
-    orders,
-    loading, 
-    error, 
-    loadAdminData,
-    loadDashboardStats,
-    loadUsers,
-    loadOrders,
-    loadArticles,
-    loadProducts,
     approveWithdrawal,
     moderateProduct,
-    products,
-    articles,
     changeUserPlan
   } = useAdmin();
 
   const [activeTab, setActiveTab] = useState<TabType>('overview');
 
-  useEffect(() => {
-    if (activeTab === 'overview') {
-      loadDashboardStats();
-    } else if (activeTab === 'users') {
-      loadUsers();
-    } else if (activeTab === 'orders') {
-      loadOrders(100);
-    } else if (activeTab === 'withdrawals') {
-      loadAdminData();
-    } else if (activeTab === 'articles') {
-      loadArticles();
-    } else if (activeTab === 'products') {
-      loadProducts();
-    }
-  }, [activeTab, loadDashboardStats, loadUsers, loadOrders, loadAdminData, loadArticles, loadProducts]);
+  const { data: stats, isLoading: loadingStats } = useAdminStats(activeTab === 'overview');
+  const { data: users = [], isLoading: loadingUsers, mutate: mutateUsers } = useAdminUsers(activeTab === 'users');
+  const { data: orders = [], isLoading: loadingOrders } = useAdminOrders(100, activeTab === 'orders');
+  const { data: commissions = [], isLoading: loadingCommissions, error: errorCommissions, mutate: mutateCommissions } = useAdminWithdrawals(activeTab === 'withdrawals');
+  const { data: articles = [], isLoading: loadingArticles, mutate: mutateArticles } = useAdminArticles(activeTab === 'articles');
+  const { data: products = [], isLoading: loadingProducts, mutate: mutateProducts } = useAdminProducts(activeTab === 'products');
 
   const handleApprove = async (userId: string, userName: string, amount: number) => {
     const confirmed = await confirm({
@@ -309,9 +294,14 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
         <h2 className="text-xl font-extrabold">Tổng Quan Nền Tảng</h2>
       </div>
       
-      {loading && !stats ? (
-        <div className="p-12 text-center">
-          <Loader2 className="w-8 h-8 animate-spin text-brand-orange mx-auto" />
+      {loadingStats && !stats ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {[...Array(4)].map((_, i) => (
+            <Card key={i} className="p-5 flex flex-col gap-2">
+              <Skeleton className="h-4 w-1/2" />
+              <Skeleton className="h-8 w-3/4 mt-2" />
+            </Card>
+          ))}
         </div>
       ) : stats ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -354,14 +344,21 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
 
   const renderUsers = () => (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
-      <div className="flex items-center gap-3">
-        <Users className="w-5 h-5 text-brand-orange" />
-        <h2 className="text-xl font-extrabold">Quản Lý Users (Tenants)</h2>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <Users className="w-5 h-5 text-brand-orange" />
+          <h2 className="text-xl font-extrabold">Quản Lý Users (Tenants)</h2>
+        </div>
+        <Button onClick={() => mutateUsers()} variant="outline" size="sm">
+          Làm mới
+        </Button>
       </div>
 
       <Card className="p-0 overflow-hidden">
-        {loading ? (
-           <div className="p-12 text-center"><Loader2 className="w-8 h-8 animate-spin text-brand-orange mx-auto" /></div>
+        {loadingUsers && users.length === 0 ? (
+          <div className="p-4 space-y-4">
+            {[...Array(5)].map((_, i) => <Skeleton key={i} className="h-12 w-full" />)}
+          </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
@@ -441,8 +438,10 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
       </div>
 
       <Card className="p-0 overflow-hidden">
-        {loading ? (
-           <div className="p-12 text-center"><Loader2 className="w-8 h-8 animate-spin text-brand-orange mx-auto" /></div>
+        {loadingOrders && orders.length === 0 ? (
+          <div className="p-4 space-y-4">
+            {[...Array(5)].map((_, i) => <Skeleton key={i} className="h-12 w-full" />)}
+          </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
@@ -494,18 +493,17 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
       </div>
 
       <Card className="p-0 overflow-hidden">
-        {loading ? (
-          <div className="p-12 text-center space-y-3">
-            <Loader2 className="w-8 h-8 animate-spin text-brand-orange mx-auto" />
-            <p className="text-sm text-semantic-muted">Đang tải danh sách rút tiền...</p>
+        {loadingCommissions && commissions.length === 0 ? (
+          <div className="p-4 space-y-4">
+            {[...Array(3)].map((_, i) => <Skeleton key={i} className="h-16 w-full" />)}
           </div>
-        ) : error ? (
+        ) : errorCommissions ? (
           <div className="p-12 text-center space-y-4">
             <div className="w-12 h-12 bg-semantic-error/10 border border-semantic-error/20 rounded-full flex items-center justify-center text-semantic-error mx-auto">
               <AlertTriangle className="w-6 h-6" />
             </div>
-            <p className="text-sm text-semantic-error font-semibold">{error}</p>
-            <Button onClick={loadAdminData} variant="secondary">Thử lại</Button>
+            <p className="text-sm text-semantic-error font-semibold">{errorCommissions}</p>
+            <Button onClick={() => mutateCommissions()} variant="secondary">Thử lại</Button>
           </div>
         ) : commissions.length === 0 ? (
           <div className="p-16 text-center space-y-3">
@@ -570,12 +568,17 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
           <FileText className="w-5 h-5 text-brand-orange" />
           <h2 className="text-xl font-extrabold">Kiểm duyệt Bài viết</h2>
         </div>
-        <Button onClick={loadArticles} variant="outline" size="sm">
+        <Button onClick={() => mutateArticles()} variant="outline" size="sm">
           Làm mới
         </Button>
       </div>
       
       <Card className="overflow-hidden border-border bg-card/50">
+        {loadingArticles && articles.length === 0 ? (
+          <div className="p-4 space-y-4">
+            {[...Array(5)].map((_, i) => <Skeleton key={i} className="h-12 w-full" />)}
+          </div>
+        ) : (
         <div className="overflow-x-auto">
           <table className="w-full text-sm text-left">
             <thead className="bg-muted/50 text-semantic-muted border-b border-border">
@@ -633,7 +636,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
                             });
                             if (confirmed) {
                               await articleService.adminModerateArticle(article.id, 'approved');
-                              loadArticles();
+                              mutateArticles();
                               toast.success('Đã duyệt bài viết');
                             }
                           }}
@@ -650,7 +653,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
                             const msg = window.prompt('Nhập nội dung cảnh báo:');
                             if (msg !== null) {
                               await articleService.adminModerateArticle(article.id, 'warned', msg);
-                              loadArticles();
+                              mutateArticles();
                             }
                           }}
                         >
@@ -666,7 +669,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
                             const msg = window.prompt('Lý do đình chỉ (ẩn bài viết):');
                             if (msg !== null) {
                               await articleService.adminModerateArticle(article.id, 'suspended', msg);
-                              loadArticles();
+                              mutateArticles();
                             }
                           }}
                         >
@@ -677,7 +680,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
                   </td>
                 </tr>
               ))}
-              {articles.length === 0 && !loading && (
+              {articles.length === 0 && (
                 <tr>
                   <td colSpan={5} className="px-6 py-8 text-center text-semantic-muted">
                     Chưa có bài viết nào
@@ -687,6 +690,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
             </tbody>
           </table>
         </div>
+        )}
       </Card>
     </div>
   );
@@ -698,12 +702,17 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
           <ShoppingBag className="w-5 h-5 text-brand-orange" />
           <h2 className="text-xl font-extrabold">Kiểm duyệt Sản phẩm</h2>
         </div>
-        <Button onClick={loadProducts} variant="outline" size="sm">
+        <Button onClick={() => mutateProducts()} variant="outline" size="sm">
           Làm mới
         </Button>
       </div>
       
       <Card className="overflow-hidden border-border bg-card/50">
+        {loadingProducts && products.length === 0 ? (
+          <div className="p-4 space-y-4">
+            {[...Array(5)].map((_, i) => <Skeleton key={i} className="h-12 w-full" />)}
+          </div>
+        ) : (
         <div className="overflow-x-auto">
           <table className="w-full text-sm text-left">
             <thead className="bg-muted/50 text-semantic-muted border-b border-border">
@@ -787,7 +796,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
                   </td>
                 </tr>
               ))}
-              {(!products || products.length === 0) && !loading && (
+              {(!products || products.length === 0) && (
                 <tr>
                   <td colSpan={5} className="px-6 py-8 text-center text-semantic-muted">
                     Chưa có sản phẩm nào
@@ -797,6 +806,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onNaviga
             </tbody>
           </table>
         </div>
+        )}
       </Card>
     </div>
   );

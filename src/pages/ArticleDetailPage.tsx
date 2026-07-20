@@ -1,8 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
+import useSWR from 'swr';
 import { GlobalHeader } from '@/shared/components/layout/GlobalHeader';
 import { articleService } from '@/entities/article/api';
-import { Loader2, ArrowLeft, Calendar } from 'lucide-react';
+import { ArrowLeft, Calendar } from 'lucide-react';
 import { Button } from '@/shared/ui/Button';
+import { Skeleton } from '@/shared/ui/Skeleton';
 
 interface ArticleDetailPageProps {
   articleSlug: string;
@@ -11,25 +13,10 @@ interface ArticleDetailPageProps {
 }
 
 export const ArticleDetailPage: React.FC<ArticleDetailPageProps> = ({ articleSlug, onNavigateBack, onNavigateToHome }) => {
-  const [article, setArticle] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchArticle = async () => {
-      setLoading(true);
-      try {
-        const data = await articleService.getPublicArticleBySlug(articleSlug);
-        setArticle(data);
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    if (articleSlug) {
-      fetchArticle();
-    }
-  }, [articleSlug]);
+  const { data: article, isLoading } = useSWR(
+    articleSlug ? `article_${articleSlug}` : null,
+    () => articleService.getPublicArticleBySlug(articleSlug)
+  );
 
   return (
     <div className="min-h-screen bg-background">
@@ -45,9 +32,20 @@ export const ArticleDetailPage: React.FC<ArticleDetailPageProps> = ({ articleSlu
           Quay lại
         </Button>
 
-        {loading ? (
-          <div className="flex justify-center py-20">
-            <Loader2 className="w-8 h-8 animate-spin text-brand-orange" />
+        {isLoading ? (
+          <div className="space-y-6">
+            <Skeleton className="w-full aspect-[2/1] rounded-3xl" />
+            <Skeleton className="w-3/4 h-12" />
+            <div className="flex items-center gap-4 border-b border-border pb-8 mb-12">
+              <Skeleton className="w-32 h-4" />
+            </div>
+            <div className="space-y-4">
+              <Skeleton className="w-full h-4" />
+              <Skeleton className="w-full h-4" />
+              <Skeleton className="w-5/6 h-4" />
+              <Skeleton className="w-full h-4" />
+              <Skeleton className="w-4/5 h-4" />
+            </div>
           </div>
         ) : !article ? (
           <div className="text-center py-20">

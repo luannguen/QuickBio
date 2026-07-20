@@ -5,9 +5,10 @@ import {
   KeyboardSensor, 
   PointerSensor, 
   useSensor, 
-  useSensors
+  useSensors,
+  DragOverlay
 } from '@dnd-kit/core';
-import type { DragEndEvent } from '@dnd-kit/core';
+import type { DragEndEvent, DragStartEvent } from '@dnd-kit/core';
 import { 
   arrayMove, 
   SortableContext, 
@@ -28,6 +29,7 @@ interface BioBlocksEditorProps {
 
 export const BioBlocksEditor: React.FC<BioBlocksEditorProps> = ({ blocks, products = [], onChange }) => {
   const [isEditing, setIsEditing] = useState<string | null>(null);
+  const [activeId, setActiveId] = useState<string | null>(null);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -40,7 +42,12 @@ export const BioBlocksEditor: React.FC<BioBlocksEditorProps> = ({ blocks, produc
     })
   );
 
+  const handleDragStart = (event: DragStartEvent) => {
+    setActiveId(event.active.id as string);
+  };
+
   const handleDragEnd = (event: DragEndEvent) => {
+    setActiveId(null);
     const { active, over } = event;
 
     if (over && active.id !== over.id) {
@@ -156,6 +163,7 @@ export const BioBlocksEditor: React.FC<BioBlocksEditorProps> = ({ blocks, produc
       <DndContext 
         sensors={sensors}
         collisionDetection={closestCenter}
+        onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
       >
         <SortableContext 
@@ -182,6 +190,18 @@ export const BioBlocksEditor: React.FC<BioBlocksEditorProps> = ({ blocks, produc
             )}
           </div>
         </SortableContext>
+        <DragOverlay>
+          {activeId ? (
+            <SortableBlockItem 
+              id={activeId}
+              block={blocks.find(b => b.id === activeId)!}
+              products={products}
+              onEdit={() => {}}
+              onDelete={() => {}}
+              onToggleVisibility={() => {}}
+            />
+          ) : null}
+        </DragOverlay>
       </DndContext>
 
       {/* Add new blocks */}
