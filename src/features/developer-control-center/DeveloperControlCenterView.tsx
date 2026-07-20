@@ -337,17 +337,78 @@ export const DeveloperControlCenterView: React.FC = () => {
             <table className="w-full text-sm text-left">
               <thead className="bg-muted/50 text-semantic-muted border-b border-border">
                 <tr>
-                  <th className="px-6 py-4 font-semibold uppercase tracking-wider text-xs">Checkpoint ID</th>
-                  <th className="px-6 py-4 font-semibold uppercase tracking-wider text-xs">Details</th>
+                  <th className="px-6 py-4 font-semibold uppercase tracking-wider text-xs">Checkpoint & Task</th>
+                  <th className="px-6 py-4 font-semibold uppercase tracking-wider text-xs">References (PRD/Spec/ADR)</th>
+                  <th className="px-6 py-4 font-semibold uppercase tracking-wider text-xs">Rules / Skills / Patterns</th>
                   <th className="px-6 py-4 font-semibold uppercase tracking-wider text-xs text-right">Timestamp</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
                 {tasks?.map((task) => (
                   <tr key={task.id} className="hover:bg-muted/30 transition-colors">
-                    <td className="px-6 py-4 font-mono text-xs text-foreground font-bold">{task.id}</td>
+                    <td className="px-6 py-4">
+                      <div className="flex flex-col gap-1">
+                        <div className="font-bold text-foreground text-sm">
+                          {task.assumptions && task.assumptions.length > 0 ? task.assumptions.join(", ") : 'Checkpoint'}
+                        </div>
+                        <div className="flex items-center gap-2 mt-0.5">
+                          <span className="px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-muted text-muted-foreground border border-border">
+                            {task.task_id}
+                          </span>
+                          <span className="text-[10px] font-mono text-semantic-muted truncate max-w-[120px]">
+                            {task.id}
+                          </span>
+                        </div>
+                      </div>
+                    </td>
                     <td className="px-6 py-4 text-xs text-semantic-muted">
-                      {task.assumptions && task.assumptions.length > 0 ? task.assumptions.join(", ") : task.task_id}
+                      <div className="flex flex-col gap-1">
+                        {task.prd_reference && (
+                          <div className="flex items-center gap-1.5">
+                            <span className="w-1.5 h-1.5 rounded-full bg-brand-orange" />
+                            <span>PRD: {task.prd_reference.document_id}</span>
+                          </div>
+                        )}
+                        {task.spec_reference && (
+                          <div className="flex items-center gap-1.5">
+                            <span className="w-1.5 h-1.5 rounded-full bg-semantic-info" />
+                            <span>Spec: {task.spec_reference.document_id}</span>
+                          </div>
+                        )}
+                        {task.adr_references && task.adr_references.length > 0 && (
+                          <div className="flex items-center gap-1.5">
+                            <span className="w-1.5 h-1.5 rounded-full bg-semantic-success" />
+                            <span>ADRs: {task.adr_references.map(a => a.document_id).join(", ")}</span>
+                          </div>
+                        )}
+                        {!task.prd_reference && !task.spec_reference && (!task.adr_references || task.adr_references.length === 0) && (
+                          <span className="text-muted-foreground">-</span>
+                        )}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 text-xs">
+                      <div className="flex flex-wrap gap-1 max-w-xs">
+                        {task.applied_rule_keys?.map((r, idx) => (
+                          <span key={idx} className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-brand-orange/10 text-brand-orange border border-brand-orange/20" title={r.reason}>
+                            {r.key}
+                          </span>
+                        ))}
+                        {task.applied_skill_keys?.map((s, idx) => (
+                          <span key={idx} className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-semantic-info/10 text-semantic-info border border-semantic-info/20" title={s.reason}>
+                            {s.key}
+                          </span>
+                        ))}
+                        {task.applied_pattern_keys?.map((p, idx) => (
+                          <span key={idx} className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-semantic-success/10 text-semantic-success border border-semantic-success/20" title={p.reason}>
+                            {p.key}
+                          </span>
+                        ))}
+                        {(!task.applied_rule_keys || task.applied_rule_keys.length === 0) &&
+                         (!task.applied_skill_keys || task.applied_skill_keys.length === 0) &&
+                         (!task.applied_pattern_keys || task.applied_pattern_keys.length === 0) && (
+                          <span className="text-muted-foreground">-</span>
+                        )}
+                      </div>
                     </td>
                     <td className="px-6 py-4 text-xs text-right text-semantic-muted">
                       {task.created_at ? new Date(task.created_at).toLocaleString() : 'N/A'}
@@ -356,7 +417,7 @@ export const DeveloperControlCenterView: React.FC = () => {
                 ))}
                 {(!tasks || tasks.length === 0) && (
                   <tr>
-                    <td colSpan={3} className="px-6 py-12 text-center text-semantic-muted">
+                    <td colSpan={4} className="px-6 py-12 text-center text-semantic-muted">
                       <History className="w-8 h-8 mx-auto mb-3 opacity-20" />
                       No checkpoints logged yet.
                     </td>
