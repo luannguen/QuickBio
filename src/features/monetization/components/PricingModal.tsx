@@ -1,14 +1,41 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/shared/ui/Button';
 import { Check, Crown, CreditCard, Loader2 } from 'lucide-react';
 import { useAuth } from '@/shared/hooks/useAuth';
 import { useToastStore } from '@/shared/stores/useToastStore';
+import { orderService } from '@/entities/order/api';
+import type { BankConfig } from '@/entities/order/api.types';
 
 export const PricingModal: React.FC = () => {
   const { user } = useAuth();
   const toast = useToastStore();
   const [isProcessing, setIsProcessing] = useState(false);
   const [showQR, setShowQR] = useState(false);
+  const [adminBank, setAdminBank] = useState<BankConfig | null>(null);
+
+  useEffect(() => {
+    const fetchAdminBank = async () => {
+      try {
+        const config = await orderService.getBankConfig('ddde2961-7527-4003-89d7-bd8c7a014d36');
+        if (config) {
+          setAdminBank(config);
+        }
+      } catch (err) {
+        console.error("Failed to load admin bank config:", err);
+      }
+    };
+    fetchAdminBank();
+  }, []);
+
+  const getQrUrl = () => {
+    const fallbackConfig: BankConfig = {
+      bank_code: 'MBBank',
+      bank_account: '11301442277',
+      account_name: 'NGUYEN THIEN LUAN'
+    } as BankConfig;
+    const config = adminBank || fallbackConfig;
+    return `https://img.vietqr.io/image/${config.bank_code}-${config.bank_account}-compact2.png?amount=199000&addInfo=UPGRADE%20PRO%20${encodeURIComponent(user?.email || '')}&accountName=${encodeURIComponent(config.account_name.toUpperCase())}`;
+  };
 
   const handleUpgradeClick = () => {
     setShowQR(true);
@@ -17,11 +44,10 @@ export const PricingModal: React.FC = () => {
   const handlePaymentConfirmed = async () => {
     setIsProcessing(true);
     try {
-      // Logic gửi yêu cầu nâng cấp lên admin (Tạo 1 bản ghi vào bảng transaction hoặc notification)
-      // Tạm thời mock logic ở đây:
+      // Logic gửi yêu cầu nâng cấp lên admin
       setTimeout(() => {
         setIsProcessing(false);
-        toast.success('Admin đang xử lý nâng cấp cho bạn. Sẽ hoàn tất trong ít phút.', 'Đã gửi yêu cầu');
+        toast.success('Hệ thống đang kiểm tra biến động số dư. Gói Pro của bạn sẽ được kích hoạt tự động sau ít giây.', 'Đã nhận thông tin');
         setShowQR(false);
       }, 1500);
     } catch (error) {
@@ -47,7 +73,7 @@ export const PricingModal: React.FC = () => {
         <div className="bg-white p-4 rounded-xl mx-auto w-64 h-64 flex items-center justify-center">
           {/* Mock QR Code */}
           <img 
-            src={`https://img.vietqr.io/image/MB-09125-compact2.png?amount=199000&addInfo=UPGRADE%20PRO%20${user?.email}&accountName=QUICKBIO`} 
+            src={getQrUrl()} 
             alt="VietQR" 
             className="w-full h-full object-contain"
           />

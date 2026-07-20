@@ -27,6 +27,98 @@ export default async function handler(req: any, res: any) {
     // [TSK-03] Tránh việc lấy Date.now() làm ID, dùng ID thực của giao dịch (nếu có)
     const transactionId = data.id ? String(data.id) : `TX_${Date.now()}_${Math.random()}`; 
 
+    // Kiểm tra nâng cấp tài khoản trước khi khớp mã đơn hàng thông thường
+    const upgradeMatch = content.match(/UPGRADE\s+PRO\s+(\S+@\S+)/i);
+    if (upgradeMatch) {
+      const email = upgradeMatch[1].trim().toLowerCase();
+      console.log('Phát hiện giao dịch nâng cấp PRO cho email:', email);
+
+      // 1. Tìm profile theo email
+      const { data: profile, error: profileError } = await supabaseAdmin
+        .from('profiles')
+        .select('id, email, full_name')
+        .eq('email', email)
+        .maybeSingle();
+
+      if (profileError || !profile) {
+        console.error('Không tìm thấy tài khoản để nâng cấp cho email:', email, profileError);
+        return res.status(200).json({ message: 'Ignored: User profile not found for upgrade' });
+      }
+
+      // Kiểm tra số tiền chuyển khoản tối thiểu (ví dụ gói Pro là 199.000đ, cho phép từ 150k trở lên)
+      if (transferAmount < 150000) {
+        console.log(`Số tiền ${transferAmount} không đủ để nâng cấp PRO cho ${email}`);
+        return res.status(200).json({ message: 'Ignored: Insufficient amount for upgrade' });
+      }
+
+      // 2. Cập nhật gói dịch vụ thành 'pro'
+      const { error: updateError } = await supabaseAdmin
+        .from('profiles')
+        .update({ plan: 'pro' })
+        .eq('id', profile.id);
+
+      if (updateError) {
+        console.error('Lỗi khi nâng cấp gói pro:', updateError);
+        return res.status(500).json({ message: 'Database error upgrading plan' });
+      }
+
+      // 3. Ghi log transaction nâng cấp
+      await supabaseAdmin.from('transactions').insert({
+        transaction_id: transactionId,
+        amount: transferAmount,
+        content: content,
+        transfer_type: 'in'
+      });
+
+      // 4. Gửi email xác nhận nâng cấp thành công
+      const resendApiKey = process.env.RESEND_API_KEY;
+      if (resendApiKey) {
+        const emailPayload = {
+          from: 'QuickBio <onboarding@resend.dev>', 
+          to: email,
+          subject: `🎉 Chúc mừng bạn đã nâng cấp thành công gói QuickBio PRO!`,
+          html: `
+            <div style="font-family: sans-serif; max-width: 600px; margin: 40px auto; padding: 30px; border: 1px solid #e2e8f0; border-radius: 12px;">
+              <h2 style="color: #f97316;">Xin chào ${profile.full_name || 'Creator'}!</h2>
+              <p>Tài khoản của bạn đã được nâng cấp lên gói <strong>PRO</strong> thành công.</p>
+              <div style="background-color: #f8fafc; padding: 25px; border-radius: 8px; margin-top: 15px;">
+                <p><strong>Gói dịch vụ:</strong> QuickBio Pro</p>
+                <p><strong>Tính năng đã mở khóa:</strong></p>
+                <ul>
+                  <li>Không giới hạn số lượng trang Bio và sản phẩm</li>
+                  <li>Ẩn hoàn toàn Logo thương hiệu QuickBio</li>
+                  <li>Công cụ kéo thả (Drag & Drop) nâng cao</li>
+                  <li>Sử dụng Tên miền riêng (Custom Domain)</li>
+                </ul>
+              </div>
+              <p style="margin-top: 20px; font-size: 13px; color: #64748b;">Chúc bạn có nhiều đơn hàng cùng QuickBio!</p>
+            </div>
+          `
+        };
+
+        try {
+          const controller = new AbortController();
+          const timeout = setTimeout(() => controller.abort(), 3000);
+          await fetch('https://api.resend.com/emails', {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${resendApiKey}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(emailPayload),
+            signal: controller.signal
+          });
+          clearTimeout(timeout);
+          console.log(`Đã gửi email nâng cấp thành công đến: ${email}`);
+        } catch (emailErr) {
+          console.error('Lỗi khi gửi email chúc mừng:', emailErr);
+        }
+      }
+
+      console.log(`Nâng cấp PRO THÀNH CÔNG cho: ${email}`);
+      return res.status(200).json({ success: true, message: 'Profile upgraded to pro successfully' });
+    }
+
     const orderMatch = content.match(/QB\d{5}/i);
     
     if (!orderMatch) {
