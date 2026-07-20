@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ShoppingBag, Sparkles, X, CheckCircle, Clock, FileText, Calendar, Home, LayoutDashboard } from 'lucide-react';
+import { ShoppingBag, Sparkles, X, CheckCircle, Clock, FileText, Calendar, Home, LayoutDashboard, LayoutTemplate, ChevronRight } from 'lucide-react';
 import type { BioLink } from "@/entities/bio/api";
 import type { Product } from "@/entities/product/api";
 import { CountdownBanner } from './CountdownBanner';
@@ -16,6 +16,7 @@ interface PublicBioLayoutProps {
   bio: BioLink;
   products: Product[];
   articles?: any[];
+  landingPages?: any[];
   activeProduct: Product | null;
   setActiveProduct: (product: Product | null) => void;
   formattedTime: string;
@@ -26,12 +27,14 @@ interface PublicBioLayoutProps {
   onNavigateToLanding?: () => void;
   onNavigateToSam?: () => void;
   onNavigateToArticle?: (slug: string) => void;
+  onNavigateToLandingPublic?: (bioSlug: string, landingSlug: string) => void;
 }
 
 export const PublicBioLayout: React.FC<PublicBioLayoutProps> = ({
   bio,
   products,
   articles,
+  landingPages,
   activeProduct,
   setActiveProduct,
   formattedTime,
@@ -42,8 +45,9 @@ export const PublicBioLayout: React.FC<PublicBioLayoutProps> = ({
   onNavigateToLanding,
   onNavigateToSam,
   onNavigateToArticle,
+  onNavigateToLandingPublic,
 }) => {
-  const [activeTab, setActiveTab] = useState<'store' | 'blog'>('store');
+  const [activeTab, setActiveTab] = useState<'store' | 'blog' | 'landings'>('store');
   const isOwner = currentUserId === bio.user_id;
 
   const currentThemeId = bio.theme_id || 'glassmorphism';
@@ -118,6 +122,19 @@ export const PublicBioLayout: React.FC<PublicBioLayoutProps> = ({
             <ShoppingBag className="w-4 h-4" />
             Cửa hàng
           </button>
+          {landingPages && landingPages.length > 0 && (
+            <button
+              onClick={() => setActiveTab('landings')}
+              className={`flex-1 py-3 text-sm font-bold rounded-xl transition-all duration-300 flex items-center justify-center gap-2 ${
+                activeTab === 'landings'
+                  ? 'bg-brand-orange/20 text-brand-orange shadow-[0_0_15px_rgba(255,107,0,0.2)]'
+                  : 'text-muted-foreground hover:text-foreground hover:bg-white/5'
+              }`}
+            >
+              <LayoutTemplate className="w-4 h-4" />
+              Trang bán hàng
+            </button>
+          )}
           <button
             onClick={() => setActiveTab('blog')}
             className={`flex-1 py-3 text-sm font-bold rounded-xl transition-all duration-300 flex items-center justify-center gap-2 ${
@@ -157,6 +174,9 @@ export const PublicBioLayout: React.FC<PublicBioLayoutProps> = ({
                     product={products[0]}
                     onSelectProduct={setActiveProduct}
                     onNavigateToSam={onNavigateToSam}
+                    landingPages={landingPages}
+                    onNavigateToLandingPublic={onNavigateToLandingPublic}
+                    bioSlug={bio.slug}
                   />
                 )}
 
@@ -166,10 +186,46 @@ export const PublicBioLayout: React.FC<PublicBioLayoutProps> = ({
                     products={products.slice(1)}
                     onSelectProduct={setActiveProduct}
                     onNavigateToSam={onNavigateToSam}
+                    landingPages={landingPages}
+                    onNavigateToLandingPublic={onNavigateToLandingPublic}
+                    bioSlug={bio.slug}
                   />
                 )}
               </div>
             )}
+          </div>
+        )}
+
+        {/* Landing Pages Section */}
+        {activeTab === 'landings' && landingPages && landingPages.length > 0 && (
+          <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <div className="flex items-center justify-between px-1">
+              <h3 className="text-xs font-bold tracking-widest uppercase opacity-55 flex items-center gap-2">
+                <LayoutTemplate className="w-4 h-4 text-brand-orange animate-bounce-slow" />
+                Trang bán hàng nổi bật
+              </h3>
+            </div>
+            
+            <div className="flex flex-col gap-4">
+              {landingPages.map((lp) => (
+                <div
+                  key={lp.id}
+                  onClick={() => onNavigateToLandingPublic?.(bio.slug, lp.slug)}
+                  className="glass-card rounded-2xl border border-border p-4 flex justify-between items-center cursor-pointer hover:border-brand-orange/50 transition-all hover:bg-white/5 active:scale-[0.98]"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-brand-orange/10 flex items-center justify-center text-brand-orange">
+                      <LayoutTemplate className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-sm text-foreground">{lp.title}</h4>
+                      <p className="text-xs text-muted-foreground mt-0.5 line-clamp-1">{lp.description || 'Khám phá ngay sản phẩm đặc biệt này!'}</p>
+                    </div>
+                  </div>
+                  <ChevronRight className="w-5 h-5 text-muted-foreground opacity-50" />
+                </div>
+              ))}
+            </div>
           </div>
         )}
 

@@ -16,7 +16,7 @@ import { Card } from "@/shared/ui/Card";
 import { ThemeToggle } from "@/shared/ui/ThemeToggle";
 import { 
   Sparkles, Eye, DollarSign, ShoppingBag, BookOpen, 
-  Users, Menu, X, Settings, ChevronRight, Home, ShieldCheck, Activity
+  Users, Menu, X, Settings, ChevronRight, Home, ShieldCheck, Activity, LayoutTemplate
 } from 'lucide-react';
 
 interface DashboardViewProps {
@@ -612,8 +612,9 @@ export const DashboardView: React.FC<DashboardViewProps> = (props) => {
               </div>
 
               <div className="space-y-2">
-                {[
+                 {[
                   { name: 'Thống kê (Analytics)', id: 'analytics', icon: <Activity className="w-4 h-4 text-brand-orange" /> },
+                  { name: 'Landing Pages', id: 'landing', icon: <LayoutTemplate className="w-4 h-4 text-brand-orange" /> },
                   { name: 'Bài viết (Blog)', id: 'articles', icon: <BookOpen className="w-4 h-4 text-brand-orange" /> },
                   { name: 'Cấu hình VietQR', id: 'sepay', icon: <Settings className="w-4 h-4 text-brand-orange" /> },
                   { name: 'Sáng tạo AI (Gemini)', id: 'ai-content', icon: <Sparkles className="w-4 h-4 text-brand-orange" /> },

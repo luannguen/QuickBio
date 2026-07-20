@@ -42,6 +42,19 @@ export const usePublicBio = (slug: string) => {
   const bio: BioLink | null = data?.bio || null;
   const products: Product[] = data?.products || [];
   const articles: any[] = data?.articles || [];
+  const [landingPages, setLandingPages] = useState<any[]>([]);
+
+  useEffect(() => {
+    if (bio?.user_id) {
+      import('@/entities/landing/api').then(({ landingService }) => {
+        landingService.getLandingPagesByUserId(bio.user_id)
+          .then(res => {
+            setLandingPages(res.filter((p: any) => p.status === 'active'));
+          })
+          .catch(err => console.error("Error loading landing pages for public bio:", err));
+      });
+    }
+  }, [bio?.user_id]);
 
   // 3. Log view event khi bio được load xong
   useEffect(() => {
@@ -61,6 +74,7 @@ export const usePublicBio = (slug: string) => {
     bio,
     products,
     articles,
+    landingPages,
     loading: isLoading,
     activeProduct,
     setActiveProduct,

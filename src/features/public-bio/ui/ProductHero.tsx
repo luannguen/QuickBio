@@ -7,11 +7,24 @@ interface ProductHeroProps {
   product: Product;
   onSelectProduct: (product: Product) => void;
   onNavigateToSam?: () => void;
+  landingPages?: any[];
+  onNavigateToLandingPublic?: (bioSlug: string, landingSlug: string) => void;
+  bioSlug?: string;
 }
 
-export const ProductHero: React.FC<ProductHeroProps> = ({ product, onSelectProduct, onNavigateToSam }) => {
+export const ProductHero: React.FC<ProductHeroProps> = ({ 
+  product, 
+  onSelectProduct, 
+  onNavigateToSam,
+  landingPages,
+  onNavigateToLandingPublic,
+  bioSlug
+}) => {
   const handleClick = () => {
-    if (product.id === '9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb7d' && onNavigateToSam) {
+    const matchedLanding = landingPages?.find(lp => lp.product_id === product.id);
+    if (matchedLanding && onNavigateToLandingPublic && bioSlug) {
+      onNavigateToLandingPublic(bioSlug, matchedLanding.slug);
+    } else if (product.id === '9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb7d' && onNavigateToSam) {
       onNavigateToSam();
     } else {
       onSelectProduct(product);

@@ -234,6 +234,7 @@ function App() {
           onNavigateToLanding={() => navigateTo('landing')}
           onNavigateToSam={() => navigateTo('sam-tay-nguyen')}
           onNavigateToArticle={(s) => navigateTo('article', s)}
+          onNavigateToLandingPublic={(bioSlug, landingSlug) => navigateTo('landing-public', bioSlug, landingSlug)}
         />
       );
 

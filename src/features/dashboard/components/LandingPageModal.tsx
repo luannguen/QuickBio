@@ -20,12 +20,25 @@ export const LandingPageModal: React.FC<LandingPageModalProps> = ({ isOpen, onCl
   const [loading, setLoading] = useState(false);
   const toast = useToastStore();
   
+  const [products, setProducts] = useState<any[]>([]);
+  
   const [formData, setFormData] = useState({
     title: '',
     slug: '',
     description: '',
-    logo_url: ''
+    logo_url: '',
+    product_id: ''
   });
+
+  useEffect(() => {
+    if (isOpen && userId) {
+      import('@/entities/product/api').then(({ productService }) => {
+        productService.getProductsByUserId(userId)
+          .then(setProducts)
+          .catch(err => console.error("Error loading products:", err));
+      });
+    }
+  }, [isOpen, userId]);
 
   useEffect(() => {
     if (page) {
@@ -33,14 +46,16 @@ export const LandingPageModal: React.FC<LandingPageModalProps> = ({ isOpen, onCl
         title: page.title || '',
         slug: page.slug || '',
         description: page.description || '',
-        logo_url: page.logo_url || ''
+        logo_url: page.logo_url || '',
+        product_id: page.product_id || ''
       });
     } else {
       setFormData({
         title: '',
         slug: '',
         description: '',
-        logo_url: ''
+        logo_url: '',
+        product_id: ''
       });
     }
   }, [page, isOpen]);
@@ -57,7 +72,8 @@ export const LandingPageModal: React.FC<LandingPageModalProps> = ({ isOpen, onCl
           title: formData.title,
           slug: formData.slug,
           description: formData.description,
-          logo_url: formData.logo_url
+          logo_url: formData.logo_url,
+          product_id: formData.product_id || undefined
         });
         toast.success('Cập nhật thành công!');
       } else {
@@ -67,6 +83,7 @@ export const LandingPageModal: React.FC<LandingPageModalProps> = ({ isOpen, onCl
           slug: formData.slug,
           description: formData.description,
           logo_url: formData.logo_url,
+          product_id: formData.product_id || undefined,
           template_id: 'default',
           status: 'draft',
           config: {}
@@ -122,6 +139,21 @@ export const LandingPageModal: React.FC<LandingPageModalProps> = ({ isOpen, onCl
               required
             />
           </div>
+        </div>
+
+        <div>
+          <Label className="mb-2 block">Sản phẩm liên kết (Tuỳ chọn)</Label>
+          <select 
+            value={formData.product_id}
+            onChange={(e) => setFormData({...formData, product_id: e.target.value})}
+            className="w-full px-4 py-3 rounded-xl text-sm glass-input text-foreground bg-background outline-none border border-border"
+          >
+            <option value="">-- Không liên kết sản phẩm --</option>
+            {products.map(p => (
+              <option key={p.id} value={p.id} className="bg-background text-foreground">{p.name}</option>
+            ))}
+          </select>
+          <p className="text-[10px] text-muted-foreground mt-1">Khi khách nhấn mua sản phẩm này ở trang Bio, hệ thống tự động dẫn sang trang Landing Page này.</p>
         </div>
 
         <div>
