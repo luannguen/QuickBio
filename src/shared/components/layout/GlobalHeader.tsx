@@ -25,7 +25,7 @@ export const GlobalHeader: React.FC<GlobalHeaderProps> = ({
 }) => {
   const { user, isAuthenticated, loading } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const isAdmin = user?.role === 'admin';
+  const isAdmin = user?.role === 'admin' || user?.role === 'super_admin';
 
   return (
     <header className="relative z-50 max-w-7xl mx-auto px-4 lg:px-6 py-4 lg:py-6 flex justify-between items-center border-b lg:border-none border-border bg-background/80 lg:bg-transparent backdrop-blur-md lg:backdrop-blur-none">
