@@ -443,7 +443,7 @@ function injectCSS() {
       position:absolute;
       inset:0;
       width: 100vw;
-      background: radial-gradient(circle at center, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.15) 60%, transparent 100%);
+      background: radial-gradient(circle at center, rgba(0, 0, 0, 0.75) 0%, rgba(0, 0, 0, 0.3) 50%, transparent 100%);
     }
     .sw-copy {
       left: 50% !important;
@@ -511,11 +511,11 @@ function injectCSS() {
     will-change:transform,opacity;
   }
   .sw-copy__title{
-    font-family:var(--sw-font-display);
+    font-family: 'Playfair Display', serif;
     font-weight:700;
     color:var(--sw-ink);
     font-size:clamp(2rem,4.4vw,3.5rem);
-    line-height:1.03;
+    line-height:1.15;
     margin:12px 0 0;
     letter-spacing:-.01em;
     text-shadow:0 2px 20px color-mix(in srgb,var(--sw-bg) 70%,transparent);

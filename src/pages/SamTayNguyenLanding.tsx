@@ -112,7 +112,7 @@ export function SamTayNguyenLanding({ onNavigateToHome, landingData }: SamTayNgu
 
     // Tải động script scrub-engine
     const script = document.createElement('script');
-    script.src = '/assets/sam/scrub-engine.js?v=1.4.6';
+    script.src = '/assets/sam/scrub-engine.js?v=1.4.7';
     script.async = true;
     
     let engineInstance: any = null;
@@ -134,13 +134,16 @@ export function SamTayNguyenLanding({ onNavigateToHome, landingData }: SamTayNgu
             {
               id: 'khoi-nguon',
               label: 'Định vị',
-              still: '/assets/sam/misty_tea_hills.png',
-              stillMobile: '/assets/sam/misty_tea_hills_mobile.png',
+              still: '/assets/sam/sam_tea_packaging.png',
+              stillMobile: '/assets/sam/sam_tea_packaging.png',
               accent: '#D4AF37',
-              eyebrow: 'ASHWA DAILY',
-              title: 'Sâm Ấn Độ Cho Nhịp Sống Hiện Đại',
-              body: 'Khởi nguồn từ những rễ sâm Ấn Độ (Ashwagandha) chuẩn hóa quý giá, được tinh chế bằng công nghệ cao chiết hiện đại tại Việt Nam. Không còn là trà thảo mộc thông thường, đây là giải pháp khẩu phần phục hồi thân tâm tiện lợi cho cuộc sống năng động.',
-              tags: ['Cao chiết Ashwagandha', 'Nhịp sống hiện đại', 'Phục hồi sinh lực'],
+              eyebrow: 'HAPICO ASHWA DAILY',
+              title: 'Tái Tạo Năng Lượng & Giảm Căng Thẳng',
+              body: 'Trải nghiệm sức mạnh của Sâm Ấn Độ (Ashwagandha) nguyên chất dạng bột hòa tan. Giải pháp phục hồi tĩnh tại, xoa dịu hệ thần kinh trung ương thiết kế riêng cho người bận rộn.',
+              tags: ['Chuẩn hóa hàm lượng', 'Không mất thời gian đun sắc', 'Thảo mộc tự nhiên 100%'],
+              cta: {
+                primary: { label: 'Đặt mua ngay - 299K', href: '#buy' }
+              },
               objectPosition: 'center bottom'
             },
             {
