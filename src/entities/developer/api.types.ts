@@ -16,7 +16,7 @@ export interface ArtifactTriggerCondition {
 export interface DevArtifact {
   id: string;
   stable_key: string;
-  artifact_type: 'rule' | 'skill' | 'pattern' | 'workflow' | 'checklist' | 'bootstrap' | 'architecture_document' | 'migration' | 'test_plan';
+  artifact_type: 'rule' | 'skill' | 'pattern' | 'workflow' | 'checklist' | 'bootstrap' | 'architecture_document' | 'migration' | 'test_plan' | 'prd' | 'spec' | 'adr';
   name: string;
   description?: string;
   source_type: 'repository' | 'database' | 'remote';

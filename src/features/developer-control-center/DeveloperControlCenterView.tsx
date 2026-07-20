@@ -416,8 +416,11 @@ export const DeveloperControlCenterView: React.FC = () => {
         
         {activeTab === 'changes' && renderChanges()}
         
+        {activeTab === 'prds' && renderCatalog('prd', 'PRDs')}
+        {activeTab === 'specs' && renderCatalog('spec', 'Specifications')}
+        {activeTab === 'adrs' && renderCatalog('adr', 'Architecture Decisions')}
+        
         {(
-          activeTab === 'prds' || activeTab === 'specs' || activeTab === 'adrs' ||
           activeTab === 'checkpoints' || activeTab === 'versions' || 
           activeTab === 'releases' || activeTab === 'migrations' || activeTab === 'issues' || 
           activeTab === 'tech_debt'
